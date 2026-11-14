@@ -30,7 +30,7 @@ Statuses: **proposed**, **accepted**, **superseded**, or **rejected**. Acceptanc
 
 ## D-003 — Feature branches, main integration, and future production
 
-- **Status:** accepted; deployment and enforcement not yet implemented.
+- **Status:** accepted; its pull-request requirement is superseded by D-010. Deployment and enforcement not yet implemented.
 - **Date:** 2026-11-14.
 - **Decision owner:** Tushar.
 - **Decision:** Work happens on task branches in separate worktrees and reaches `main` through PRs. `main` is the intended source of future production deployments.
@@ -78,6 +78,18 @@ IDs D-004 to D-006 are used by proposals in draft [PR #2](https://github.com/tus
 - **Implementation:** Mockup wording and sample values only.
 - **Revisit when:** The doctor returns her twelve answers.
 - **Supersedes:** nothing.
+
+## D-010 — Merge directly into main; no pull requests
+
+- **Status:** accepted.
+- **Date:** 2026-11-14.
+- **Decision owner:** Tushar.
+- **Decision:** Agents work on a task branch and merge it straight into `main`, then push. Pull requests are not used.
+- **Reason:** The founder does not want PRs as a step between finished work and `main`.
+- **Evidence:** Founder instruction on 2026-11-14: "do not create prs, just directly merge, change the rule if anywhere it says".
+- **Implementation:** [AGENTS.md](../AGENTS.md) and [README.md](../README.md) updated; the PR template removed.
+- **Revisit when:** Production deployment from `main` is configured, since every merge would then be a release.
+- **Supersedes:** the pull-request requirement in D-003. Task branches, separate worktrees and `main` as the future production source still stand.
 
 ## Adding or changing a decision
 

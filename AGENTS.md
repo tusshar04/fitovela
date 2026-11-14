@@ -28,10 +28,10 @@ Distinguish proposed, accepted, implemented, and verified. A suggestion in chat 
 
 - One owner per task. Begin with sequential work; either agent can implement or review.
 - Keep the primary checkout on `main`. Perform every task on a descriptive branch in a separate worktree: `feat/<task>-<name>`, `fix/<task>-<name>`, `docs/<name>`, or `chore/<name>`.
-- Branch from current `origin/main`. Push with an explicit upstream to the task's remote branch. Never push application or documentation changes directly to `main`.
+- Branch from current `origin/main`. When the task is done and its checks pass, merge the branch straight into `main` and push `main`. Do not open pull requests ([D-010](docs/DECISIONS.md)).
 - Concurrent agents need distinct worktrees, branches, and non-overlapping ownership. They must not edit the same working folder or switch its branch for each other.
 - Task ownership must be assigned by the user or a designated coordinator before concurrent work. `STATE.md` and worktrees are not atomic locks. The coordinator serializes assignments and shared-document integration; a stale branch is not evidence that a task is unclaimed.
-- Use one PR per coherent task, targeting `main`. Keep product/decision updates with the changes they describe. Prefer squash merges for completed tasks.
+- One merge per coherent task. Keep product/decision updates with the changes they describe. Fast-forward when possible; otherwise use a plain merge commit.
 - Before integration, inspect current `origin/main`, reconcile intervening changes, and repeat affected checks. A conflict resolution is a code change and needs review.
 - Do not force-push shared branches, erase another agent's work, bypass configured protections, or merge unrelated changes.
 - After merge, verify the remote result, fast-forward the clean primary checkout, and leave an accurate handoff. Clean up a task worktree only after confirming that it has no uncommitted or unmerged work.
@@ -40,17 +40,17 @@ Distinguish proposed, accepted, implemented, and verified. A suggestion in chat 
 
 Define observable acceptance criteria before implementation. Run checks appropriate to the change and record their actual results; do not claim a test, external review, or deployment that did not happen.
 
-Routine documentation and low-impact edits can use recorded self-review. Significant product behavior, architecture, payment, health-assessment, privacy, or security changes require independent review before merge. The reviewer may be the other agent or a qualified human. If the required reviewer is unavailable, leave a review-ready PR and state what remains outstanding.
+Routine documentation and low-impact edits can use recorded self-review. Significant product behavior, architecture, payment, health-assessment, privacy, or security changes require independent review before merge. The reviewer may be the other agent or a qualified human. If the required reviewer is unavailable, say so in the handoff and state what remains outstanding.
 
 Review the actual diff and requirements. Each actionable finding should give its location, consequence, and evidence or a way to verify it. Settle technical disagreements through reproduction, tests, or primary sources. Bring unresolved product tradeoffs to the user with a recommendation.
 
-Record the reviewed commit in the PR. New changes after review invalidate approval for the affected parts; review the final changes again. The author must not present a self-review as independent approval. Agent review does not replace appropriate domain expertise for health content.
+Record the reviewed commit in the commit message or in `STATE.md`. New changes after review invalidate approval for the affected parts; review the final changes again. The author must not present a self-review as independent approval. Agent review does not replace appropriate domain expertise for health content.
 
-PRs should explain the problem, resulting behavior, checks, documentation changes, and remaining limitations. Use the repository PR template. Relevant checks must pass and blocking findings must be resolved before merge.
+The commit message for a merged task should explain the problem, resulting behavior, checks, and remaining limitations. Relevant checks must pass and blocking findings must be resolved before merge.
 
 ## Main and future production deployment
 
-`main` is the intended production source. Once deployment is configured, merging to `main` is a release action. Branch pushes and PRs should run checks and, where supported, previews; successful main integration should deploy the merged revision after required checks pass.
+`main` is the intended production source. Once deployment is configured, merging to `main` is a release action. Branch pushes should run checks and, where supported, previews; successful main integration should deploy the merged revision after required checks pass.
 
 Follow the task's existing merge/release authorization. Do not repeatedly request approval already given, and do not infer permission for unrelated production or live-account changes. If release scope is unclear, complete the reviewable work before asking about the release.
 
@@ -64,8 +64,8 @@ Repository work does not expand authority over live advertising accounts or the 
 - A reusable lesson needs evidence, scope, and a prevention step. Do not promote guesses or one agent's confidence into project facts.
 - Correct factual errors with a short explanation and evidence. Preserve decision history by marking old decisions superseded and linking replacements.
 - Where useful, turn a recurring failure into an automated check. Keep permanent instructions concise; do not add a rule for every trivial mistake.
-- At handoff, update the existing task with owner/status, branch/worktree, commit or PR, checks/results, unresolved issues, and the exact next step. Never leave the only useful handoff in chat or private agent memory.
-- Keep `STATE.md` compact. Completed detail belongs in commits/PRs; at milestones consolidate duplicate guidance and remove obsolete instructions.
+- At handoff, update the existing task with owner/status, branch/worktree, commit, checks/results, unresolved issues, and the exact next step. Never leave the only useful handoff in chat or private agent memory.
+- Keep `STATE.md` compact. Completed detail belongs in commits; at milestones consolidate duplicate guidance and remove obsolete instructions.
 - Never commit credentials, tokens, production secrets, or real customer health responses. Use synthetic examples and redacted evidence.
 
 ## Definition of done

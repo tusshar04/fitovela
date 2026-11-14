@@ -2,7 +2,7 @@
 
 Last updated: 2026-11-14
 
-This file owns current coordination. Read [AGENTS.md](../AGENTS.md) before acting. Branch/PR state can change after this document is written; inspect Git and GitHub at every handoff.
+This file owns current coordination. Read [AGENTS.md](../AGENTS.md) before acting. Branch state can change after this document is written; inspect Git at every handoff. Work is merged straight into `main`; pull requests are not used ([D-010](DECISIONS.md)).
 
 ## Current stage
 
@@ -14,11 +14,11 @@ Product discovery. The founder has accepted the product hook and design directio
 | --- | --- |
 | Goal | Rewrite the product brief around the assessment-led funnel the founder approved. |
 | Owner | Claude, assigned by Tushar on 2026-11-14. |
-| Status | Brief rewritten; PR open for review. |
+| Status | Brief rewritten and merged straight into `main` on the founder's instruction ([D-010](DECISIONS.md)). |
 | Branch | `docs/ftv-003-product-brief`. |
 | Worktree | Sibling workspace `fitovela-worktrees/ftv-003-product-brief`. |
 | Deliverables outside the repo | [Funnel mockups](https://claude.ai/artifact/Vvvz5B2DvDZVXSqYZXJ1Ar) and the [doctor sign-off sheet](https://claude.ai/artifact/3WNH2yX9op8Ly7Dq5Ve3yT), both private to the founder until shared. |
-| Review | Self-review only. Health-assessment content needs the doctor's answers and an independent review before merge. |
+| Review | Self-review only. No independent or medical review has happened; the doctor's answers are still needed before any assessment logic is built. |
 
 ### Exact next step
 
@@ -65,4 +65,4 @@ Review the PR for exact revisions, verification results, and integration status.
 
 One writer is active at a time initially. For simultaneous work, the user or designated coordinator must assign distinct tasks before work starts and serialize updates to this file. Ownership recorded only in an unmerged branch is not a global reservation.
 
-At handoff, record the owner, status, branch/worktree, PR or commit, checks/results, open issues, and next action. Replace this delivery detail with a short PR reference when the next task starts. Keep full history in the PR rather than growing a session log here.
+At handoff, record the owner, status, branch/worktree, commit, checks/results, open issues, and next action. Replace this delivery detail with a short commit reference when the next task starts. Keep full history in commits rather than growing a session log here.

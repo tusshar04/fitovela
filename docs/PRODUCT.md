@@ -23,30 +23,32 @@ A funnel that opens with "get a diet plan" misses this. Every screen before the 
 
 | # | Screen | What she sees | Why it is there |
 | --- | --- | --- | --- |
-| 1 | Landing | "Free 2-minute symptom assessment", a headline matched to the ad, four causes we check, age tiles as the first tap. | The ad click turns into the first answer with no extra step. |
+| 1 | Landing | A hook headline, a teaser of what the report holds, and four age buttons as the only action. No photos in the age step. A live count of women checked today. | The ad click turns into the first answer with no extra step. |
 | 2 | Questions | One question per screen, grouped as Hormones, Insulin, Inflammation, Thyroid, Food. A live count of signals found. | Feels like an assessment in progress, not a form. |
-| 3 | Early finding | Mid-way: "We are seeing a pattern", signals per area, two areas still unchecked. | Rewards effort and gives a reason to finish. |
-| 4 | Food | Cuisine photo tiles (up to two), vegetarian / egg / non-veg. | Makes the plan feel personal before she sees a price. |
-| 5 | Report ready | "18 answers checked across 4 systems", then her WhatsApp number, with a skip. | Captures the lead at peak curiosity; lets us follow up. |
-| 6 | Result | Her type, markers matched, a score per area, what it means, a weight estimate, and her diet shown blurred and locked. | The payoff of the assessment and the reason to pay. |
-| 7 | Paywall | "Unlock the diet for your type": now versus goal, three plan lengths priced per day, guarantee, sample meals, reviews, FAQ. | Converts. |
-| 8 | Plan | A day of meals with photos, swaps, grocery list, weekly WhatsApp check-in. | What she actually receives. |
+| 3 | Reading her answers | After the first few answers: what was noted, "choosing your next questions", and questions skipped because they do not apply to her. | Shows the questionnaire is reacting to her, and respects her time. |
+| 4 | Follow-up | A question that quotes her earlier answer ("Because you said…") and, once she taps, a note on what that answer changed. | Makes every answer feel heard. |
+| 5 | What we see so far | "It was never your willpower", signals per area, two areas still unchecked. | Emotional connection and a reason to finish. |
+| 6 | Food | Cuisine photo tiles (up to two), vegetarian / egg / non-veg. | Makes the plan feel personal before she sees a price. |
+| 7 | Report ready | "14 answers checked across 4 systems", then her WhatsApp number, with a skip. | Captures the lead at peak curiosity; lets us follow up. |
+| 8 | Result | Her type, markers matched, a score per area, what it means, a weight estimate, and her diet shown blurred and locked. | The payoff of the assessment and the reason to pay. |
+| 9 | Paywall | "Unlock the diet for your type", a recap of her own answers, now versus goal, three plan lengths priced per day, guarantee, sample meals, reviews, FAQ. | Her effort so far becomes the reason to buy now. |
+| 10 | Plan | A day of meals with photos, swaps, grocery list, weekly WhatsApp check-in. | What she actually receives. |
 
-Clickable mockups of all eight screens: [Fitovela Funnel Mockups](https://claude.ai/artifact/Vvvz5B2DvDZVXSqYZXJ1Ar) (private to the founder until shared).
+The founder's brief for the question flow: she should feel her inputs are being processed and the next question depends on them, feel inspired and connected along the way, and feel good enough about the time she invested that buying on the paywall is an impulse.
 
-## Ad categories and entry headlines
+Clickable mockups of every screen: [Fitovela Funnel Mockups](https://claude.ai/artifact/Vvvz5B2DvDZVXSqYZXJ1Ar) (private to the founder until shared).
 
-One funnel, one set of screens. Only the landing headline changes with the ad.
+## Landing pages
 
-| Ad category | Landing headline |
-| --- | --- |
-| PCOS / PCOD | PCOS, PCOD or insulin? Find your exact type |
-| Thyroid | Is it only thyroid? Find your exact type |
-| Menopause | Hormones after 40. Find what changed |
-| Diabetes | Sugar, insulin or both? Find your exact type |
-| General weight loss | Why is the weight stuck? Find your real reason |
+One funnel, one set of question screens. The landing page changes with the ad. Three hooks are mocked up for testing against each other:
 
-The mockups show the PCOS path. Which category launches first is not decided.
+| Variant | Hook | Headline |
+| --- | --- | --- |
+| A | Failure to lose weight | Dieting hard. Weight still stuck? Find out why. |
+| B | Free health assessment | Is it PCOS, thyroid or insulin? Check in 2 minutes. |
+| C | Diet plan for her type | One diet does not fit every woman. Find yours. |
+
+Each ad category (PCOS / PCOD, thyroid, menopause, diabetes, general weight loss) can get its own version of these. The mockups show the PCOS path. Which category and which hook launch first is not decided.
 
 ## How the result is worded
 
@@ -72,6 +74,7 @@ The founder wants the questionnaire to feel like a diagnosis. The mockups delive
 
 - Modelled on the leading quiz funnels (BetterMe, Reverse Health, Noom), localised for India. Chosen by the founder over the long dark sales page used by ToneOp.
 - Light pages, large bold sans headlines with an italic serif accent, rani-pink buttons, deep plum for dark cards, a yellow tag for offers.
+- Logo: a rani-pink leaf mark with the name set in serif.
 - Real photography of Indian women and Indian food. The mockups use Unsplash stand-ins; replace them with licensed or shot images before launch.
 - One primary action per screen, large tap targets, phone first.
 
@@ -121,7 +124,7 @@ Until she answers, the scores, markers, calorie figures and meal examples in the
 
 ## Related work
 
-Draft [PR #2](https://github.com/tusshar04/fitovela/pull/2) (Codex, FTV-002) proposes a food-and-lifestyle profile with no condition result. That is the opposite of D-007. If this brief is merged, PR #2 needs to be reworked or closed; its decision IDs D-004 to D-006 are left unused here to avoid a clash.
+Draft [PR #2](https://github.com/tusshar04/fitovela/pull/2) (Codex, FTV-002) proposes a food-and-lifestyle profile with no condition result. That is the opposite of D-007, so PR #2 needs to be reworked or closed. Its decision IDs D-004 to D-006 are left unused here to avoid a clash.
 
 ## Implementation status
 

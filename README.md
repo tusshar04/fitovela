@@ -23,12 +23,11 @@ Read the shared instructions and current state before starting work. Each topic 
 Task and acceptance criteria
   -> feature/task branch in its own worktree
   -> implementation and relevant checks
-  -> pull request targeting main
-  -> review and merge
+  -> merge straight into main and push (no pull requests)
   -> production deployment from main (future; not configured)
 ```
 
-`main` is the integration branch and intended future production source. Feature, fix, and documentation work goes through pull requests. See [AGENTS.md](AGENTS.md) for the complete workflow.
+`main` is the integration branch and intended future production source. Feature, fix, and documentation work is done on a task branch and merged straight into `main`; the project does not use pull requests. See [AGENTS.md](AGENTS.md) for the complete workflow.
 
 ### Starting a task
 
@@ -40,7 +39,7 @@ git fetch origin
 git worktree add --no-track -b feat/ftv-002-short-description ../fitovela-worktrees/ftv-002-short-description origin/main
 ```
 
-Use the actual assigned task ID, a unique branch, and an unused worktree path. Run subsequent edits and commits inside that worktree. Publish it with `git push -u origin <branch-name>` and open a PR to `main`.
+Use the actual assigned task ID, a unique branch, and an unused worktree path. Run subsequent edits and commits inside that worktree. When the task is done, merge the branch into `main` from the primary checkout and run `git push origin main`.
 
 The primary checkout stays on `main`; update it with `git pull --ff-only` only when clean. Never use two agents to edit the same working directory concurrently.
 
