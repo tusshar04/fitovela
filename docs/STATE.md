@@ -17,7 +17,7 @@ Product discovery. First clickable concepts are prepared for founder discussion.
 | Scope | Review references, propose the journey, and create interactive mockups. |
 | Branch | `docs/ftv-002-product-concepts`. |
 | Worktree | Sibling `fitovela-worktrees/ftv-002-product-concepts`. |
-| Delivery | Draft PR reference will be added before handoff. |
+| Delivery | [Draft PR #2](https://github.com/tusshar04/fitovela/pull/2), with exact revisions, verification, and open discussion points. |
 | Canonical proposal | [PRODUCT.md](PRODUCT.md), first design proposal. |
 | Editable mockup | [food-plan-concepts.html](mockups/food-plan-concepts.html). |
 | Review | Codex self-review and prototype checks; no independent Claude or clinical review claimed. |
