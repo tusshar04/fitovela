@@ -2,49 +2,51 @@
 
 Last updated: 2026-11-14
 
-This file owns current coordination. Read [AGENTS.md](../AGENTS.md) before acting. Branch/PR state can change after this document is written; inspect Git and GitHub at every handoff.
+Read [AGENTS.md](../AGENTS.md) before acting. Inspect current Git branches and open PRs at handoff; an unmerged branch's state file is not a global task reservation.
 
 ## Current stage
 
-Shared project foundation documented in [PR #1](https://github.com/tusshar04/fitovela/pull/1). The next stage is product discovery with Tushar. There is no application or production deployment, and no implementation task is assigned.
+Product discovery. First clickable concepts are prepared for founder discussion. There is no production application, checkout, assessment engine, or deployment. All new product decisions remain proposals.
 
-## Latest delivery — FTV-001
+## Current task — FTV-002
 
 | Field | Value |
 | --- | --- |
-| Goal | Establish the shared documents and branch/worktree/PR workflow. |
 | Owner | Codex. |
-| Status | Documentation complete; the linked PR owns current integration status. |
-| Branch | `docs/project-foundation`. |
-| Worktree | Sibling workspace `fitovela-worktrees/project-foundation`. |
-| Review | Documentation self-review; no independent Claude review claimed. |
-| Delivery | [PR #1](https://github.com/tusshar04/fitovela/pull/1), including exact revisions, review, and merge status. |
-| Verification | Whitespace and local Markdown links checked; shared Claude import confirmed; GitHub tooling status inspected. Final commit/check results are recorded in the PR. |
+| Status | Concept deliverable prepared; awaiting founder feedback on direction and offer. |
+| Scope | Review references, propose the journey, and create interactive mockups. |
+| Branch | `docs/ftv-002-product-concepts`. |
+| Worktree | Sibling `fitovela-worktrees/ftv-002-product-concepts`. |
+| Delivery | Draft PR reference will be added before handoff. |
+| Canonical proposal | [PRODUCT.md](PRODUCT.md), first design proposal. |
+| Editable mockup | [food-plan-concepts.html](mockups/food-plan-concepts.html). |
+| Review | Codex self-review and prototype checks; no independent Claude or clinical review claimed. |
 
-### Delivered scope
+### What is ready
 
-- The seven agreed documents exist and have distinct responsibilities.
-- Claude imports the shared rules rather than duplicating them.
-- The product brief preserves the founder's direction and marks unresolved proposals honestly.
-- Feature branches, isolated worktrees, PR review, and `main` integration are documented.
-- Future deployment intent is clearly separated from currently configured tooling.
-- A PR template captures verification, review, handoff, and release implications.
+- Two entry concepts: Food-first and Quiz-first, sharing downstream screens.
+- Clickable goals, health context, food preferences, summary, offer, checkout preview, professional-review route, and illustrative plan delivery.
+- Recorded reference observations and primary health sources in [LEARNINGS.md](LEARNINGS.md).
+- Proposed decisions D-004–D-006 in [DECISIONS.md](DECISIONS.md); none marked accepted.
 
-### Handoff
+### Verification and limitations
 
-Review the PR for exact revisions, verification results, and integration status. No application tests exist. Remaining product and infrastructure questions are intentional open work, not implemented features.
+- JavaScript syntax and isolated DOM interaction checks passed for both concepts and all 18 screen renders.
+- Checked cuisine selection constraints, preference propagation, review routing, checkout preview, day selection, breakfast-only swaps, shopping toggle, and navigation-only saved state.
+- Rendered welcome and preference layouts inspected in native Safari; the general route through the offer was exercised. Full cross-browser, light/dark, narrow-viewport and accessibility QA remains open.
+- Local documentation links and whitespace checked; final revision/results are recorded in the PR.
+- No real nutrition, clinical, payment, backend, or tracking behavior is implemented. Meal ideas are illustrative and repeat through a short sample cycle. The prototype's conservative review route is not a clinical eligibility protocol.
 
-## Next task — FTV-002
+### Exact next step
 
-- **Status:** planned; not started or claimed.
-- **Proposed scope:** product discovery with Tushar, using [PRODUCT.md](PRODUCT.md) as the starting point.
-- **Exact next step:** discuss the first customer segment, assessment purpose, and the deliverable a customer buys; capture agreed answers and remaining questions in the existing product brief.
-- **Acceptance criteria:** to be agreed when the task starts.
-- **Dependencies:** founder's product decisions; later health-content expertise and research as required.
-- **Implementation:** not authorized by this planning placeholder.
+Discuss the Food-first versus Quiz-first entry and the purchased deliverable with Tushar. Update the existing product brief and proposal records with his choices. Continue on this branch while iterating the concepts; do not create a second competing design document.
 
-## Coordination notes
+The initial general-weight-management focus and INR 499 / 28-day self-serve offer are working assumptions used to make the mockup concrete. The founder's answers to these open choices are still required before treating them as accepted requirements.
 
-One writer is active at a time initially. For simultaneous work, the user or designated coordinator must assign distinct tasks before work starts and serialize updates to this file. Ownership recorded only in an unmerged branch is not a global reservation.
+## Completed foundation
 
-At handoff, record the owner, status, branch/worktree, PR or commit, checks/results, open issues, and next action. Replace this delivery detail with a short PR reference when the next task starts. Keep full history in the PR rather than growing a session log here.
+FTV-001 established the shared documents and task-branch/worktree/PR workflow in [PR #1](https://github.com/tusshar04/fitovela/pull/1).
+
+## Coordination
+
+One writer is active at a time initially. Before concurrent work, the user or designated coordinator assigns distinct tasks and serializes shared-document integration. Keep completed detail in PRs; keep this file focused on current ownership, evidence, and the next action.

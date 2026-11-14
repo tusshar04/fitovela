@@ -1,0 +1,245 @@
+<style>
+  #fitovela-concepts { width:100%; }
+  #fitovela-concepts .ftv-stage { min-height:900px; padding:18px 0; box-sizing:border-box; }
+  #fitovela-concepts .ftv-phone {
+    --fv-bg:light-dark(#faf8f2,#1a2420); --fv-paper:light-dark(#ffffff,#24312b);
+    --fv-ink:light-dark(#203d32,#edf3e9); --fv-muted:light-dark(#647269,#b4c2b7);
+    --fv-line:light-dark(#dce3d8,#43584a); --fv-soft:light-dark(#eaf0e1,#324332);
+    --fv-peach:light-dark(#f5e1d6,#4a342c); --fv-brand:light-dark(#244c3a,#cce1bd);
+    --fv-on-brand:light-dark(#fffdf6,#193324); --fv-radius:20px;
+    width:min(100%,420px); min-height:820px; margin:auto; box-sizing:border-box;
+    background:var(--fv-bg); color:var(--fv-ink); border:1px solid var(--fv-line);
+    border-radius:28px; padding:24px; font:400 14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    box-shadow:0 14px 42px light-dark(#19352412,#00000028); overflow-wrap:anywhere;
+  }
+  #fitovela-concepts .ftv-phone * { box-sizing:border-box; }
+  #fitovela-concepts .ftv-phone h1,#fitovela-concepts .ftv-phone h2,#fitovela-concepts .ftv-phone h3,#fitovela-concepts .ftv-phone p { margin:0; }
+  #fitovela-concepts .ftv-phone button,#fitovela-concepts .ftv-phone select { font:inherit; }
+  #fitovela-concepts .ftv-phone button { cursor:var(--cursor-interaction, pointer); }
+  #fitovela-concepts .ftv-phone button:focus-visible,#fitovela-concepts .ftv-phone select:focus-visible,#fitovela-concepts .ftv-phone input:focus-visible { outline:3px solid var(--fv-brand); outline-offset:4px; }
+  #fitovela-concepts .ftv-phone button:disabled { opacity:.45; cursor:default; }
+  #fitovela-concepts .ftv-phone [hidden] { display:none !important; }
+  #fitovela-concepts .ftv-header { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:30px; }
+  #fitovela-concepts .ftv-wordmark { font:500 27px/1 Georgia,serif; letter-spacing:-1.3px; display:flex; align-items:center; gap:7px; }
+  #fitovela-concepts .ftv-wordmark svg { width:19px; height:19px; }
+  #fitovela-concepts .ftv-mini { font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--fv-muted); }
+  #fitovela-concepts .ftv-kicker { font-size:11px; letter-spacing:1.5px; font-weight:600; color:var(--fv-muted); text-transform:uppercase; margin-bottom:10px; }
+  #fitovela-concepts .ftv-phone h1 { font:400 36px/1.08 Georgia,serif; letter-spacing:-1.3px; margin-bottom:13px; }
+  #fitovela-concepts .ftv-phone h2 { font:400 29px/1.15 Georgia,serif; letter-spacing:-.6px; margin-bottom:12px; }
+  #fitovela-concepts .ftv-phone h3 { font-size:16px; line-height:1.4; font-weight:600; }
+  #fitovela-concepts .ftv-phone .ftv-hero-title { font-size:48px; line-height:1.02; letter-spacing:-2px; }
+  #fitovela-concepts .ftv-hero-title em { font-weight:400; color:var(--fv-brand); }
+  #fitovela-concepts .ftv-sub { color:var(--fv-muted); margin-bottom:22px !important; }
+  #fitovela-concepts .ftv-small { font-size:12px; color:var(--fv-muted); }
+  #fitovela-concepts .ftv-brand-button { display:flex; justify-content:space-between; align-items:center; gap:12px; width:100%; min-height:52px; padding:14px 18px; border:0; border-radius:12px; background:var(--fv-brand); color:var(--fv-on-brand); font-weight:600 !important; text-align:left; }
+  #fitovela-concepts .ftv-brand-button svg { width:18px; height:18px; flex:none; }
+  #fitovela-concepts .ftv-secondary { display:block; padding:12px 0; width:100%; background:transparent; border:0; color:var(--fv-ink); text-decoration:underline; text-underline-offset:4px; }
+  #fitovela-concepts .ftv-center { text-align:center; margin-top:10px !important; }
+  #fitovela-concepts .ftv-spaced { margin-top:22px !important; }
+  #fitovela-concepts .ftv-menu-preview { margin:24px 0; padding:22px; border-radius:var(--fv-radius); background:var(--fv-soft); position:relative; }
+  #fitovela-concepts .ftv-menu-preview .ftv-script { font:italic 30px/1.1 Georgia,serif; margin-bottom:18px; }
+  #fitovela-concepts .ftv-meal-line { display:grid; grid-template-columns:28px 1fr; align-items:start; gap:10px; padding:10px 0; border-bottom:1px solid var(--fv-line); }
+  #fitovela-concepts .ftv-meal-line:last-child { border:0; padding-bottom:0; }
+  #fitovela-concepts .ftv-meal-line svg { width:19px; height:19px; margin-top:4px; }
+  #fitovela-concepts .ftv-meal-line strong { display:block; font-size:14px; font-weight:600; }
+  #fitovela-concepts .ftv-tag { display:inline-block; padding:5px 10px; border-radius:40px; background:var(--fv-peach); color:var(--fv-ink); font-size:11px; }
+  #fitovela-concepts .ftv-step-row { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:12px; }
+  #fitovela-concepts .ftv-back { border:0; padding:6px 0; color:var(--fv-muted); background:transparent; min-height:36px; }
+  #fitovela-concepts .ftv-progress { display:flex; gap:5px; margin-bottom:26px; }
+  #fitovela-concepts .ftv-progress span { flex:1; height:4px; background:var(--fv-line); border-radius:8px; }
+  #fitovela-concepts .ftv-progress span[data-done="true"] { background:var(--fv-brand); }
+  #fitovela-concepts .ftv-options { display:grid; gap:10px; margin:20px 0; }
+  #fitovela-concepts .ftv-option { display:flex; align-items:center; gap:12px; min-height:62px; padding:13px; background:var(--fv-paper); border:1px solid var(--fv-line); border-radius:13px; color:var(--fv-ink); text-align:left; }
+  #fitovela-concepts .ftv-option[aria-pressed="true"] { background:var(--fv-soft); border-color:var(--fv-brand); box-shadow:inset 0 0 0 1px var(--fv-brand); }
+  #fitovela-concepts .ftv-option svg { flex:none; width:20px; height:20px; }
+  #fitovela-concepts .ftv-option span { flex:1; }
+  #fitovela-concepts .ftv-option b { font-weight:600; }
+  #fitovela-concepts .ftv-option small { display:block; color:var(--fv-muted); font-size:12px; margin-top:2px; }
+  #fitovela-concepts .ftv-option > .ftv-choice-mark { width:17px; height:17px; border:1px solid var(--fv-line); border-radius:50%; flex:0 0 17px; }
+  #fitovela-concepts .ftv-option[aria-pressed="true"] .ftv-choice-mark { border:5px solid var(--fv-brand); background:var(--fv-bg); }
+  #fitovela-concepts .ftv-chip-group { display:flex; flex-wrap:wrap; gap:8px; margin:10px 0 20px; }
+  #fitovela-concepts .ftv-chip { min-height:40px; border:1px solid var(--fv-line); border-radius:10px; background:var(--fv-paper); color:var(--fv-ink); padding:8px 11px; }
+  #fitovela-concepts .ftv-chip[aria-pressed="true"] { background:var(--fv-brand); color:var(--fv-on-brand); border-color:var(--fv-brand); }
+  #fitovela-concepts .ftv-label { display:block; font-size:13px; font-weight:600; margin-top:18px; }
+  #fitovela-concepts .ftv-note { padding:14px 16px; border-radius:12px; background:var(--fv-soft); margin:18px 0; font-size:13px; }
+  #fitovela-concepts .ftv-note strong { display:block; margin-bottom:4px; }
+  #fitovela-concepts .ftv-profile { display:grid; gap:0; margin:20px 0; padding:6px 18px; background:var(--fv-paper); border:1px solid var(--fv-line); border-radius:var(--fv-radius); }
+  #fitovela-concepts .ftv-profile-row { padding:13px 0; display:flex; justify-content:space-between; align-items:start; gap:18px; border-bottom:1px solid var(--fv-line); }
+  #fitovela-concepts .ftv-profile-row:last-child { border-bottom:0; }
+  #fitovela-concepts .ftv-profile-row span { color:var(--fv-muted); font-size:12px; }
+  #fitovela-concepts .ftv-profile-row strong { text-align:right; font-size:13px; font-weight:500; max-width:65%; }
+  #fitovela-concepts .ftv-offer { background:var(--fv-paper); border:1px solid var(--fv-line); padding:22px; border-radius:var(--fv-radius); margin:20px 0; }
+  #fitovela-concepts .ftv-price { display:flex; align-items:baseline; gap:10px; margin:8px 0 18px; }
+  #fitovela-concepts .ftv-price strong { font:400 48px/1 Georgia,serif; letter-spacing:-2px; }
+  #fitovela-concepts .ftv-inclusions { list-style:none; margin:0; padding:0; display:grid; gap:12px; }
+  #fitovela-concepts .ftv-inclusions li { display:flex; gap:10px; }
+  #fitovela-concepts .ftv-inclusions svg { width:17px; height:17px; flex:none; margin-top:2px; }
+  #fitovela-concepts .ftv-phone details { border-bottom:1px solid var(--fv-line); padding:12px 0; }
+  #fitovela-concepts .ftv-phone summary { cursor:var(--cursor-interaction,pointer); font-weight:500; }
+  #fitovela-concepts .ftv-phone details p { font-size:12px; margin-top:8px; color:var(--fv-muted); }
+  #fitovela-concepts .ftv-day-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(44px,1fr)); gap:5px; margin:18px 0; }
+  #fitovela-concepts .ftv-day { min-width:0; min-height:44px; border:1px solid var(--fv-line); color:var(--fv-ink); background:var(--fv-paper); border-radius:10px; }
+  #fitovela-concepts .ftv-day[aria-pressed="true"] { background:var(--fv-brand); color:var(--fv-on-brand); }
+  #fitovela-concepts .ftv-meal { padding:16px 0; border-bottom:1px solid var(--fv-line); }
+  #fitovela-concepts .ftv-meal-top { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:7px; }
+  #fitovela-concepts .ftv-swap { color:var(--fv-brand); background:var(--fv-soft); border:0; border-radius:8px; padding:7px 10px; font-size:12px !important; }
+  #fitovela-concepts .ftv-footer { margin-top:28px; padding-top:14px; border-top:1px solid var(--fv-line); color:var(--fv-muted); font-size:11px; }
+  #fitovela-concepts .ftv-compact { --fv-bg:light-dark(#f4f7f5,#18231f); --fv-soft:light-dark(#e3ede7,#2c4437); --fv-radius:12px; }
+  #fitovela-concepts .ftv-compact h1,#fitovela-concepts .ftv-compact h2 { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; font-weight:650; letter-spacing:-1.1px; }
+  #fitovela-concepts .ftv-compact .ftv-offer { border-top:5px solid var(--fv-brand); }
+  #fitovela-concepts .ftv-compact .ftv-wordmark { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; font-weight:650; }
+  #fitovela-concepts .ftv-status { min-height:20px; font-size:12px; color:var(--fv-muted); margin:8px 0; }
+  @media(max-width:380px) { #fitovela-concepts .ftv-stage { min-height:1020px; padding:10px 0; } #fitovela-concepts .ftv-phone { padding:20px 17px; min-height:940px; border-radius:20px; } #fitovela-concepts .ftv-phone .ftv-hero-title { font-size:42px; } }
+  @media(pointer:coarse) { #fitovela-concepts .ftv-chip,#fitovela-concepts .ftv-swap,#fitovela-concepts .ftv-back { min-height:44px; } }
+</style>
+<div id="fitovela-concepts">
+  <div class="viz-carousel viz-dotted-background" aria-label="Fitovela entry concepts">
+    <section class="ftv-stage" data-variant="Food-first" aria-label="Food-first customer journey">
+      <article class="ftv-phone" id="fitovela-food-first" aria-label="Food-first Fitovela mockup">
+        <header class="ftv-header"><div class="ftv-wordmark"><i data-lucide="sprout" aria-hidden="true"></i>fitovela</div><span class="ftv-mini">made for you</span></header>
+        <div class="ftv-screen"></div>
+        <footer class="ftv-footer">Interactive concept · sample answers only<br>₹499 and 28 days are proposals. No data is submitted or payment taken.</footer>
+      </article>
+    </section>
+    <section class="ftv-stage" data-variant="Quiz-first" aria-label="Quiz-first customer journey" hidden>
+      <article class="ftv-phone ftv-compact" id="fitovela-quiz-first" aria-label="Quiz-first Fitovela mockup">
+        <header class="ftv-header"><div class="ftv-wordmark"><i data-lucide="sprout" aria-hidden="true"></i>fitovela</div><span class="ftv-mini">your food profile</span></header>
+        <div class="ftv-screen"></div>
+        <footer class="ftv-footer">Interactive concept · sample answers only<br>₹499 and 28 days are proposals. No data is submitted or payment taken.</footer>
+      </article>
+    </section>
+  </div>
+</div>
+<script>
+(() => {
+  const root = document.getElementById('fitovela-concepts');
+  const stages = ['Welcome','Your goal','Health context','Food preferences','Your summary','Your offer','Plan preview','Professional review','Checkout preview'];
+  const goals = {weight:'Weight management',routine:'A steadier meal routine',variety:'More balanced meal ideas'};
+  const health = {none:'None of these',pcos:'A clinician diagnosed PCOS',thyroid:'A diagnosed thyroid condition',diabetes:'Diabetes or blood-sugar medication',other:'Pregnancy, an allergy, or a prescribed diet',unsure:'Symptoms I have not discussed with a clinician'};
+  const diets = {veg:'Vegetarian',eggs:'Vegetarian + eggs',nonveg:'Non-vegetarian'};
+  const cuisines = {north:'North Indian',south:'South Indian',bengali:'Bengali',punjabi:'Punjabi',odia:'Odia',maharashtrian:'Maharashtrian'};
+  const menu = {
+    north:[['Vegetable poha','Moong chilla','Vegetable daliya'],['Dal, roti & seasonal sabzi','Chana, rice & cucumber','Rajma, rice & kachumber'],['Vegetable khichdi','Roti, dal & mixed vegetables','Vegetable pulao & dal']],
+    south:[['Idli & sambar','Vegetable upma','Pesarattu & tomato chutney'],['Sambar, rice & poriyal','Kootu, rice & beans','Rasam, dal & rice'],['Vegetable uttapam & sambar','Dosa & dal-based sambar','Vegetable rice & kootu']],
+    bengali:[['Chire with vegetables','Vegetable suji','Roti & cholar dal'],['Moong dal, rice & seasonal vegetables','Cholar dal, rice & cabbage','Masoor dal, rice & mixed vegetables'],['Vegetable khichuri','Roti & vegetable curry','Rice, dal & sautéed greens']],
+    punjabi:[['Besan chilla','Vegetable poha','Methi roti & dal'],['Rajma chawal & salad','Chole, roti & cucumber','Dal, roti & seasonal sabzi'],['Moong dal khichdi','Roti & mixed vegetables','Dal, rice & greens']],
+    odia:[['Vegetable suji','Chakuli pitha & dalma','Chuda with vegetables'],['Dalma, rice & seasonal greens','Santula, rice & dal','Dal, rice & bhaja'],['Vegetable khichdi','Roti & dalma','Rice, santula & dal']],
+    maharashtrian:[['Kanda poha','Vegetable thalipeeth','Vegetable upma'],['Matki usal, roti & salad','Varan, rice & bhaji','Pithla, bhakri & vegetables'],['Vegetable khichdi','Roti, dal & bhaji','Rice, amti & vegetables']]
+  };
+  const icon = name => `<i data-lucide="${name}" aria-hidden="true"></i>`;
+  const primary = (text,action) => `<button type="button" class="ftv-brand-button" data-action="${action}">${text}${icon('arrow-right')}</button>`;
+  const secondary = (text,action) => `<button type="button" class="ftv-secondary" data-action="${action}">${text}</button>`;
+  const option = (kind,key,label,sub,selected,iconName) => `<button type="button" class="ftv-option" data-kind="${kind}" data-value="${key}" aria-pressed="${selected}">${icon(iconName)}<span><b>${label}</b>${sub?`<small>${sub}</small>`:''}</span><span class="ftv-choice-mark" aria-hidden="true"></span></button>`;
+  const safeStage = value => stages.includes(value) ? value : 'Welcome';
+  const controllers = [];
+  const saved = window.openai?.widgetState?.privateContent?.screens || {};
+
+  root.querySelectorAll('.ftv-phone').forEach((phone,index) => {
+    const screen = phone.querySelector('.ftv-screen');
+    const state = {screen:safeStage(saved[phone.id] || (index ? 'Your goal' : 'Welcome')),goal:'weight',health:'none',diet:'veg',cuisines:['north'],time:'20',day:0,swap:0,shopping:false,entry:'general'};
+    const needsReview = () => state.health !== 'none';
+    const cuisineLabel = () => state.cuisines.map(c => cuisines[c]).join(' + ');
+    const meals = () => {
+      const first = menu[state.cuisines[0]], second = menu[state.cuisines[1] || state.cuisines[0]];
+      const pos = (state.day + state.swap) % 3, dayPos = state.day % 3;
+      const result = [first[0][pos],second[1][dayPos],first[2][dayPos]];
+      if(state.diet === 'eggs') result[0] = ['Vegetable egg bhurji & toast','Egg omelette & roti','Boiled eggs & vegetable poha'][pos];
+      if(state.diet === 'nonveg') result[1] = state.cuisines.includes('bengali') || state.cuisines.includes('odia') ? 'Fish curry, rice & vegetables' : 'Chicken curry, rice & vegetables';
+      return result;
+    };
+    const profile = () => `<div class="ftv-profile"><div class="ftv-profile-row"><span>Your focus</span><strong>${goals[state.goal]}</strong></div><div class="ftv-profile-row"><span>Your food</span><strong>${diets[state.diet]}</strong></div><div class="ftv-profile-row"><span>Your kitchen</span><strong>${cuisineLabel()}</strong></div><div class="ftv-profile-row"><span>Weekday cooking</span><strong>About ${state.time} minutes</strong></div></div>`;
+    const progress = step => `<div class="ftv-step-row">${step===1&&index?'<span class="ftv-small">Let’s begin</span>':'<button type="button" class="ftv-back" data-action="back">← Back</button>'}<span class="ftv-small">Your profile · ${step} of 3</span></div><div class="ftv-progress" aria-label="Profile step ${step} of 3">${[1,2,3].map(n=>`<span data-done="${n<=step}"></span>`).join('')}</div>`;
+    const persist = () => {
+      if(!window.openai?.setWidgetState) return;
+      const screens = Object.fromEntries(controllers.map(c=>[c.id,c.state.screen]));
+      // Persist presentation navigation only. Health, goal, and food answers stay in memory.
+      window.openai.setWidgetState({modelContent:{concept:'Fitovela design exploration'},privateContent:{screens}}).catch(()=>{});
+    };
+    function go(name) {
+      state.screen = (needsReview() && (name==='Your offer' || name==='Checkout preview')) ? 'Professional review' : safeStage(name);
+      render();
+      phone.scrollIntoView?.({block:'start',behavior:'auto'});
+      persist();
+    }
+    function render() {
+      if(needsReview() && ['Your offer','Checkout preview'].includes(state.screen)) state.screen='Professional review';
+      let html='';
+      switch(state.screen) {
+        case 'Welcome':
+          html=`<div class="ftv-kicker">${state.entry==='pcos'?'Nutrition support with PCOS':'Women’s nutrition, made personal'}</div><h1 class="ftv-hero-title">Your food.<br>Your routine.<br><em>Your plan.</em></h1><p class="ftv-sub">${state.entry==='pcos'?'Start with your food, routine and care needs. Find the right next step for a plan that fits.':'A practical meal plan for your weight goals, built around the Indian food you love.'}</p><div class="ftv-menu-preview"><div class="ftv-kicker">Familiar food. A clearer plan.</div><p class="ftv-script">A little more like home.</p><div class="ftv-meal-line">${icon('sunrise')}<div><span class="ftv-small">Breakfast</span><strong>Vegetable poha</strong></div></div><div class="ftv-meal-line">${icon('sun')}<div><span class="ftv-small">Lunch</span><strong>Dal, roti & seasonal sabzi</strong></div></div><div class="ftv-meal-line">${icon('moon')}<div><span class="ftv-small">Dinner</span><strong>A comforting bowl of khichdi</strong></div></div></div>${primary('Find my food plan','start')}<p class="ftv-small ftv-center">Free profile · No sign-up to see your summary</p><p class="ftv-small ftv-center">Optional 28-day digital plan · ₹499</p>`;
+          break;
+        case 'Your goal':
+          html=`${progress(1)}<div class="ftv-kicker">A good place to start</div><h1>What would you like help with?</h1><p class="ftv-sub">We’ll shape your food profile around what matters to you.</p><div class="ftv-options" role="group" aria-label="Your main goal">${option('goal','weight',goals.weight,'A practical approach to everyday meals',state.goal==='weight','footprints')}${option('goal','routine',goals.routine,'Less skipping, guessing and last-minute meals',state.goal==='routine','clock-3')}${option('goal','variety',goals.variety,'More variety in the food you already enjoy',state.goal==='variety','utensils')}</div><div class="ftv-note"><strong>Made around your kitchen.</strong>Choose your food preferences and regional favourites next.</div>${primary('Continue','goal-next')}<p class="ftv-small ftv-center">Your summary is free. A paid plan is optional.</p>`;
+          break;
+        case 'Health context':
+          html=`${progress(2)}<h2>Anything your plan needs to account for?</h2><p class="ftv-sub">This helps identify when professional guidance is needed. It doesn’t diagnose a condition.</p><div class="ftv-options" role="group" aria-label="Sample health context">${Object.entries(health).map(([key,label])=>option('health',key,label,'',state.health===key,key==='none'?'check':'heart')).join('')}</div>${primary('Continue to food preferences','health-next')}`;
+          break;
+        case 'Food preferences':
+          html=`${progress(3)}<div class="ftv-kicker">Make it taste like you</div><h1>Keep the food<br>you look forward to.</h1><p class="ftv-sub">Your preferences will shape the meal ideas you see.</p><span class="ftv-label">How do you eat?</span><div class="ftv-chip-group" role="group" aria-label="Diet preference">${Object.entries(diets).map(([k,v])=>`<button type="button" class="ftv-chip" data-kind="diet" data-value="${k}" aria-pressed="${state.diet===k}">${v}</button>`).join('')}</div><span class="ftv-label">Which cuisines feel like home? <span class="ftv-small">Choose up to 2</span></span><div class="ftv-chip-group" role="group" aria-label="Regional cuisines">${Object.entries(cuisines).map(([k,v])=>`<button type="button" class="ftv-chip" data-kind="cuisine" data-value="${k}" aria-pressed="${state.cuisines.includes(k)}">${v}</button>`).join('')}</div><span class="ftv-label">Time to cook on a typical weekday</span><div class="ftv-chip-group" role="group" aria-label="Cooking time">${['20','30','45'].map(t=>`<button type="button" class="ftv-chip" data-kind="time" data-value="${t}" aria-pressed="${state.time===t}">${t} min</button>`).join('')}</div><div class="ftv-status" role="status" aria-live="polite"></div>${primary('See my food profile','food-next')}`;
+          break;
+        case 'Your summary':
+          html=`<button type="button" class="ftv-back" data-action="back">← Edit preferences</button><div class="ftv-kicker ftv-spaced">Your food profile</div><h1>A plan that fits<br>your everyday.</h1><p class="ftv-sub">Here’s the direction your answers point us toward.</p>${profile()}<div class="ftv-note"><strong>${state.time==='20'?'Keep weekday meals simple.':'Build a little variety into your week.'}</strong>${state.time==='20'?'Your cooking-time choice suggests quick preparations and ingredients you can reuse across meals.':'Your cooking-time choice leaves room to alternate familiar dishes and prepare a few ingredients ahead.'}</div><h3>A taste of your preferences</h3><div class="ftv-meal-line">${icon('utensils')}<div><span class="ftv-small">Illustrative breakfast idea</span><strong>${meals()[0]}</strong></div></div>${needsReview()?`<div class="ftv-note"><strong>A professional review comes first.</strong>You reported a health or dietary concern. This profile cannot confirm a diagnosis or determine a treatment plan.</div>${primary('See the next step','review')}`:`<div class="ftv-spaced">${primary('Explore my 28-day plan','offer')}</div>`}<p class="ftv-small ftv-center">Based on your answers · No medical score or diagnosis</p>`;
+          break;
+        case 'Your offer':
+          html=`<button type="button" class="ftv-back" data-action="back">← My food profile</button><div class="ftv-kicker ftv-spaced">Your next 28 days, made simpler</div><h1>Less “what should<br>I eat today?”</h1><p class="ftv-sub">A practical plan with ${diets[state.diet].toLowerCase()} meals and ${cuisineLabel()} favourites.</p><div class="ftv-offer"><span class="ftv-tag">The Fitovela food plan</span><div class="ftv-price"><strong>₹499</strong><span class="ftv-small">One-time payment<br>No subscription</span></div><ul class="ftv-inclusions">${['4 weekly meal schedules','Meal swaps for more variety','A weekly shopping list','Mobile access + a printable plan'].map(t=>`<li>${icon('check')}<span>${t}</span></li>`).join('')}</ul></div>${primary('Get my plan · ₹499','checkout')}${secondary('Preview a day in my plan','plan')}<details><summary>Do I have to give up familiar foods?</summary><p>Your preferences shape the plan. Regional dishes and practical swaps are part of the proposed offer.</p></details><details><summary>Does this include personal coaching?</summary><p>This concept is a self-serve digital plan. Ongoing coaching and medical treatment are not included.</p></details><details><summary>Is a specific weight loss guaranteed?</summary><p>No. Individual outcomes vary; the plan is a tool for organizing your meals.</p></details>`;
+          break;
+        case 'Checkout preview':
+          html=`<button type="button" class="ftv-back" data-action="back">← Back to the offer</button><div class="ftv-kicker ftv-spaced">Checkout concept</div><h1>Your plan,<br>ready for the next step.</h1><div class="ftv-profile"><div class="ftv-profile-row"><span>Digital food plan</span><strong>28 days</strong></div><div class="ftv-profile-row"><span>Payment type</span><strong>One time</strong></div><div class="ftv-profile-row"><span>Proposed total</span><strong>₹499</strong></div></div><div class="ftv-note"><strong>This is a design preview.</strong>No payment or contact details are collected. The final checkout, taxes, delivery and policies still need to be defined.</div>${primary('Preview plan delivery','plan')}<p class="ftv-small ftv-center">This opens an example plan, not a completed order.</p>`;
+          break;
+        case 'Professional review':
+          html=`<button type="button" class="ftv-back" data-action="back">← Back to my profile</button><div class="ftv-kicker ftv-spaced">The right support for you</div><h1>Your needs deserve<br>a closer look.</h1><p class="ftv-sub">${needsReview()?`You selected: ${health[state.health]}.`:'A preview of the route for a reported health condition or prescribed diet.'}</p><div class="ftv-note"><strong>A qualified professional should review your needs.</strong>A condition-specific or prescribed diet needs more than this food-preference quiz.</div><p>This profile cannot confirm or rule out a health condition. Speak with your clinician about symptoms or treatment questions.</p><div class="ftv-spaced">${primary('See an illustrative plan format','plan')}</div><p class="ftv-small ftv-center">No payment requested on this route.</p>`;
+          break;
+        case 'Plan preview': {
+          const dayMeals=meals();
+          html=`<button type="button" class="ftv-back" data-action="back">← ${needsReview()?'Back to review guidance':'Back to my offer'}</button><div class="ftv-kicker ftv-spaced">A look inside</div><h1>Your everyday<br>food companion.</h1><p class="ftv-small">${diets[state.diet]} · ${cuisineLabel()}</p><div class="ftv-day-row" role="group" aria-label="Preview day">${Array.from({length:7},(_,i)=>`<button type="button" class="ftv-day" data-kind="day" data-value="${i}" aria-pressed="${state.day===i}" aria-label="Day ${i+1}">${i+1}</button>`).join('')}</div><p class="ftv-small">Day ${state.day+1} · Illustrative meal ideas</p>${dayMeals.map((m,i)=>`<section class="ftv-meal"><div class="ftv-meal-top"><span class="ftv-kicker" style="margin:0">${['Breakfast','Lunch','Dinner'][i]}</span>${i===0?'<button type="button" class="ftv-swap" data-action="swap">Swap meal</button>':''}</div><h3>${m}</h3></section>`).join('')}<div class="ftv-spaced">${secondary(state.shopping?'Hide shopping-list preview':'See shopping-list preview','shopping')}</div>${state.shopping?`<div class="ftv-note"><strong>Sample pantry starters</strong>Rice or atta · lentils · seasonal vegetables${state.diet==='eggs'?' · eggs':state.diet==='nonveg'?' · chicken or fish':''}<p class="ftv-small">A full plan would include recipe quantities and a complete list.</p></div>`:''}<p class="ftv-small ftv-spaced">These examples show the product format. They are not a nutritionally calculated or prescribed diet.</p>`;
+          break;
+        }
+      }
+      screen.innerHTML=html;
+      if(globalThis.lucide?.createIcons) globalThis.lucide.createIcons({attrs:{width:18,height:18}});
+    }
+    phone.addEventListener('click',event=>{
+      const button=event.target.closest('button');
+      if(!button || !phone.contains(button)) return;
+      const {kind,value,action}=button.dataset;
+      if(kind) {
+        if(kind==='cuisine') {
+          if(state.cuisines.includes(value)) {
+            if(state.cuisines.length===1) { phone.querySelector('.ftv-status').textContent='Keep at least one cuisine selected.'; return; }
+            state.cuisines=state.cuisines.filter(c=>c!==value);
+          } else {
+            if(state.cuisines.length===2) { phone.querySelector('.ftv-status').textContent='Choose up to two. Deselect one to change it.'; return; }
+            state.cuisines.push(value);
+          }
+        } else if(kind==='day') { state.day=Number(value); state.swap=0; }
+        else state[kind]=value;
+        render();
+        const replacement=screen.querySelector(`[data-kind="${kind}"][data-value="${value}"]`);
+        replacement?.focus({preventScroll:true});
+        return;
+      }
+      if(action==='back') {
+        const previous={'Welcome':'Welcome','Your goal':index?'Your goal':'Welcome','Health context':'Your goal','Food preferences':'Health context','Your summary':'Food preferences','Your offer':'Your summary','Checkout preview':'Your offer','Professional review':'Your summary','Plan preview':needsReview()?'Professional review':'Your offer'};
+        go(previous[state.screen]);
+      } else if(action==='swap') { state.swap=(state.swap+1)%3; render(); }
+      else if(action==='shopping') { state.shopping=!state.shopping; render(); }
+      else {
+        const routes={start:'Your goal','goal-next':'Health context','health-next':'Food preferences','food-next':'Your summary',offer:'Your offer',checkout:'Checkout preview',plan:'Plan preview',review:'Professional review'};
+        if(routes[action]) go(routes[action]);
+      }
+    });
+    controllers.push({id:phone.id,state,render});
+    render();
+    if(globalThis.Tweak) {
+      const tweak=new Tweak({container:phone,onChange:render});
+      tweak.addSelect(state,'screen',{label:'Preview screen',options:stages,reference:'fitovela.screen'});
+      tweak.addSelect(state,'entry',{label:'Welcome-page message',options:[{label:'General weight management',value:'general'},{label:'PCOS nutrition support',value:'pcos'}],reference:'fitovela.entry'});
+    }
+  });
+  window.addEventListener('openai:set_globals',event=>{
+    const screens=event.detail?.globals?.widgetState?.privateContent?.screens;
+    if(!screens) return;
+    controllers.forEach(c=>{ if(screens[c.id]) { c.state.screen=safeStage(screens[c.id]); c.render(); } });
+  });
+})();
+</script>
