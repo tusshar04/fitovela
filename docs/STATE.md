@@ -6,28 +6,29 @@ This file owns current coordination. Read [AGENTS.md](../AGENTS.md) before actin
 
 ## Current stage
 
-Shared project foundation prepared. The next stage is product discovery with Tushar. There is no application or production deployment.
+Shared project foundation documented in [PR #1](https://github.com/tusshar04/fitovela/pull/1). The next stage is product discovery with Tushar. There is no application or production deployment, and no implementation task is assigned.
 
-## Current task — FTV-001
+## Latest delivery — FTV-001
 
 | Field | Value |
 | --- | --- |
 | Goal | Establish the shared documents and branch/worktree/PR workflow. |
 | Owner | Codex. |
-| Status | Documentation prepared; integration and validation evidence will be recorded in the PR. |
+| Status | Documentation complete; the linked PR owns current integration status. |
 | Branch | `docs/project-foundation`. |
 | Worktree | Sibling workspace `fitovela-worktrees/project-foundation`. |
 | Review | Documentation self-review; no independent Claude review claimed. |
-| Integration | PR reference to be added before merge. |
+| Delivery | [PR #1](https://github.com/tusshar04/fitovela/pull/1), including exact revisions, review, and merge status. |
+| Verification | Whitespace and local Markdown links checked; shared Claude import confirmed; GitHub tooling status inspected. Final commit/check results are recorded in the PR. |
 
-### Acceptance criteria
+### Delivered scope
 
 - The seven agreed documents exist and have distinct responsibilities.
 - Claude imports the shared rules rather than duplicating them.
 - The product brief preserves the founder's direction and marks unresolved proposals honestly.
 - Feature branches, isolated worktrees, PR review, and `main` integration are documented.
 - Future deployment intent is clearly separated from currently configured tooling.
-- Documentation links and whitespace are checked; changes are committed, published, and integrated through a PR.
+- A PR template captures verification, review, handoff, and release implications.
 
 ### Handoff
 
@@ -46,4 +47,4 @@ Review the PR for exact revisions, verification results, and integration status.
 
 One writer is active at a time initially. For simultaneous work, the user or designated coordinator must assign distinct tasks before work starts and serialize updates to this file. Ownership recorded only in an unmerged branch is not a global reservation.
 
-At handoff, record the owner, status, branch/worktree, PR or commit, checks/results, open issues, and next action. Once FTV-001 is integrated, replace its active detail with a short completed reference. Keep full history in the PR rather than growing a session log here.
+At handoff, record the owner, status, branch/worktree, PR or commit, checks/results, open issues, and next action. Replace this delivery detail with a short PR reference when the next task starts. Keep full history in the PR rather than growing a session log here.
