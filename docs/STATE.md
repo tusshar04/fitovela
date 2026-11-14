@@ -6,7 +6,25 @@ This file owns current coordination. Read [AGENTS.md](../AGENTS.md) before actin
 
 ## Current stage
 
-Shared project foundation documented in [PR #1](https://github.com/tusshar04/fitovela/pull/1). The next stage is product discovery with Tushar. There is no application or production deployment, and no implementation task is assigned.
+Product discovery. The founder has accepted the product hook and design direction ([D-007](DECISIONS.md), [D-008](DECISIONS.md)); medical rules wait for the doctor. There is no application or production deployment, and no implementation task is assigned.
+
+## Current task — FTV-003
+
+| Field | Value |
+| --- | --- |
+| Goal | Rewrite the product brief around the assessment-led funnel the founder approved. |
+| Owner | Claude, assigned by Tushar on 2026-11-14. |
+| Status | Brief rewritten; PR open for review. |
+| Branch | `docs/ftv-003-product-brief`. |
+| Worktree | Sibling workspace `fitovela-worktrees/ftv-003-product-brief`. |
+| Deliverables outside the repo | [Funnel mockups](https://claude.ai/artifact/Vvvz5B2DvDZVXSqYZXJ1Ar) and the [doctor sign-off sheet](https://claude.ai/artifact/3WNH2yX9op8Ly7Dq5Ve3yT), both private to the founder until shared. |
+| Review | Self-review only. Health-assessment content needs the doctor's answers and an independent review before merge. |
+
+### Exact next step
+
+1. Tushar shares the sign-off sheet with the doctor and returns her twelve answers.
+2. Update [PRODUCT.md](PRODUCT.md) and D-009 with her choices; adjust the mockups where they differ.
+3. Tushar decides what happens to draft PR #2, which proposes the opposite result design.
 
 ## Latest delivery — FTV-001
 
@@ -36,7 +54,7 @@ Review the PR for exact revisions, verification results, and integration status.
 
 ## Next task — FTV-002
 
-- **Status:** planned; not started or claimed.
+- **Status:** in progress by Codex in draft [PR #2](https://github.com/tusshar04/fitovela/pull/2), not merged. Its food-first, no-condition-result proposal conflicts with accepted D-007.
 - **Proposed scope:** product discovery with Tushar, using [PRODUCT.md](PRODUCT.md) as the starting point.
 - **Exact next step:** discuss the first customer segment, assessment purpose, and the deliverable a customer buys; capture agreed answers and remaining questions in the existing product brief.
 - **Acceptance criteria:** to be agreed when the task starts.
