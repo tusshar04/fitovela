@@ -2,7 +2,7 @@
 
 Fitovela is an early-stage website concept for personalized diet plans for women, with visitors arriving from category-specific Meta ads.
 
-The project is in planning. There is no application, chosen technology stack, payment integration, or deployment pipeline yet.
+The project is in planning. There is no production application, chosen technology stack, payment integration, or deployment pipeline yet. The first [product proposal and clickable concepts](docs/PRODUCT.md#first-design-proposal--ftv-002) are available for discussion.
 
 ## Start here
 

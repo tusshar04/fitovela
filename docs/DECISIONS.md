@@ -41,6 +41,41 @@ Statuses: **proposed**, **accepted**, **superseded**, or **rejected**. Acceptanc
 - **Revisit when:** Selecting hosting and release controls. Any alternative production branch strategy requires an explicit decision.
 - **Supersedes:** nothing.
 
+## D-004 — First product and design direction
+
+- **Status:** proposed; awaiting founder discussion.
+- **Date:** 2026-11-14.
+- **Proposer:** Codex; no founder approval claimed.
+- **Proposal:** Lead with general women's weight management and a reusable category-entry journey. Compare Food-first and Quiz-first concepts, with Food-first as the initial recommendation.
+- **Reason:** Start with a coherent offer and reusable flow while establishing the professional input needed for condition-specific services.
+- **Evidence:** Founder brief and inspected reference patterns; no customer or conversion experiment yet.
+- **Implementation:** Presentation concepts only. Details and unresolved tradeoffs are in [PRODUCT.md](PRODUCT.md).
+- **Revisit when:** The founder selects the first segment and early customer/ad research supplies evidence.
+- **Supersedes:** nothing.
+
+## D-005 — Food profile and professional review route
+
+- **Status:** proposed product design; clinical eligibility rules unresolved.
+- **Date:** 2026-11-14.
+- **Proposer:** Codex; no clinical validation or founder approval claimed.
+- **Proposal:** Give visitors a traceable food/lifestyle summary and keep diagnosis separate. Route relevant reported concerns to appropriate professional review before a condition-specific purchase offer.
+- **Reason/evidence:** See [L-003](LEARNINGS.md#l-003--a-questionnaire-must-not-be-treated-as-a-condition-diagnosis). Neither the source material nor this prototype establishes a validated diagnostic quiz.
+- **Implementation:** The concept demonstrates a conservative review branch. Real eligibility and care rules are not implemented.
+- **Revisit when:** A qualified professional defines intake and condition-related service delivery.
+- **Supersedes:** nothing.
+
+## D-006 — Offer used in the first mockup
+
+- **Status:** proposed working assumption.
+- **Date:** 2026-11-14.
+- **Proposer:** Codex; no founder approval claimed.
+- **Proposal:** Model a one-time INR 499, 28-day self-serve digital plan for design discussion. Exact deliverables and unresolved commercial terms live in [PRODUCT.md](PRODUCT.md).
+- **Reason:** Make the paywall and delivered product concrete enough to evaluate together.
+- **Evidence:** The founder suggested approximately INR 499; the 28-day duration and self-serve scope are agent proposals, not validated pricing or service commitments.
+- **Implementation:** Non-transactional mockup only.
+- **Revisit when:** The founder defines the deliverable, quality process, support scope, and unit economics.
+- **Supersedes:** nothing.
+
 ## Adding or changing a decision
 
 Assign the next stable ID and record status, date, owner, choice, reason, evidence, implementation status, and revisit conditions. Identify who accepted a decision; do not represent an agent suggestion as founder approval.
