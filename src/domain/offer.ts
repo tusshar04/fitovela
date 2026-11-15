@@ -1,5 +1,6 @@
-// Plan tiers and the launch-price window. The countdown is real: when it ends,
-// the price the server charges goes back to the regular price.
+// Plan tiers and the launch-price window. The window starts again each time she opens
+// the paywall (founder, 2026-11-15). If she stays on the page until the countdown ends,
+// the server charges the regular price until she opens the page again.
 
 export type TierId = 'w1' | 'w4' | 'w12';
 
@@ -15,7 +16,7 @@ export interface Tier {
 
 // Founder's prices, 2026-11-15 (second change the same day): 199, 299 and 399. The
 // 12-week plan is the one we want everyone to buy, so it costs only a little more than
-// the shorter ones. The regular prices (after the 15-minute window) were set by an AI
+// the shorter ones. The regular prices (charged only if she lets the 15-minute countdown run out on the page) were set by an AI
 // agent at twice the launch price, rounded up to end in 99.
 export const TIERS: Record<TierId, Tier> = {
   w1: { id: 'w1', name: '1-week trial', days: 7, launch: 199, regular: 399 },

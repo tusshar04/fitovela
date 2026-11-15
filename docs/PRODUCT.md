@@ -71,7 +71,7 @@ Women at BMI 30 and above are also offered an **intensive track** of 800 to 1,00
 | --- | --- | --- |
 | Anchor price | INR 399 for 12 weeks, one-time, no auto-renewal | Founder's figure ([D-023](DECISIONS.md)) |
 | Tiers | 1 week INR 199, 4 weeks INR 299, 12 weeks INR 399, each shown per day. The 12-week plan is the default and the one to steer everyone to | Founder's prices ([D-023](DECISIONS.md)) |
-| Launch price and countdown | 15 minutes from her first view of the paywall; then the regular price (INR 399, 599, 799) applies | Built; the server charges whichever price is live. Regular prices are Claude's, not confirmed |
+| Launch price and countdown | 15 minutes, starting again each time she opens the paywall ([D-024](DECISIONS.md)); the regular price (INR 399, 599, 799) applies only if the countdown runs out while she is on the page | Built; the server charges whichever price is live. Regular prices are Claude's, not confirmed |
 | Guarantee | 7-day money-back | Proposal; shown on the paywall |
 | Contents | Daily meals in her cuisine, two swaps per meal, a grocery list for each week, a daily movement plan | Built. Weekly check-ins on the intensive track only. No eating-out guide is promised |
 | Delivery | By email, plus login with mobile number and one-time code | Founder's decision ([D-013](DECISIONS.md)); email and SMS providers not connected |

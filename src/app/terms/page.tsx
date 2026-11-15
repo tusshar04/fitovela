@@ -34,7 +34,7 @@ export default function TermsPage() {
       <p>The timeline and targets we show are estimates of what many people notice on a plan like yours. They are not a promise. Results depend on how closely you follow the plan and differ from person to person.</p>
 
       <h2>Price and payment</h2>
-      <p>Prices are in Indian rupees and include any applicable taxes. You pay once for the plan length you choose. There is no subscription and nothing renews automatically. A launch price is held for a limited time from when you first see the offer; after that the regular price shown on the page applies.</p>
+      <p>Prices are in Indian rupees and include any applicable taxes. You pay once for the plan length you choose. There is no subscription and nothing renews automatically. A launch price is held for a limited time from when you open the offer page; if the timer on that page runs out, the regular price shown on the page applies.</p>
 
       <h2>Refunds</h2>
       <p>You can ask for a full refund within 7 days of buying. See our <a href="/refund">Refund Policy</a>.</p>

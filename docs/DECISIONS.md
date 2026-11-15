@@ -253,6 +253,20 @@ IDs D-004 to D-006 are used by proposals in draft [PR #2](https://github.com/tus
 - **Revisit when:** Ad tests give a cost per purchase; refund requests cite the movement plan; or the doctor rules on the lines.
 - **Supersedes:** the prices in D-019; the "never tell her that her body looks bad" limit recorded in D-022.
 
+## D-024 — The launch-price timer restarts on every visit to the paywall
+
+- **Status:** accepted; implemented.
+- **Date:** 2026-11-15.
+- **Decision owner:** Tushar.
+- **Decision:** The 15-minute launch-price countdown starts again each time she opens or refreshes the paywall. The regular price (INR 399, 599, 799) is charged only if she keeps the page open until the countdown reaches zero and pays without reloading.
+- **Reason:** Founder instruction of 2026-11-15, "restart every visit, lets keep it simple", after being told that a woman who left and came back after 15 minutes was shown double the price for 30 days.
+- **Alternatives shown to him:** one second chance on her first return (the agent's recommendation); restart after 24 hours; leave the strict deadline.
+- **Evidence:** Founder message. No conversion data.
+- **Implementation:** `src/app/unlock/page.tsx` sets `offerStartedAt` on every view; `src/app/api/order/route.ts` still charges by that time. The terms page wording was changed to match.
+- **Consequences to know:** The deadline is no longer a real one: a refresh brings the launch price back, and a visitor who notices may trust the page less. The page still says "Launch price held for" with a countdown. In practice almost every buyer pays the launch price, so the struck-through prices are reference prices that few or no one pays; advertising rules on reference prices have not been checked.
+- **Revisit when:** Conversion data shows whether the countdown helps; or a complaint or an ad review cites the timer or the struck-through prices.
+- **Supersedes:** the "countdown is real" behaviour from the first build (FTV-004).
+
 ## Adding or changing a decision
 
 Assign the next stable ID and record status, date, owner, choice, reason, evidence, implementation status, and revisit conditions. Identify who accepted a decision; do not represent an agent suggestion as founder approval.

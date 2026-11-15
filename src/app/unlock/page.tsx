@@ -45,11 +45,10 @@ export default async function UnlockPage() {
     );
   }
 
-  // The launch price runs from the first time she sees this page.
-  if (!session.offerStartedAt) {
-    session.offerStartedAt = new Date().toISOString();
-    await saveSession(session);
-  }
+  // Founder, 2026-11-15: the 15 minutes start again every time she opens this page,
+  // so a woman who comes back later is offered the launch price again.
+  session.offerStartedAt = new Date().toISOString();
+  await saveSession(session);
   await logEvent('unlock_view', session.id);
 
   return (

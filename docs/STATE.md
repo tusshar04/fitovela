@@ -59,6 +59,10 @@ On the founder's instruction, relaying the doctor's view that the pages undersol
 
 Founder instructions ([D-023](DECISIONS.md)): new prices; the timeline lines rewritten to sell hard; the paywall and report say only "Your basic movement plan"; "Protein-rich meals from everyday home food" in place of "Protein at every meal"; the "Birth-control pill" tick box removed. The paywall FAQ says "No powders or supplements" while the intensive plan asks for a multivitamin and sometimes a protein scoop; the founder was shown this and decided both stay. Self-review only; no independent reviewer was available.
 
+### FTV-017 — launch-price timer restarts on every visit (Claude, 2026-11-15, merged)
+
+Founder instruction ([D-024](DECISIONS.md)): the 15-minute countdown starts again each time she opens or refreshes the paywall, so a returning visitor is offered the launch price again. Self-review only; checked on screen.
+
 ### Exact next step
 
 The "Open, in order" list under Production above.

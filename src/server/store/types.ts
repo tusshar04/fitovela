@@ -23,7 +23,7 @@ export interface Session {
   ad: Record<string, string>;
   answers: Answers;
   lead?: Lead;
-  /** When she first saw the paywall. The launch price runs from here. */
+  /** When she last opened the paywall. The launch price runs from here. */
   offerStartedAt?: string;
 }
 
