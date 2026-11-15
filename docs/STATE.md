@@ -12,7 +12,7 @@ In production, payments off. The app runs on Cloud Run in Mumbai (GCP project `f
 
 | Piece | Status on 2026-11-15 |
 | --- | --- |
-| Cloud Run service `fitovela`, `asia-south1` | Live. Release `13d3292` (FTV-016), deployed and checked through `fitovela.com` on 2026-11-15. Its own address is `https://fitovela-pflkmzgscq-el.a.run.app`; the Worker forwards to it. |
+| Cloud Run service `fitovela`, `asia-south1` | Live. Release `b60f4e6` (FTV-017 timer restart and FTV-018 Cashfree code, payments still off), deployed and checked through `fitovela.com` on 2026-11-15. Its own address is `https://fitovela-pflkmzgscq-el.a.run.app`; the Worker forwards to it. |
 | Firestore, `asia-south1` | Live, used by the service. First real use of the Firestore driver. |
 | Domain | **Live at https://fitovela.com.** DNS is at Cloudflare (nameservers `norm` and `teagan.ns.cloudflare.com`, the same account as tarot). The Worker `fitovela-edge` (source in `edge/`) forwards `fitovela.com` to the Cloud Run service; `www` and plain http redirect to `https://fitovela.com`. Checked through the domain: pages, a full assessment, cookies, security headers. The Google load balancer is deleted. Workers free plan: 100,000 requests a day. |
 | Login codes by SMS | Switched on, through tarot's 2Factor key. Tested by Tushar with his own phone on 2026-11-15. The SMS wording is whatever template tarot's 2Factor account uses. |
