@@ -34,14 +34,15 @@ describe('journey', () => {
     expect(hers).toContain('deeper sleep');
 
     const none = text([]);
-    for (const word of ['cravings', 'Bloating', 'waistband', 'puffiness', 'jawline', 'cycles', 'deeper sleep']) expect(none).not.toContain(word);
+    for (const word of ['cravings', 'Bloating', 'waistband', 'puffiness', 'jawline', 'Cycles', 'deeper sleep']) expect(none).not.toContain(word);
   });
 
-  it('takes every weight from the energy plan', () => {
-    const stops = buildJourney([], energy, 72);
-    expect(stops.map((s) => s.kg)).toEqual([undefined, undefined, undefined, 69.2, 66.4, 64]);
-    expect(text([])).toContain('Down about 2.8 kg');
+  it('shows a weight once, on the last stop, taken from the energy plan', () => {
+    const stops = buildJourney(['i_cravings', 'i_belly', 'p_acne', 'p_cycle'], energy, 72);
+    expect(stops.map((s) => s.kg)).toEqual([undefined, undefined, undefined, undefined, undefined, 64]);
     expect(stops[5].title).toBe('Your goal');
+    // No kilograms and no "weight" in the wording itself.
+    expect(stops.map(stopText).join(' ')).not.toMatch(/\bkg\b|weight|scale/i);
   });
 
   it('doctor: skin on the chin and jawline starts to respond in week 3', () => {
@@ -56,7 +57,7 @@ describe('journey', () => {
     // 0.7 kg a week: 1.4 kg by week 2.
     const fast = buildJourney(['i_belly'], energy, 72);
     expect(fast[1].title).toBe('Your clothes notice');
-    expect(fast[1].lines[0]).toBe('About 1.4 kg down. You start to feel lighter and your waistband sits looser.');
+    expect(fast[1].lines[0]).toBe('You start to feel lighter and your waistband sits looser.');
 
     // A slower pace: a woman in the healthy range reaches 1 kg later, so the line moves with it.
     const slowMetrics: Metrics = { age: 30, heightCm: 160, weightKg: 56, goalKg: 52 };
@@ -77,23 +78,23 @@ describe('journey', () => {
     const big: Metrics = { age: 35, heightCm: 160, weightKg: 95, goalKg: 65 };
     const stops = buildJourney([], energyPlan(big, 'light'), 95);
     expect(stops[5].title).toBe('Stage 1 complete');
-    expect(stops[5].lines[0]).toContain('80.4 kg');
-    expect(stops[5].lines[0]).toContain('65 kg');
+    expect(stops[5].kg).toBe(80.4);
+    expect(stops[5].lines[0]).toContain('Stage 2');
   });
 
   it('doctor: cycles are mentioned only for late or skipped periods and only once 5% of her weight is off', () => {
-    expect(text(['p_cycle'])).toContain('cycles can start to become more regular');
-    expect(text([])).not.toContain('cycles');
+    expect(text(['p_cycle'])).toContain('Cycles can start to become more regular');
+    expect(text([])).not.toMatch(/cycles/i);
     // A small loss: 60 kg to 58 kg never reaches 5%.
     const small: Metrics = { age: 30, heightCm: 158, weightKg: 60, goalKg: 58 };
-    expect(text(['p_cycle'], energyPlan(small, 'sedentary'), 60)).not.toContain('cycles');
+    expect(text(['p_cycle'], energyPlan(small, 'sedentary'), 60)).not.toMatch(/cycles/i);
   });
 
   it('drops weights and loss lines when she is not trying to lose', () => {
     const steady = energyPlan({ ...metrics, goalKg: 72 }, 'light');
     const stops = buildJourney(['i_cravings'], steady, 72);
     expect(stops.every((s) => s.kg === undefined)).toBe(true);
-    expect(text(['i_cravings'], steady)).not.toMatch(/Down about|kg down|feel lighter/);
+    expect(text(['i_cravings'], steady)).not.toMatch(/feel lighter|notice/);
   });
 
   it('never promises: no "will", "guarantee" or "cure"', () => {

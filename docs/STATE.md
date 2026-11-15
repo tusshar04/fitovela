@@ -52,6 +52,10 @@ After the doctor's feedback on the demo: a movement plan in every paid plan (now
 
 The result, paywall and plan now lead with a personalised "Your next 12 weeks" timeline; weights are supporting tags and the chart is folded under "See the numbers" ([D-016](DECISIONS.md)). The timeline lines are a draft for the doctor.
 
+### FTV-008 and FTV-009 — doctor's journey rulings; sleeker design (Claude, 2026-11-15, merged)
+
+The doctor's three rulings on the timeline are applied (skin at week 3, cycles line kept, "feel lighter" at about 1 kg in place of a dress-size claim). After the founder's review the whole funnel was restyled to be sleeker and weight is now mentioned once, on the week 12 stop ([D-017](DECISIONS.md)). Self-review only; checked on screen.
+
 ### Exact next step
 
 1. Tushar reviews the build on localhost, and decides with the doctor whether to run a supervised intensive track.

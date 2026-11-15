@@ -32,7 +32,7 @@ export function AgeButtons({ hook, category, ad }: { hook: Hook; category: Categ
 
   return (
     <div className="stack" style={{ gap: 10 }}>
-      <div className="row" style={{ justifyContent: 'center', gap: 6, fontSize: 15, fontWeight: 800 }}>
+      <div className="row" style={{ justifyContent: 'center', gap: 6, fontSize: 15, fontWeight: 700, letterSpacing: '-0.01em' }}>
         <span>Tap your age to begin</span>
         <ChevronDown className="nudge" style={{ color: '#C2185B' }} />
       </div>
@@ -40,7 +40,7 @@ export function AgeButtons({ hook, category, ad }: { hook: Hook; category: Categ
         {BANDS.map((b) => (
           <button key={b.id} type="button" className="age" disabled={busy !== null} onClick={() => start(b.id)}>
             <span>{b.label}</span>
-            <ChevronRight />
+            <ChevronRight size={16} stroke={2.6} />
           </button>
         ))}
       </div>

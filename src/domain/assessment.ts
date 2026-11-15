@@ -73,7 +73,7 @@ export function buildAssessment(answers: Answers, now: Date = new Date()): Asses
   const signLines: string[] = picked.map((m) => MARKERS[m].label);
   const recap: string[] = [...signLines];
   recap.push(cuisines.length ? `${DIET_LABEL[diet]}, ${cuisineLabels(cuisines)}` : DIET_LABEL[diet]);
-  if (energy.toLoseKg > 0) recap.push(`Your goal: ${metrics.weightKg} kg to ${energy.goalKg} kg`);
+  if (energy.toLoseKg > 0) recap.push(`Your goal: ${energy.goalKg} kg`);
 
   const bloat = answers.bloat_when;
   const weekOneLighterOn = bloat === 'wheat' || bloat === 'dairy' ? bloat : null;

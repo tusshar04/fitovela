@@ -104,7 +104,9 @@ Defined in `src/domain/typing.ts`. An area needs at least 2 signs (Moderate) to 
     - Week 1: sugar cravings after meals start to fade; staying full for longer; bloating often eases; the sleepy hour after lunch gets lighter.
     - Week 2: less puffiness in the face and fingers; the slump after lunch is mostly gone.
     - Week 3: the daily walk often pays back in deeper sleep.
+    - Week 4: "four weeks in, the meals and the walk take less thought".
     - Week 8: "this is usually when friends and family start to notice".
+  - **Weight is shown once (founder, 2026-11-15, [D-017](DECISIONS.md)).** The timeline no longer says "about 1.4 kg down" or "down about 2.8 kg" and carries no weight tags on weeks 4 and 8. Her target appears only as a tag on the week 12 stop. The doctor's thresholds (1 kg for "feel lighter", 5% for cycles) still decide when a line appears; they are just not printed. The cycles line now reads "Cycles can start to become more regular."
   - All lines use "often", "can" or "start to", and the page says they are what many women notice, not guarantees.
 - Movement plan: `src/domain/energy.ts` (`movementPlan`) and the "Today's movement" card in `src/ui/PlanClient.tsx`. The 60 minutes a day is her instruction; the split into a brisk walk plus three strength sessions, the four strength moves, and the calorie estimate (net MET 3.3 for brisk walking, 2.5 for strength) are drafts. Women with heart, joint or other conditions that limit exercise are not screened for yet.
 

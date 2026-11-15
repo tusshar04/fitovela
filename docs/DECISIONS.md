@@ -164,6 +164,18 @@ IDs D-004 to D-006 are used by proposals in draft [PR #2](https://github.com/tus
 - **Revisit when:** The doctor reviews the lines, or real customer feedback shows which changes women actually report.
 - **Supersedes:** nothing; it sits on top of D-015.
 
+## D-017 — A sleeker interface, and weight mentioned once
+
+- **Status:** accepted and implemented.
+- **Date:** 2026-11-15.
+- **Decision owner:** Tushar.
+- **Decision:** (1) Restyle the whole funnel to be sleeker: white cards with hairline borders and soft shadows in place of pink-filled blocks and thick borders, lighter type weights, thinner progress and level bars, sentence-case buttons, and a quiet timeline. The colours, fonts, logo and the direct-response structure (timer, tiers, locked diet, FOMO) stay. (2) Stop repeating weight. On the result and paywall her target weight appears once, on the week 12 stop of the timeline, plus her goal in the paywall recap; the full numbers stay folded under "See your 12-week numbers". The "Now / In 12 weeks" weight table on the paywall is removed. The result page gets a pinned "Unlock my diet plan" button.
+- **Reason:** Founder feedback on the localhost build: "design is not that sleek and avoid mentioning weight too many places".
+- **Evidence:** Founder instruction on 2026-11-15. Checked on screen for the landing page, a question, the reading screen, the result, the paywall and a bought plan.
+- **Implementation:** `src/app/globals.css`, `src/app/result/page.tsx`, `src/ui/JourneyCard.tsx`, `src/ui/TargetCard.tsx`, `src/ui/UnlockClient.tsx`, `src/app/page.tsx`, `src/domain/journey.ts`. A unit test fails if the timeline wording contains "kg", "weight" or "scale".
+- **Revisit when:** The founder reviews it, or ad tests show the weight number converts better than its absence.
+- **Supersedes:** the "weights become small tags" part of D-016. Refines D-008 (visual style) without replacing it.
+
 ## Adding or changing a decision
 
 Assign the next stable ID and record status, date, owner, choice, reason, evidence, implementation status, and revisit conditions. Identify who accepted a decision; do not represent an agent suggestion as founder approval.

@@ -60,16 +60,9 @@ export default async function UnlockPage() {
       typeName={`${a.content.name} ${a.content.accent}`}
       recap={a.recap}
       answerCount={Object.keys(session.answers).length}
-      weightKg={a.metrics.weightKg}
-      goalKg={a.energy.goalKg}
-      bmi={a.bmi}
       targetKcal={a.energy.targetKcal}
-      week12Kg={a.energy.week12Kg}
-      week12LossKg={a.energy.week12LossKg}
-      reachesGoal={a.energy.reachesGoal}
       movementLine={movementSentence(a.energy)}
       journey={a.journey}
-      toLoseKg={a.energy.toLoseKg}
       planChanges={a.content.planChanges}
       medicationAdvisory={a.eligibility.medicationAdvisory}
       email={session.lead?.email ?? ''}

@@ -21,17 +21,17 @@ function Hero({ hook, category }: { hook: Hook; category: Category }) {
       ? { title: CHECK_HEADLINE[category], accent: 'Check in 2 minutes.', sub: 'A free symptom check made for Indian women. No blood test, no sign-up. See what your body has been trying to tell you.' }
       : hook === 'c'
         ? { title: 'One diet does not fit every woman.', accent: 'Find yours.', sub: 'Take the free assessment. We match your symptoms to a type, then build your plan from dosa, dal and roti. No salads.' }
-        : { title: 'Dieting hard. Weight still stuck?', accent: 'Find out why.', sub: 'Generic diets ignore your hormones. Answer about 18 questions and see which of 4 hidden causes is holding your weight.' };
+        : { title: 'Dieting hard. Weight still stuck?', accent: 'Find out why.', sub: 'Generic diets ignore your hormones. Answer about 18 questions and see which of 4 hidden causes is holding you back.' };
 
   return (
-    <div className="stack" style={{ alignItems: 'center', gap: 10, paddingTop: 6 }}>
+    <div className="stack" style={{ alignItems: 'center', gap: 12 }}>
       <h1 className="center" style={{ textWrap: 'balance' }}>
-        <span style={{ display: 'block', fontSize: 30, lineHeight: 1.12, fontWeight: 800, letterSpacing: '-0.02em' }}>{copy.title}</span>
-        <span className="accent" style={{ display: 'block', marginTop: 4, fontSize: 40 }}>
+        <span style={{ display: 'block', fontSize: 32, lineHeight: 1.08, fontWeight: 800, letterSpacing: '-0.032em' }}>{copy.title}</span>
+        <span className="accent" style={{ display: 'block', marginTop: 6, fontSize: 42 }}>
           {copy.accent}
         </span>
       </h1>
-      <p className="center" style={{ fontSize: 15, fontWeight: 500, color: 'var(--muted)' }}>
+      <p className="sub" style={{ fontSize: 15, maxWidth: 330 }}>
         {copy.sub}
       </p>
     </div>
@@ -42,18 +42,18 @@ function Visual({ hook }: { hook: Hook }) {
   if (hook === 'b') {
     return (
       <>
-        <section className="grid2" style={{ marginTop: 16 }}>
+        <section className="grid2" style={{ marginTop: 22 }}>
           {AREAS.map((a) => (
             <div key={a} className="check-tile">
-              <div style={{ fontSize: 14.5, fontWeight: 800 }}>{a}</div>
-              <div className="row" style={{ gap: 6, fontSize: 12, fontWeight: 600, color: 'var(--muted)' }}>
+              <div style={{ fontSize: 14.5, fontWeight: 700 }}>{a}</div>
+              <div className="row" style={{ gap: 6, fontSize: 12, fontWeight: 500, color: 'var(--muted)' }}>
                 <span style={{ width: 7, height: 7, borderRadius: 999, background: 'var(--border)' }} />
                 <span>Not checked yet</span>
               </div>
             </div>
           ))}
         </section>
-        <div className="center" style={{ marginTop: 10, fontSize: 13, fontWeight: 700 }}>
+        <div className="center" style={{ marginTop: 12, fontSize: 13, fontWeight: 600, color: 'var(--muted)' }}>
           You get a score for each one, and your type.
         </div>
       </>
@@ -67,7 +67,7 @@ function Visual({ hook }: { hook: Hook }) {
     ];
     return (
       <>
-        <section className="grid3" style={{ marginTop: 16 }}>
+        <section className="grid3" style={{ marginTop: 22 }}>
           {plates.map((p) => (
             <div key={p.label} className="stack" style={{ gap: 6 }}>
               <div style={{ position: 'relative' }}>
@@ -76,32 +76,32 @@ function Visual({ hook }: { hook: Hook }) {
                   <Lock size={12} />
                 </span>
               </div>
-              <span className="center" style={{ fontSize: 12, lineHeight: 1.25, fontWeight: 800 }}>
+              <span className="center" style={{ fontSize: 12, lineHeight: 1.25, fontWeight: 700 }}>
                 {p.label}
               </span>
             </div>
           ))}
         </section>
-        <div className="center" style={{ marginTop: 10, fontSize: 13, fontWeight: 700 }}>
+        <div className="center" style={{ marginTop: 12, fontSize: 13, fontWeight: 600, color: 'var(--muted)' }}>
           Different type, different plate. Which one is yours?
         </div>
       </>
     );
   }
   return (
-    <section className="plum stack" style={{ marginTop: 16, padding: 16, gap: 12 }}>
+    <section className="plum stack" style={{ marginTop: 22, padding: 18, gap: 14 }}>
       <div className="row between" style={{ gap: 10 }}>
-        <span style={{ fontSize: 11.5, fontWeight: 800, letterSpacing: '0.1em', color: 'var(--yellow)' }}>YOUR FREE REPORT</span>
-        <span className="row dim" style={{ gap: 5, fontSize: 11.5, fontWeight: 700 }}>
+        <span style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: '0.14em', color: 'var(--yellow)' }}>YOUR FREE REPORT</span>
+        <span className="row dim" style={{ gap: 5, fontSize: 11.5, fontWeight: 500 }}>
           <Lock size={12} />
           <span>Opens when you finish</span>
         </span>
       </div>
       <div className="row" style={{ alignItems: 'baseline', gap: 10 }}>
-        <span className="dim" style={{ fontSize: 14, fontWeight: 600 }}>
+        <span className="dim" style={{ fontSize: 14, fontWeight: 500 }}>
           Your type:
         </span>
-        <span aria-hidden className="blur" style={{ fontSize: 20, fontWeight: 800 }}>
+        <span aria-hidden className="blur" style={{ fontSize: 20, fontWeight: 700 }}>
           Hidden until you finish
         </span>
       </div>
@@ -125,17 +125,19 @@ export default async function Landing({ searchParams }: { searchParams: Promise<
   await logEvent('landing_view', undefined, { hook, category });
 
   return (
-    <main className="screen pad" style={{ paddingBottom: 16 }}>
+    <main className="screen pad" style={{ paddingBottom: 18 }}>
       <header className="hdr land" style={{ padding: 0 }}>
         <Logo large />
         <span className="tag-yellow">Free · 2 minutes</span>
       </header>
 
-      <Hero hook={hook} category={category} />
-      <Visual hook={hook} />
+      <div className="stack" style={{ margin: 'auto 0', padding: '10px 0 18px' }}>
+        <Hero hook={hook} category={category} />
+        <Visual hook={hook} />
+      </div>
 
-      <div className="push stack" style={{ gap: 10, paddingTop: 14 }}>
-        <div className="row" style={{ justifyContent: 'center', gap: 12, paddingBottom: 8, fontSize: 13, fontWeight: 700, color: 'var(--muted)' }}>
+      <div className="stack" style={{ gap: 12 }}>
+        <div className="trust">
           <span>No sign-up</span>
           <span aria-hidden>·</span>
           <span>No blood test</span>
@@ -143,10 +145,10 @@ export default async function Landing({ searchParams }: { searchParams: Promise<
           <span>Private</span>
         </div>
         <AgeButtons hook={hook} category={category} ad={ad} />
-        <p className="center" style={{ fontSize: 11, lineHeight: 1.45, color: 'var(--muted)' }}>
+        <p className="center" style={{ fontSize: 11, lineHeight: 1.5, color: 'var(--faint)' }}>
           By choosing your age you agree to our <a href="/terms">Terms</a> and <a href="/privacy">Privacy Policy</a>. A symptom assessment, not a medical diagnosis.
         </p>
-        <p className="center" style={{ fontSize: 12.5, fontWeight: 700 }}>
+        <p className="center" style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--muted)' }}>
           Already bought a plan? <a href="/login">Log in</a>
         </p>
       </div>

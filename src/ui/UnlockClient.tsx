@@ -14,16 +14,9 @@ interface Props {
   typeName: string;
   recap: string[];
   answerCount: number;
-  weightKg: number;
-  goalKg: number;
-  bmi: number;
   targetKcal: number;
-  week12Kg: number;
-  week12LossKg: number;
-  reachesGoal: boolean;
   movementLine: string;
   journey: JourneyStop[];
-  toLoseKg: number;
   planChanges: string[];
   medicationAdvisory: boolean;
   email: string;
@@ -107,53 +100,28 @@ export function UnlockClient(props: Props) {
     <main className="screen">
       <div className="timer">
         <div className="stack">
-          <span className="dim" style={{ fontSize: 11.5, fontWeight: 600, color: '#DCCBDD' }}>
+          <span className="dim" style={{ fontSize: 11, fontWeight: 500, color: '#D9C9DB' }}>
             {launchLive ? 'Launch price held for' : 'Launch price has ended'}
           </span>
           <span className="clock">{launchLive ? `${mm}:${ss}` : 'Regular price'}</span>
         </div>
         <button type="button" onClick={() => formRef.current?.scrollIntoView({ block: 'center', behavior: 'smooth' })}>
-          GET MY PLAN
+          Get my plan
         </button>
       </div>
 
-      <section style={{ margin: '16px 20px 0', border: '2px solid var(--line)', borderRadius: 22, overflow: 'hidden', display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))' }}>
-        <div style={{ height: 40, background: 'var(--card)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 800 }}>Now</div>
-        <div style={{ height: 40, background: 'var(--tint)', color: 'var(--pink)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 800 }}>In 12 weeks</div>
-        <div className="stack" style={{ padding: 16, gap: 12, borderRight: '2px solid var(--line)' }}>
-          <div className="stack" style={{ gap: 2 }}>
-            <span className="small" style={{ fontWeight: 700 }}>Weight</span>
-            <span style={{ fontSize: 24, lineHeight: 1.1, fontWeight: 800 }}>{props.weightKg} kg</span>
-          </div>
-          <div className="stack" style={{ gap: 2 }}>
-            <span className="small" style={{ fontWeight: 700 }}>BMI</span>
-            <span style={{ fontSize: 18, fontWeight: 800 }}>{props.bmi}</span>
-          </div>
-        </div>
-        <div className="stack" style={{ padding: 16, gap: 12 }}>
-          <div className="stack" style={{ gap: 2 }}>
-            <span className="small" style={{ fontWeight: 700 }}>Weight</span>
-            <span style={{ fontSize: 24, lineHeight: 1.1, fontWeight: 800, color: 'var(--pink)' }}>{props.toLoseKg > 0 ? `${props.week12Kg} kg` : 'Hold steady'}</span>
-          </div>
-          <div className="stack" style={{ gap: 2 }}>
-            <span className="small" style={{ fontWeight: 700 }}>{props.week12LossKg <= 0 ? 'Daily calories' : props.reachesGoal ? 'You lose' : 'Then stage 2 to'}</span>
-            <span style={{ fontSize: 18, fontWeight: 800 }}>{props.week12LossKg <= 0 ? `${props.targetKcal} kcal` : props.reachesGoal ? `${props.week12LossKg} kg` : `${props.goalKg} kg`}</span>
-          </div>
-        </div>
-      </section>
-
-      <section className="stack" style={{ padding: '24px 20px 0', alignItems: 'center', gap: 8 }}>
-        <h1 className="h1 big">
-          Unlock the diet for <span className="accent">your type</span>
-        </h1>
-        <div className="signal" style={{ height: 32 }}>
+      <section className="stack" style={{ padding: '26px 22px 0', alignItems: 'center', gap: 12 }}>
+        <div className="signal">
           <i />
-          <span>Your result: {props.typeName}</span>
+          <span>{props.typeName}</span>
         </div>
-        <div className="soft stack" style={{ alignSelf: 'stretch', marginTop: 6, gap: 9, padding: '14px 16px' }}>
-          <div style={{ fontSize: 13.5, fontWeight: 800 }}>Built from your {props.answerCount} answers</div>
+        <h1 className="h1 big">
+          Your plan is ready to <span className="accent">unlock</span>
+        </h1>
+        <div className="outline stack" style={{ alignSelf: 'stretch', marginTop: 6, gap: 10, padding: '16px 18px' }}>
+          <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.1em', color: 'var(--faint)' }}>BUILT FROM YOUR {props.answerCount} ANSWERS</div>
           {props.recap.map((line) => (
-            <div key={line} className="line-item" style={{ fontSize: 14, fontWeight: 600 }}>
+            <div key={line} className="line-item" style={{ fontSize: 14.5 }}>
               <Tick small />
               <span>{line}</span>
             </div>
@@ -161,7 +129,7 @@ export function UnlockClient(props: Props) {
         </div>
       </section>
 
-      <section className="stack" style={{ padding: '24px 20px 0', gap: 14 }}>
+      <section className="sec" style={{ padding: '30px 22px 0' }}>
         <h2 className="h2">
           Your next <span className="accent">12 weeks</span>
         </h2>
@@ -169,7 +137,11 @@ export function UnlockClient(props: Props) {
         <p className="small">{JOURNEY_FOOTNOTE}</p>
       </section>
 
-      <section className="stack" style={{ padding: '22px 20px 0', gap: 10 }}>
+      <section className="stack" style={{ padding: '30px 22px 0', gap: 12 }}>
+        <h2 className="h2">Choose your plan</h2>
+      </section>
+
+      <section className="stack" style={{ padding: '14px 22px 0', gap: 10 }}>
         {props.tiers.map((t) => {
           const on = t.id === selected;
           const price = priceOf(t);
@@ -179,8 +151,8 @@ export function UnlockClient(props: Props) {
                 <i />
               </span>
               <span className="stack" style={{ flex: 1, gap: 2 }}>
-                <span style={{ fontSize: 16, fontWeight: 800 }}>{t.name}</span>
-                <span style={{ fontSize: 13.5, fontWeight: 700 }}>
+                <span style={{ fontSize: 16, fontWeight: 700, letterSpacing: '-0.01em' }}>{t.name}</span>
+                <span style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--muted)' }}>
                   {launchLive ? <span className="strike">{rupees(t.regular)}</span> : null} {rupees(price)}
                 </span>
               </span>
@@ -201,7 +173,7 @@ export function UnlockClient(props: Props) {
         })}
       </section>
 
-      <section ref={formRef} className="stack" style={{ padding: '18px 20px 0', gap: 12 }}>
+      <section ref={formRef} className="stack" style={{ padding: '20px 22px 0', gap: 12 }}>
         <div className="field">
           <label htmlFor="pay-email">Email for your plan</label>
           <input id="pay-email" className="input" type="email" autoComplete="email" inputMode="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} />
@@ -217,19 +189,19 @@ export function UnlockClient(props: Props) {
         <button type="button" className="btn" disabled={busy || props.provider === null} onClick={startCheckout}>
           Get my plan · {rupees(priceOf(tier))}
         </button>
-        <div className="center" style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--muted)' }}>
+        <div className="center" style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--muted)' }}>
           {props.provider === null ? 'Payments are not switched on yet.' : 'One-time payment. No auto-renewal.'}
         </div>
         <div className="guarantee">
           <Shield style={{ flex: 'none', color: 'var(--green)' }} />
           <div className="stack" style={{ gap: 2 }}>
-            <span style={{ fontSize: 14, fontWeight: 800 }}>7-day money-back guarantee</span>
+            <span style={{ fontSize: 14, fontWeight: 700 }}>7-day money-back guarantee</span>
             <span style={{ fontSize: 12.5, fontWeight: 500 }}>If the plan does not fit your kitchen, write to us for a full refund.</span>
           </div>
         </div>
       </section>
 
-      <section className="stack" style={{ padding: '32px 20px 0', gap: 14 }}>
+      <section className="stack" style={{ padding: '36px 22px 0', gap: 14 }}>
         <h2 className="h2">What you get</h2>
         <div className="grid3">
           {[
@@ -239,12 +211,12 @@ export function UnlockClient(props: Props) {
           ].map(([src, alt, label]) => (
             <div key={label} className="stack" style={{ gap: 6 }}>
               <img className="photo-sq" src={src} alt={alt} />
-              <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.08em', color: 'var(--pink)' }}>{label.toUpperCase()}</span>
+              <span style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: '0.1em', color: 'var(--faint)' }}>{label.toUpperCase()}</span>
             </div>
           ))}
         </div>
         <div className="stack" style={{ gap: 12, marginTop: 4 }}>
-          {[`Every day planned: 5 meals, about ${props.targetKcal} kcal, in your own cuisine`, 'Two swaps for every single meal', 'A grocery list for each week', `Your movement plan: ${props.movementLine}`, 'Sent to your email, with a login to come back any time', ...props.planChanges].map((line) => (
+          {[`Every day planned: 5 meals, about ${props.targetKcal.toLocaleString('en-IN')} kcal, in your own cuisine`, 'Two swaps for every single meal', 'A grocery list for each week', `Your movement plan: ${props.movementLine}`, 'Sent to your email, with a login to come back any time', ...props.planChanges].map((line) => (
             <div key={line} className="line-item top" style={{ fontSize: 15 }}>
               <Tick />
               <span>{line}</span>
@@ -254,7 +226,7 @@ export function UnlockClient(props: Props) {
         {props.medicationAdvisory ? <div className="advice">{MEDICATION_ADVISORY}</div> : null}
       </section>
 
-      <section className="stack" style={{ padding: '32px 20px 0' }}>
+      <section className="stack" style={{ padding: '36px 22px 0' }}>
         <h2 className="h2" style={{ marginBottom: 6 }}>
           Questions
         </h2>
@@ -269,9 +241,9 @@ export function UnlockClient(props: Props) {
         ))}
       </section>
 
-      <section className="plum stack grow" style={{ marginTop: 32, borderRadius: 0, padding: '28px 20px 24px', gap: 14 }}>
+      <section className="plum stack grow" style={{ marginTop: 36, borderRadius: 0, padding: '30px 22px 26px', gap: 14 }}>
         <div className="stack center" style={{ gap: 4 }}>
-          <div style={{ fontSize: 26, lineHeight: 1.15, fontWeight: 800, letterSpacing: '-0.02em' }}>
+          <div style={{ fontSize: 24, lineHeight: 1.15, fontWeight: 700, letterSpacing: '-0.022em' }}>
             {tier.name} for <span style={{ color: 'var(--yellow)' }}>{rupees(priceOf(tier))}</span>
           </div>
           <div className="dim" style={{ fontSize: 13.5, fontWeight: 600 }}>
