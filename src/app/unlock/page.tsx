@@ -64,6 +64,7 @@ export default async function UnlockPage() {
       movementLine={movementSentence(a.energy)}
       journey={a.journey}
       planChanges={a.content.planChanges}
+      intensive={a.intensive.blocks.length === 0 ? { targetKcal: a.intensive.energy.targetKcal, journey: a.intensive.journey } : null}
       medicationAdvisory={a.eligibility.medicationAdvisory}
       email={session.lead?.email ?? ''}
       phone={session.lead?.phone ?? ''}

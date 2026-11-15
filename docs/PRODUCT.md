@@ -61,7 +61,9 @@ The founder wants the questionnaire to feel like a diagnosis. The product delive
 
 The result leads with **"Your next 12 weeks"**: a timeline of what she is likely to feel and see at weeks 1, 2, 3, 4, 8 and 12, built from the complaints she ticked (cravings, bloating, a tight waistband, tiredness, skin, cycles). It sells the experience in her own words. Weight is mentioned once: her target is a small tag on the week 12 stop, and the chart is folded under "See your 12-week numbers" ([D-016](DECISIONS.md), [D-017](DECISIONS.md)). The same timeline appears on the paywall and, week by week, on the plan. It speaks to what she wants relief from and never shames her body.
 
-Behind it, the weight section is a **12-week transformation**: a target weight at week 12 with milestones at weeks 4 and 8, and no dates ([D-015](DECISIONS.md)). It is built from her meals (1,200 kcal a day for most women, on the doctor's instruction) plus an hour of movement a day, and shows what those add up to. If her goal is within reach, the headline is her goal; if not, the 12 weeks are "stage 1". The 12-week plan is the default tier. The doctor also asked for 800 kcal plans and a 2 kg a week target; neither is built, for the reasons in [MEDICAL_RULES.md](MEDICAL_RULES.md).
+Behind it, the weight section is a **12-week transformation**: a target weight at week 12 with milestones at weeks 4 and 8, and no dates ([D-015](DECISIONS.md)). It is built from her meals (1,200 kcal a day for most women, on the doctor's instruction) plus an hour of movement a day, and shows what those add up to. If her goal is within reach, the headline is her goal; if not, the 12 weeks are "stage 1". The 12-week plan is the default tier. The doctor also asked for a 2 kg a week target; it is not built, for the reasons in [MEDICAL_RULES.md](MEDICAL_RULES.md).
+
+Women at BMI 30 and above are also offered an **intensive track** of 800 to 1,000 kcal a day on the paywall ([D-018](DECISIONS.md)). Its plan opens only after a clinician reviews her answers on `/review`, each week opens after a short check-in, and it runs for 12 weeks at most. It costs the same as the standard plan for now.
 
 ## Offer
 

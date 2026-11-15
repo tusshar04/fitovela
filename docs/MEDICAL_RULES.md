@@ -33,7 +33,7 @@ She found the first weight estimate too slow to sell. Her instructions, in the o
 | --- | --- | --- |
 | Tell buyers to burn calories with cardio or strength training | Yes | Every paid plan has a movement plan and a "Today's movement" card. |
 | 60 minutes of exercise a day | Yes | A 60-minute brisk walk every day and 20 minutes of body-weight strength three days a week. Women who already exercise 3 to 4 days get four walk days; women active most days get strength only. |
-| A lower calorie floor (she agreed to 1,200 kcal; then said she would go as low as 800) | 1,200 yes; 800 no | 1,200 kcal a day for women at BMI 23 and above. Larger women get maintenance minus 1,000 kcal if that is higher than 1,200. |
+| A lower calorie floor (she agreed to 1,200 kcal; then approved going as low as 800) | 1,200 on the standard plan; 800 only on the reviewed intensive track | Standard: 1,200 kcal a day for women at BMI 23 and above; larger women get maintenance minus 1,000 kcal if that is higher. Intensive: 800 to 1,000 kcal, see "The intensive track" below. |
 | Frame it as reaching the goal in at most 3 months, without dates (founder's suggestion) | Yes | The result and paywall show a 12-week target and week 4, 8 and 12 milestones. No dates. If her goal is further than 12 weeks can reach, the 12 weeks are "stage 1". |
 | Target 2 kg a week (earlier: 10 kg in 5 weeks) | No | The upper bound in the code is 2 kg a week as she asked, but the figure shown is what her calories and movement add up to, which is lower. |
 
@@ -44,8 +44,44 @@ Pace = (maintenance calories minus plan calories, plus movement calories) x 7 / 
 ### What was not built, and why
 
 - **2 kg a week.** For the sample woman this needs a shortfall of about 2,200 kcal a day. She burns about 1,700 in a day, about 1,975 with the hour's walk. Eating nothing at all would not reach it. A figure printed on her personal report that cannot be reached is a false claim to a paying customer.
-- **800 kcal a day as an automatic plan.** That is a very-low-calorie diet. Ordinary practice uses it for people with obesity, for a limited period, with a clinician following the patient. This product sells to anyone who completes a questionnaire, with nobody seeing her, and asks for an hour of exercise a day. Claude declined to build it as a self-serve plan.
-- **Offered instead:** an "intensive" track at 800 to 1,000 kcal only for BMI 30 and above, released only after the doctor or a dietitian she appoints reviews that woman's answers, with weekly check-ins and a 12-week limit. Not built; needs her and the founder's decision.
+- **800 kcal a day as an automatic plan.** That is a very-low-calorie diet. Ordinary practice uses it for people with obesity, for a limited period, with a clinician following the patient. Selling it to anyone who completes a questionnaire, with nobody seeing her, was declined and is still not built. What is built is the reviewed track below.
+
+## The intensive track (800 to 1,000 kcal)
+
+On 2026-11-15 Tushar relayed that the doctor approved a minimum of 800 kcal. It is built as the supervised track Claude had offered, not as a lower floor for everyone ([D-018](DECISIONS.md)). Code: `src/domain/intensive.ts`, `src/domain/energy.ts`, `src/domain/plan/lightMeals.ts`, `/review`.
+
+### How it works
+
+| Step | Rule |
+| --- | --- |
+| Who is offered it | BMI 30 and above, age 18 to 60, none of the exclusions in answer 5, weight to lose. Everyone else never sees the option and the server refuses it. |
+| Calories | Maintenance minus 1,000 kcal, kept between 800 and 1,000. A sedentary woman of 88 kg and 160 cm gets 860 kcal. |
+| The day | Three light plates and one snack (not five meals). The standard dishes cannot go below about 1,230 kcal a day, so 31 light plates were written for this track. |
+| Release | After payment the plan is built but closed. It opens only when a clinician approves it on `/review`. She can instead move the woman to the standard plan, and can write a note that is shown on the plan (for example a supplement). |
+| Each week | Only week 1 is open. To open the next week the woman checks in: weight today, and whether she had any of nine signs. |
+| Stop signs | Dizziness or fainting, a racing or irregular heartbeat, strong pain in the upper right of the belly, vomiting, very low mood or constant thoughts about food; or losing more than 2.5 kg in a week. Any of these pauses the plan, tells her to add a full meal a day and see a doctor if unwell, and puts her back in the clinician's list. |
+| Limit | 12 weeks at most, then at least 4 weeks on the standard plan before it can be bought again. |
+
+### What the doctor needs to rule on
+
+All of these were set by an AI agent so the track could run. None has been reviewed.
+
+1. **The BMI 30 cut-off.** Chosen from common practice for very-low-calorie diets. The Indian obesity cut-off is 25; she may want a different line.
+2. **Ages 18 to 60.**
+3. **800 to 1,000 by size, or a flat 800 for everyone on the track.**
+4. **Protein.** Vegetarian days at 800 kcal come to about 45 g of protein (lowest day 41 g). Very-low-calorie formula diets are usually built to give at least 50 g. She should decide whether that gap needs a protein supplement.
+5. **Vitamins and minerals.** 800 kcal of ordinary food is unlikely to cover them. Clinical programmes use fortified formula or supplements. She should set a standard supplement note; today she can add one per customer on the review page.
+6. **An hour of exercise a day on 800 kcal.** The movement plan is the same as the standard plan, on her instruction. She may want gentler movement on this track.
+7. **The stop signs and the 2.5 kg a week limit.**
+8. **The 31 light plates** in `src/domain/plan/lightMeals.ts`: dishes, portions, calories and protein, added up from ingredients with general-knowledge values.
+9. **Medicines.** Women on metformin, thyroid tablets or "another prescription medicine" are not blocked; their medicines are shown to her on the review page. Type 1 diabetes and insulin are already excluded.
+10. **Who reviews, and how fast.** The paywall says "usually within 24 hours". Someone has to keep that promise.
+
+### Known gaps in the build
+
+- Check-ins are not tied to the calendar: a woman can submit them one after another and open several weeks in a day.
+- The reviewer signs in with one shared code (`REVIEW_KEY`). There is no per-person login and no limit on wrong attempts.
+- The reviewer is told about new and paused plans by email to `REVIEW_EMAIL`. Email is not connected yet, so until it is she has to open `/review` herself.
 
 ### Guards added by an AI agent, for her approval
 

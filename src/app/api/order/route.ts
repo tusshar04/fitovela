@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { buildAssessment } from '@/domain/assessment';
 import { isComplete } from '@/domain/flow';
+import { INTENSIVE_BLOCK_LABEL, intensiveBreakDue } from '@/domain/intensive';
+import { TIERS } from '@/domain/offer';
 import { isTierId, priceFor } from '@/domain/offer';
 import { activeProvider } from '@/server/payments';
 import { currentSession, logEvent, newId, saveSession } from '@/server/session';
@@ -27,6 +29,19 @@ export async function POST(req: Request) {
   if (!email) return NextResponse.json({ error: 'Enter the email address to send your plan to.', field: 'email' }, { status: 400 });
   if (!phone) return NextResponse.json({ error: 'Enter a 10-digit mobile number. You will use it to log in.', field: 'phone' }, { status: 400 });
 
+  // The intensive track is offered only to women the rules allow, and never straight after 12 weeks of it.
+  const track = body?.track === 'intensive' ? 'intensive' : 'standard';
+  if (track === 'intensive') {
+    const blocks = assessment.intensive.blocks;
+    if (blocks.length > 0) {
+      return NextResponse.json({ error: `The intensive plan is not available to you: ${INTENSIVE_BLOCK_LABEL[blocks[0]]}.` }, { status: 403 });
+    }
+    const earlier = (await (await getStore()).listPaidOrdersByPhone(phone)).filter((o) => o.track === 'intensive' && o.review?.status !== 'declined' && o.paidAt);
+    if (intensiveBreakDue(earlier.map((o) => ({ days: TIERS[o.tier].days, paidAt: o.paidAt! })))) {
+      return NextResponse.json({ error: 'You have just finished 12 weeks on the intensive plan. Take the standard plan for at least 4 weeks before another round.' }, { status: 403 });
+    }
+  }
+
   const provider = activeProvider();
   if (provider !== 'demo') {
     // Razorpay is not connected yet. Fail closed rather than hand out plans.
@@ -40,6 +55,7 @@ export async function POST(req: Request) {
     id: newId(12),
     sessionId: session.id,
     tier: body.tier,
+    track,
     amountRupees: priceFor(body.tier, session.offerStartedAt),
     status: 'created',
     provider,
@@ -49,6 +65,6 @@ export async function POST(req: Request) {
   };
   const store = await getStore();
   await store.saveOrder(order);
-  await logEvent('order_created', session.id, { tier: order.tier, amount: order.amountRupees });
+  await logEvent('order_created', session.id, { tier: order.tier, amount: order.amountRupees, track });
   return NextResponse.json({ orderId: order.id, amountRupees: order.amountRupees, provider });
 }

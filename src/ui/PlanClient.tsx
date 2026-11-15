@@ -1,9 +1,11 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import type { MovementPlan } from '@/domain/energy';
+import { CHECKIN_SIGNS, type CheckinSign } from '@/domain/intensive';
 import type { GroceryItem, Plan, PlanDish } from '@/domain/plan/generator';
-import { Logo, SwapIcon } from './bits';
+import { Check, Lock, Logo, SwapIcon } from './bits';
 
 const DAY_NAMES = ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'];
 
@@ -55,7 +57,92 @@ function formatQty(g: GroceryItem): string {
   return `${Math.round(g.qty)} ${g.unit}`;
 }
 
-export function PlanClient({ plan, token, tierName, typeName, justBought, email, emailSent }: { plan: Plan; token: string; tierName: string; typeName: string; justBought: boolean; email: string; emailSent: boolean }) {
+interface PlanProps {
+  plan: Plan;
+  /** Weeks in the plan she bought. On the intensive track `plan` holds only the weeks that are open. */
+  totalWeeks: number;
+  token: string;
+  tierName: string;
+  typeName: string;
+  justBought: boolean;
+  email: string;
+  emailSent: boolean;
+  intensive: { paused: boolean; lastKg: number | null } | null;
+  clinicianNote: string | null;
+  movedToStandard: boolean;
+}
+
+/** The weekly check-in that opens the next week of an intensive plan. */
+function CheckinCard({ token, week, lastKg }: { token: string; week: number; lastKg: number | null }) {
+  const router = useRouter();
+  const [weight, setWeight] = useState('');
+  const [signs, setSigns] = useState<CheckinSign[]>([]);
+  const [error, setError] = useState('');
+  const [busy, setBusy] = useState(false);
+
+  function toggle(id: CheckinSign) {
+    setSigns((prev) => {
+      if (id === 'none') return prev.includes('none') ? [] : ['none'];
+      const rest = prev.filter((x) => x !== 'none');
+      return rest.includes(id) ? rest.filter((x) => x !== id) : [...rest, id];
+    });
+  }
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    setBusy(true);
+    setError('');
+    try {
+      const res = await fetch('/api/plan/checkin', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token, weightKg: Number(weight), signs }) });
+      const data = (await res.json().catch(() => ({}))) as { error?: string };
+      if (!res.ok) {
+        setError(data.error ?? 'Something went wrong. Please try again.');
+        return;
+      }
+      setWeight('');
+      setSigns([]);
+      router.refresh();
+    } catch {
+      setError('Could not reach us. Check your connection and try again.');
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <form className="outline stack" style={{ margin: '14px 20px 0', gap: 12 }} onSubmit={submit} noValidate>
+      <div className="stack" style={{ gap: 4 }}>
+        <span style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: '0.1em', color: 'var(--pink)' }}>WEEK {week} CHECK-IN</span>
+        <span style={{ fontSize: 17, fontWeight: 700, letterSpacing: '-0.012em' }}>Finished week {week}? Check in to open week {week + 1}</span>
+        <span className="small">On the intensive plan we look at how you are doing before each new week.</span>
+      </div>
+      <div className="field">
+        <label htmlFor="ci-weight">Your weight today (kg){lastKg ? `, last time ${lastKg}` : ''}</label>
+        <input id="ci-weight" className="input" inputMode="decimal" placeholder="kg" value={weight} onChange={(e) => setWeight(e.target.value)} />
+      </div>
+      <div className="stack" style={{ gap: 8 }}>
+        <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--muted)' }}>This week, did you have any of these?</span>
+        {CHECKIN_SIGNS.map((sgn) => {
+          const on = signs.includes(sgn.id);
+          return (
+            <button key={sgn.id} type="button" className={`opt${on ? ' on' : ''}`} style={{ minHeight: 48, fontSize: 14.5 }} aria-pressed={on} onClick={() => toggle(sgn.id)}>
+              <span>{sgn.label}</span>
+              <span className="mark">
+                <Check />
+              </span>
+            </button>
+          );
+        })}
+      </div>
+      {error ? <p className="error">{error}</p> : null}
+      <button type="submit" className="btn" disabled={busy || !weight || signs.length === 0}>
+        Submit check-in
+      </button>
+    </form>
+  );
+}
+
+export function PlanClient({ plan, totalWeeks, token, tierName, typeName, justBought, email, emailSent, intensive, clinicianNote, movedToStandard }: PlanProps) {
   const [day, setDay] = useState(1);
   const [view, setView] = useState<'day' | 'groceries'>('day');
   // Which option is showing for each meal: 0 is the planned dish, 1 and 2 are the swaps.
@@ -83,7 +170,7 @@ export function PlanClient({ plan, token, tierName, typeName, justBought, email,
     });
   }
 
-  const totalWeeks = Math.ceil(plan.days.length / 7);
+  const openWeeks = Math.ceil(plan.days.length / 7);
   const week = Math.ceil(day / 7);
   const weekDays = plan.days.slice((week - 1) * 7, week * 7);
   const today = plan.days[day - 1];
@@ -104,6 +191,7 @@ export function PlanClient({ plan, token, tierName, typeName, justBought, email,
         <div className="stack" style={{ gap: 6 }}>
           <Logo href="/my-plans" />
           <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--muted)' }}>
+            {plan.track === 'intensive' ? 'Intensive · ' : ''}
             {tierName} · {typeName}
           </span>
         </div>
@@ -118,13 +206,37 @@ export function PlanClient({ plan, token, tierName, typeName, justBought, email,
         </div>
       ) : null}
 
+      {movedToStandard ? (
+        <div className="advice" style={{ margin: '14px 20px 0' }}>
+          Our clinician reviewed your answers and put you on the standard plan instead of the intensive one.{clinicianNote ? ` Her note: ${clinicianNote}` : ''}
+        </div>
+      ) : clinicianNote ? (
+        <div className="banner" style={{ margin: '14px 20px 0' }}>
+          <b>Note from our clinician:</b> {clinicianNote}
+        </div>
+      ) : null}
+
+      {intensive?.paused ? (
+        <div className="advice stack" style={{ margin: '14px 20px 0', gap: 6 }}>
+          <b style={{ fontSize: 15 }}>Your intensive plan is paused</b>
+          <span>Your check-in told us something our clinician needs to look at first. Until you hear from us, do not cut your food further: add a full extra meal each day, drink plenty of water, and see a doctor today if you feel faint, your heart races or you have strong belly pain.</span>
+        </div>
+      ) : null}
+
       {totalWeeks > 1 ? (
         <div className="weeks" style={{ padding: '14px 20px 0' }}>
-          {Array.from({ length: totalWeeks }, (_, i) => i + 1).map((w) => (
-            <button key={w} type="button" className={w === week ? 'on' : ''} aria-pressed={w === week} onClick={() => setDay((w - 1) * 7 + 1)}>
-              Week {w}
-            </button>
-          ))}
+          {Array.from({ length: totalWeeks }, (_, i) => i + 1).map((w) =>
+            w <= openWeeks ? (
+              <button key={w} type="button" className={w === week ? 'on' : ''} aria-pressed={w === week} onClick={() => setDay((w - 1) * 7 + 1)}>
+                Week {w}
+              </button>
+            ) : (
+              <button key={w} type="button" disabled aria-label={`Week ${w}, opens after your check-in`} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, opacity: 0.55 }}>
+                <Lock size={11} />
+                Week {w}
+              </button>
+            ),
+          )}
         </div>
       ) : null}
 
@@ -190,6 +302,7 @@ export function PlanClient({ plan, token, tierName, typeName, justBought, email,
             ))}
           </div>
           {plan.movement ? <MovementCard movement={plan.movement} dayOfWeek={((day - 1) % 7) + 1} /> : null}
+          {intensive && !intensive.paused && openWeeks < totalWeeks && week === openWeeks ? <CheckinCard token={token} week={openWeeks} lastKg={intensive.lastKg} /> : null}
           <div className="stack" style={{ padding: '14px 20px 0', gap: 8 }}>
             {plan.notes.map((n, i) => (
               <div key={n} className={i === 0 && plan.notes.length > 1 ? 'advice' : 'soft small'} style={{ borderRadius: 14 }}>

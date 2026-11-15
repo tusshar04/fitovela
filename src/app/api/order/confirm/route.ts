@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
 import { buildAssessment } from '@/domain/assessment';
 import { TIERS } from '@/domain/offer';
-import { generatePlan } from '@/domain/plan/generator';
 import { sendEmail } from '@/server/email';
 import { activeProvider } from '@/server/payments';
+import { buildPlan } from '@/server/plans';
+import { reviewerAddress } from '@/server/reviewAuth';
 import { setLoginCookie } from '@/server/auth';
 import { currentSession, logEvent, newId } from '@/server/session';
 import { getStore } from '@/server/store';
@@ -31,40 +32,40 @@ export async function POST(req: Request) {
   if (!assessment || !assessment.eligibility.eligible) return NextResponse.json({ error: 'This plan cannot be created.' }, { status: 409 });
 
   const tier = TIERS[order.tier];
-  order.plan = generatePlan({
-    seed: order.id,
-    days: tier.days,
-    targetKcal: assessment.energy.targetKcal,
-    typeId: assessment.result.type,
-    cuisines: assessment.cuisines,
-    diet: assessment.diet,
-    avoid: assessment.avoid,
-    weekOneLighterOn: assessment.weekOneLighterOn,
-    medicationAdvisory: assessment.eligibility.medicationAdvisory,
-    movement: assessment.energy.movement,
-  });
-  order.plan.journey = assessment.journey;
+  const intensive = order.track === 'intensive';
+  if (intensive && assessment.intensive.blocks.length > 0) return NextResponse.json({ error: 'This plan cannot be created.' }, { status: 409 });
+
+  order.plan = buildPlan(order, assessment, intensive ? 'intensive' : 'standard');
   order.status = 'paid';
   order.paidAt = new Date().toISOString();
   order.planToken = newId(24);
+  order.startKg = assessment.metrics.weightKg;
+  // An intensive plan stays closed until a clinician has reviewed her answers.
+  if (intensive) order.review = { status: 'pending', requestedAt: order.paidAt };
   await store.saveOrder(order);
-  await logEvent('payment_confirmed', session.id, { tier: order.tier, amount: order.amountRupees, provider: order.provider });
+  await logEvent('payment_confirmed', session.id, { tier: order.tier, amount: order.amountRupees, provider: order.provider, track: order.track ?? 'standard' });
 
   const origin = new URL(req.url).origin;
   const planUrl = `/plan/${order.planToken}`;
-  await sendEmail({
-    to: order.email,
-    subject: `Your Fitovela ${tier.name} is ready`,
-    text: [
-      'Your plan is ready.',
-      '',
-      `Open it here: ${origin}${planUrl}`,
-      '',
-      `To come back later, go to ${origin}/login and enter your mobile number ending ${order.phone.slice(-4)}.`,
-      '',
-      'Fitovela offers nutrition guidance. It does not diagnose or treat any medical condition.',
-    ].join('\n'),
-  });
+  const footer = ['', `To come back later, go to ${origin}/login and enter your mobile number ending ${order.phone.slice(-4)}.`, '', 'Fitovela offers nutrition guidance. It does not diagnose or treat any medical condition.'];
+  if (intensive) {
+    await sendEmail({
+      to: order.email,
+      subject: 'Your Fitovela intensive plan is with our clinician',
+      text: ['Thank you. Your intensive plan is built.', '', 'Before it opens, a clinician reviews your answers. This usually takes less than 24 hours. We will email you as soon as it is done.', '', `You can check here: ${origin}${planUrl}`, ...footer].join('\n'),
+    });
+    await sendEmail({
+      to: reviewerAddress(),
+      subject: 'Fitovela: an intensive plan is waiting for your review',
+      text: ['A customer has bought the intensive (800 to 1,000 kcal) plan.', '', `Review it here: ${origin}/review`].join('\n'),
+    });
+  } else {
+    await sendEmail({
+      to: order.email,
+      subject: `Your Fitovela ${tier.name} is ready`,
+      text: ['Your plan is ready.', '', `Open it here: ${origin}${planUrl}`, ...footer].join('\n'),
+    });
+  }
 
   await setLoginCookie(order.phone);
   return NextResponse.json({ planUrl, email: order.email });

@@ -18,4 +18,4 @@ export async function getStore(): Promise<Store> {
   return cached;
 }
 
-export type { Store, Session, Order, Lead, EventRecord, OtpRecord } from './types';
+export type { Store, Session, Order, Lead, EventRecord, OtpRecord, Review } from './types';

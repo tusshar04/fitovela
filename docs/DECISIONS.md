@@ -176,6 +176,18 @@ IDs D-004 to D-006 are used by proposals in draft [PR #2](https://github.com/tus
 - **Revisit when:** The founder reviews it, or ad tests show the weight number converts better than its absence.
 - **Supersedes:** the "weights become small tags" part of D-016. Refines D-008 (visual style) without replacing it.
 
+## D-018 — 800 kcal only as a clinician-reviewed intensive track
+
+- **Status:** accepted and implemented; the clinical settings are drafts awaiting the doctor.
+- **Date:** 2026-11-15.
+- **Decision owner:** Tushar, on the doctor's approval of a minimum of 800 kcal.
+- **Decision:** Offer 800 to 1,000 kcal a day as a separate "intensive" track next to the standard plan. It is offered only at BMI 30 and above (ages 18 to 60, no exclusions), the plan stays closed until a clinician approves that woman on `/review`, each new week opens only after a weekly check-in, a stop sign pauses the plan and returns her to the clinician, and it runs 12 weeks at most with a 4-week break before a repeat. The standard plan keeps its 1,200 kcal floor.
+- **Reason:** The doctor wants faster loss and approved going as low as 800 kcal. A diet that low is safe to sell only with someone looking at each woman, so the approval is implemented as the supervised track rather than as a lower floor for every buyer.
+- **Evidence:** Founder message of 2026-11-15 ("she gave approval for min 800"). Whether she approved this exact supervised design, or expected 800 for everyone, was not confirmed; the build follows the design offered to her earlier ([MEDICAL_RULES.md](MEDICAL_RULES.md)).
+- **Implementation:** `src/domain/intensive.ts`, `src/domain/energy.ts` (`track`), `src/domain/plan/lightMeals.ts`, `src/server/plans.ts`, `src/app/review`, `src/app/api/review`, `src/app/api/plan/checkin`, the paywall and the plan page. 12 unit tests. Run end to end on localhost: purchase, pending screen, approval with a note, weekly check-in, stop sign and pause, reopen, move to standard, and refusal below BMI 30.
+- **Revisit when:** The doctor rules on the ten open points in MEDICAL_RULES.md; pricing for the track is decided (today it costs the same as the standard plan); or the email provider is connected.
+- **Supersedes:** the "800 kcal is not built" part of D-015.
+
 ## Adding or changing a decision
 
 Assign the next stable ID and record status, date, owner, choice, reason, evidence, implementation status, and revisit conditions. Identify who accepted a decision; do not represent an agent suggestion as founder approval.

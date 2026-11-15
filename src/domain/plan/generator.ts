@@ -1,10 +1,13 @@
 // Builds a day-by-day plan from the meal library. Deterministic for a given seed.
 // Rules from the doctor's answer 10A: low-GI Indian meals, protein at every meal,
-// no food group banned. Calories follow energy.ts (never below BMR).
+// no food group banned. Calories follow energy.ts. The intensive track (800 to
+// 1,000 kcal) uses its own light plates: see lightMeals.ts and intensive.ts.
 
-import type { MovementPlan } from '../energy';
+import type { MovementPlan, Track } from '../energy';
+import { INTENSIVE_NOTES } from '../intensive';
 import type { JourneyStop } from '../journey';
 import type { TypeId } from '../typing';
+import { LIGHT_MEALS } from './lightMeals';
 import { MEALS } from './meals';
 import type { AvoidTag, Cuisine, Diet, Ingredient, Meal, MealSlot, MealTag } from './types';
 
@@ -17,6 +20,9 @@ const DAY_SLOTS: { slot: DaySlot; pool: MealSlot; label: string; time: string }[
   { slot: 'snack_pm', pool: 'snack', label: 'Snack', time: '5:00 pm' },
   { slot: 'dinner', pool: 'dinner', label: 'Dinner', time: '7:45 pm' },
 ];
+
+/** The intensive track eats three light plates and one snack. */
+const INTENSIVE_SLOTS = DAY_SLOTS.filter((d) => d.slot !== 'snack_am');
 
 export interface PlanDish {
   id: string;
@@ -66,6 +72,8 @@ export interface Plan {
   groceries: GroceryItem[][];
   notes: string[];
   generatedAt: string;
+  /** 'intensive' for the 800 to 1,000 kcal track. Absent on plans made before tracks existed. */
+  track?: Track;
   /** Walk and strength prescription. Absent on plans made before it existed. */
   movement?: MovementPlan;
   /** Week-by-week expectations shown on the plan. Absent on plans made before it existed. */
@@ -83,6 +91,7 @@ export interface PlanInput {
   weekOneLighterOn: 'wheat' | 'dairy' | null;
   medicationAdvisory: boolean;
   movement?: MovementPlan;
+  track?: Track;
 }
 
 interface AddOnDef extends AddOn {
@@ -151,6 +160,10 @@ export function allowedMeals(input: Pick<PlanInput, 'diet' | 'avoid' | 'cuisines
 export function generatePlan(input: PlanInput, library: Meal[] = MEALS): Plan {
   const rand = mulberry32(hashSeed(input.seed));
   const preferTags = TYPE_TAGS[input.typeId];
+  const intensive = input.track === 'intensive';
+  // Intensive days are built from the light plates, with snacks from the main library.
+  if (intensive) library = [...LIGHT_MEALS, ...library.filter((m) => m.slots.every((x) => x === 'snack'))];
+  const daySlots = intensive ? INTENSIVE_SLOTS : DAY_SLOTS;
   let allowed = allowedMeals(input, library);
 
   // If a narrow combination leaves a slot empty, widen to every cuisine before giving up.
@@ -178,7 +191,7 @@ export function generatePlan(input: PlanInput, library: Meal[] = MEALS): Plan {
     const usedToday = new Set<string>();
     const chosen: { def: (typeof DAY_SLOTS)[number]; meal: Meal; pool: Meal[] }[] = [];
 
-    for (const def of DAY_SLOTS) {
+    for (const def of daySlots) {
       let pool = allowed.filter((m) => m.slots.includes(def.pool));
       if (lighter) {
         const lighterPool = pool.filter((m) => !m.contains.includes(lighter));
@@ -268,6 +281,7 @@ export function generatePlan(input: PlanInput, library: Meal[] = MEALS): Plan {
   }
 
   const notes: string[] = [];
+  if (intensive) notes.push(...INTENSIVE_NOTES);
   if (input.medicationAdvisory) notes.push('Show this plan to your doctor before you start, and do not change the dose of any medicine because of it.');
   if (input.weekOneLighterOn) notes.push(`Week 1 goes lighter on ${input.weekOneLighterOn}, as you told us it may bloat you. Notice whether you feel different.`);
   notes.push('Portions are for one person. Calories and protein are approximate.');
@@ -282,6 +296,7 @@ export function generatePlan(input: PlanInput, library: Meal[] = MEALS): Plan {
     groceries,
     notes,
     generatedAt: new Date().toISOString(),
+    track: input.track ?? 'standard',
     movement: input.movement,
   };
 }

@@ -2,6 +2,7 @@
 
 import { checkEligibility, type Eligibility } from './eligibility';
 import { bmi, bmiBand, energyPlan, type Activity, type BmiBand, type EnergyPlan } from './energy';
+import { intensiveBlocks, type IntensiveBlock } from './intensive';
 import { buildJourney, type JourneyStop } from './journey';
 import { MARKERS, optionLabel, type MarkerId } from './questions';
 import { areaCounts, areaLevels, markersFrom, stressCount } from './scoring';
@@ -32,6 +33,8 @@ export interface Assessment {
   weekOneLighterOn: 'wheat' | 'dairy' | null;
   /** What she is likely to feel and see, week by week, from her own signs. */
   journey: JourneyStop[];
+  /** The 800 to 1,000 kcal track. Offered only when `blocks` is empty, and released only after a clinician's review. */
+  intensive: { blocks: IntensiveBlock[]; energy: EnergyPlan; journey: JourneyStop[] };
 }
 
 const DIET_LABEL: Record<Diet, string> = { veg: 'Vegetarian', egg: 'Vegetarian with eggs', nonveg: 'Non-vegetarian' };
@@ -75,6 +78,9 @@ export function buildAssessment(answers: Answers, now: Date = new Date()): Asses
   recap.push(cuisines.length ? `${DIET_LABEL[diet]}, ${cuisineLabels(cuisines)}` : DIET_LABEL[diet]);
   if (energy.toLoseKg > 0) recap.push(`Your goal: ${energy.goalKg} kg`);
 
+  const eligibility = checkEligibility(answers);
+  const intensiveEnergy = energyPlan(metrics, activity, 'intensive');
+
   const bloat = answers.bloat_when;
   const weekOneLighterOn = bloat === 'wheat' || bloat === 'dairy' ? bloat : null;
 
@@ -90,12 +96,17 @@ export function buildAssessment(answers: Answers, now: Date = new Date()): Asses
     bmiBand: bmiBand(bmiValue),
     activity,
     energy,
-    eligibility: checkEligibility(answers),
+    eligibility,
     cuisines,
     diet,
     avoid,
     recap,
     weekOneLighterOn,
     journey: buildJourney(markers, energy, metrics.weightKg),
+    intensive: {
+      blocks: intensiveBlocks({ metrics, bmi: bmiValue, eligibility, toLoseKg: energy.toLoseKg }),
+      energy: intensiveEnergy,
+      journey: buildJourney(markers, intensiveEnergy, metrics.weightKg),
+    },
   };
 }

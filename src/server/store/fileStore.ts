@@ -56,6 +56,10 @@ export const fileStore: Store = {
     return (await list<Order>('orders')).filter((o) => o.phone === phone && o.status === 'paid').sort((a, b) => (b.paidAt ?? '').localeCompare(a.paidAt ?? ''));
   },
 
+  async listIntensiveOrders() {
+    return (await list<Order>('orders')).filter((o) => o.track === 'intensive' && o.status === 'paid').sort((a, b) => (b.paidAt ?? '').localeCompare(a.paidAt ?? ''));
+  },
+
   getOtp: (phone) => read<OtpRecord>('otps', phone),
   saveOtp: (r) => write('otps', r.phone, r),
   async deleteOtp(phone) {

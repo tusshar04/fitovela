@@ -9,6 +9,10 @@
 //   - the strict 1,200 kcal rule applies only above the healthy BMI range (23 and over)
 //   - no target below the healthy minimum weight (BMI 18.5)
 // The number shown is always what her calories and movement add up to.
+//
+// Intensive track (doctor's approval relayed 2026-11-15: calories may go as low as 800):
+// 800 to 1,000 kcal a day. It is never applied automatically. intensive.ts decides who
+// may be offered it, and a plan on it is released only after a clinician reviews her.
 
 import type { Metrics } from './types';
 
@@ -19,6 +23,11 @@ const ACTIVITY_FACTOR: Record<Activity, number> = { sedentary: 1.2, light: 1.375
 const KCAL_PER_KG = 7700;
 
 export const STRICT_FLOOR_KCAL = 1200;
+/** Intensive track: the doctor's floor, and the most the track gives a larger woman. */
+export const INTENSIVE_FLOOR_KCAL = 800;
+export const INTENSIVE_CEILING_KCAL = 1000;
+
+export type Track = 'standard' | 'intensive';
 /** Largest shortfall from food alone on the strict rule, so bigger women are not cut further than needed. */
 const STRICT_FOOD_DEFICIT = 1000;
 /** Women already in the healthy BMI range get the gentler rule: 500 below maintenance, never below BMR. */
@@ -103,6 +112,7 @@ export interface EnergyPlan {
   tdee: number;
   /** True when the 1,200 kcal rule applies (BMI 23 and over). */
   strict: boolean;
+  track: Track;
   /** Daily calories for the plan. */
   targetKcal: number;
   /** Shortfall from food alone. */
@@ -134,7 +144,7 @@ export function weightAtWeek(startKg: number, goalKg: number, pace: number, week
   return Math.max(goalKg, round1(startKg - pace * week));
 }
 
-export function energyPlan(m: Metrics, activity: Activity): EnergyPlan {
+export function energyPlan(m: Metrics, activity: Activity, track: Track = 'standard'): EnergyPlan {
   const b = bmr(m);
   const t = tdee(m, activity);
   const movement = movementPlan(m, activity);
@@ -152,6 +162,7 @@ export function energyPlan(m: Metrics, activity: Activity): EnergyPlan {
       bmr: Math.round(b),
       tdee: Math.round(t),
       strict: false,
+      track: 'standard',
       targetKcal: Math.max(bmrFloor, Math.round(t / 10) * 10),
       deficit: 0,
       movement,
@@ -167,7 +178,12 @@ export function energyPlan(m: Metrics, activity: Activity): EnergyPlan {
     };
   }
 
-  const targetKcal = strict ? Math.max(STRICT_FLOOR_KCAL, Math.round((t - STRICT_FOOD_DEFICIT) / 10) * 10) : Math.max(bmrFloor, Math.round((t - GENTLE_FOOD_DEFICIT) / 10) * 10);
+  const targetKcal =
+    track === 'intensive'
+      ? Math.min(INTENSIVE_CEILING_KCAL, Math.max(INTENSIVE_FLOOR_KCAL, Math.round((t - STRICT_FOOD_DEFICIT) / 10) * 10))
+      : strict
+        ? Math.max(STRICT_FLOOR_KCAL, Math.round((t - STRICT_FOOD_DEFICIT) / 10) * 10)
+        : Math.max(bmrFloor, Math.round((t - GENTLE_FOOD_DEFICIT) / 10) * 10);
   const deficit = Math.max(0, Math.round(t - targetKcal));
   const mealsOnly = Math.min(MAX_PACE_KG_PER_WEEK, round2((deficit * 7) / KCAL_PER_KG));
   const pace = Math.min(MAX_PACE_KG_PER_WEEK, round2(((deficit + movement.kcalPerDay) * 7) / KCAL_PER_KG));
@@ -179,6 +195,7 @@ export function energyPlan(m: Metrics, activity: Activity): EnergyPlan {
     bmr: Math.round(b),
     tdee: Math.round(t),
     strict,
+    track,
     targetKcal,
     deficit,
     movement,
