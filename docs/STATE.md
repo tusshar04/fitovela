@@ -1,68 +1,66 @@
 # Project state and handoff
 
-Last updated: 2026-11-14
+Last updated: 2026-11-15
 
 This file owns current coordination. Read [AGENTS.md](../AGENTS.md) before acting. Branch state can change after this document is written; inspect Git at every handoff. Work is merged straight into `main`; pull requests are not used ([D-010](DECISIONS.md)).
 
 ## Current stage
 
-Product discovery. The founder has accepted the product hook and design direction ([D-007](DECISIONS.md), [D-008](DECISIONS.md)); medical rules wait for the doctor. There is no application or production deployment, and no implementation task is assigned.
+First working build. The full funnel runs on localhost: landing, adaptive questionnaire, result, paywall, demo checkout, generated plan, login. Nothing is deployed. Payments, email sending, SMS codes and ad tracking are not connected yet.
 
-## Current task — FTV-003
+## Current task — FTV-004
 
 | Field | Value |
 | --- | --- |
-| Goal | Rewrite the product brief around the assessment-led funnel the founder approved. |
-| Owner | Claude, assigned by Tushar on 2026-11-14. |
-| Status | Brief rewritten and merged straight into `main` on the founder's instruction ([D-010](DECISIONS.md)). |
-| Branch | `docs/ftv-003-product-brief`. |
-| Worktree | Sibling workspace `fitovela-worktrees/ftv-003-product-brief`. |
-| Deliverables outside the repo | [Funnel mockups](https://claude.ai/artifact/Vvvz5B2DvDZVXSqYZXJ1Ar) and the [doctor sign-off sheet](https://claude.ai/artifact/3WNH2yX9op8Ly7Dq5Ve3yT), both private to the founder until shared. |
-| Review | Self-review only. No independent or medical review has happened; the doctor's answers are still needed before any assessment logic is built. |
+| Goal | Build the product from the approved mockups and the doctor's answers, and run it on localhost. |
+| Owner | Claude, assigned by Tushar on 2026-11-15. |
+| Status | Built and merged into `main`. Awaiting the founder's review on localhost. |
+| Branch | `feat/ftv-004-app` (merged). |
+| Run it | `nvm use`, `npm install`, `npm run dev`, then open `http://localhost:3000`. |
+| Checks | `npm test`, `npm run typecheck`, `npm run build`. Results are in the merge commit message. |
+| Review | Self-review only. No independent, medical or legal review. |
+
+### What works
+
+- Three landing hooks (`/?h=a`, `b`, `c`; ad category with `&c=pcos|thyroid|menopause|diabetes|weightloss`).
+- About 18 questions that adapt to earlier answers, with the two interstitial screens.
+- Scoring, typing, eligibility and calories per [MEDICAL_RULES.md](MEDICAL_RULES.md).
+- Email and mobile capture, result report, paywall with a real 15-minute launch price, demo checkout.
+- Plan generator (7, 28 or 84 days), swaps, weekly grocery list, private plan link.
+- Login by mobile number and one-time code; `/my-plans`.
+- Funnel event log.
+
+### Stand-ins that must be replaced before launch
+
+| Area | Today | Needed |
+| --- | --- | --- |
+| Payments | Demo checkout; refuses to run in production. | Razorpay keys, order creation, signature check, webhook. |
+| Email | Written to `.data/outbox/`. | A provider (tarot uses AWS SES). |
+| Login codes | Shown on screen in development. | An SMS provider. |
+| Storage | JSON files under `.data/`. | Firestore driver exists but has never been run against a real database. |
+| Ad tracking | None. | Meta Pixel and Conversions API. |
+| Reviews, live counter | Hidden. | Real ones, to come from the doctor via Tushar. |
+| Photos | Unsplash stand-ins in `public/img/`. | Licensed or shot images. |
+| Privacy, terms, refund policy | Placeholder pages. | Written and reviewed. |
+| Medical drafts | Question list, type rules, meal library and copy written by an AI agent. | The doctor's one-time approval ([MEDICAL_RULES.md](MEDICAL_RULES.md)). |
 
 ### Exact next step
 
-1. Tushar shares the sign-off sheet with the doctor and returns her twelve answers.
-2. Update [PRODUCT.md](PRODUCT.md) and D-009 with her choices; adjust the mockups where they differ.
-3. Tushar decides what happens to draft PR #2, which proposes the opposite result design.
+1. Tushar reviews the build on localhost.
+2. Send the doctor the three drafts in [MEDICAL_RULES.md](MEDICAL_RULES.md) for approval.
+3. Decide the GCP project for deployment (recommended: a new project under the same account as tarot), then a deployment task: Dockerfile, Cloud Run, Firestore, secrets.
 
-## Latest delivery — FTV-001
+## Other open work
 
-| Field | Value |
-| --- | --- |
-| Goal | Establish the shared documents and branch/worktree/PR workflow. |
-| Owner | Codex. |
-| Status | Documentation complete; the linked PR owns current integration status. |
-| Branch | `docs/project-foundation`. |
-| Worktree | Sibling workspace `fitovela-worktrees/project-foundation`. |
-| Review | Documentation self-review; no independent Claude review claimed. |
-| Delivery | [PR #1](https://github.com/tusshar04/fitovela/pull/1), including exact revisions, review, and merge status. |
-| Verification | Whitespace and local Markdown links checked; shared Claude import confirmed; GitHub tooling status inspected. Final commit/check results are recorded in the PR. |
+- **FTV-002 (Codex):** draft [PR #2](https://github.com/tusshar04/fitovela/pull/2), not merged. Its food-first, no-condition-result proposal conflicts with accepted D-007. Tushar to decide whether it is closed or reworked.
 
-### Delivered scope
+## Completed
 
-- The seven agreed documents exist and have distinct responsibilities.
-- Claude imports the shared rules rather than duplicating them.
-- The product brief preserves the founder's direction and marks unresolved proposals honestly.
-- Feature branches, isolated worktrees, PR review, and `main` integration are documented.
-- Future deployment intent is clearly separated from currently configured tooling.
-- A PR template captures verification, review, handoff, and release implications.
-
-### Handoff
-
-Review the PR for exact revisions, verification results, and integration status. No application tests exist. Remaining product and infrastructure questions are intentional open work, not implemented features.
-
-## Next task — FTV-002
-
-- **Status:** in progress by Codex in draft [PR #2](https://github.com/tusshar04/fitovela/pull/2), not merged. Its food-first, no-condition-result proposal conflicts with accepted D-007.
-- **Proposed scope:** product discovery with Tushar, using [PRODUCT.md](PRODUCT.md) as the starting point.
-- **Exact next step:** discuss the first customer segment, assessment purpose, and the deliverable a customer buys; capture agreed answers and remaining questions in the existing product brief.
-- **Acceptance criteria:** to be agreed when the task starts.
-- **Dependencies:** founder's product decisions; later health-content expertise and research as required.
-- **Implementation:** not authorized by this planning placeholder.
+- **FTV-003:** product brief rewritten around the assessment-led funnel; merged 2026-11-14.
+- **FTV-001:** shared documents and workflow; [PR #1](https://github.com/tusshar04/fitovela/pull/1).
 
 ## Coordination notes
 
 One writer is active at a time initially. For simultaneous work, the user or designated coordinator must assign distinct tasks before work starts and serialize updates to this file. Ownership recorded only in an unmerged branch is not a global reservation.
 
-At handoff, record the owner, status, branch/worktree, commit, checks/results, open issues, and next action. Replace this delivery detail with a short commit reference when the next task starts. Keep full history in commits rather than growing a session log here.
+At handoff, record the owner, status, branch/worktree, commit, checks/results, open issues, and next action. Keep full history in commits rather than growing a session log here.

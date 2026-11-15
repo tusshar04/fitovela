@@ -69,7 +69,7 @@ IDs D-004 to D-006 are used by proposals in draft [PR #2](https://github.com/tus
 
 ## D-009 — Result wording and medical rules wait for the doctor
 
-- **Status:** proposed; awaiting the doctor's answers and the founder's confirmation.
+- **Status:** superseded by D-012. The doctor chose the "your symptoms match" wording and answered the open rules.
 - **Date:** 2026-11-14.
 - **Proposer:** Claude; no founder or medical approval claimed.
 - **Proposal:** Word the result as "Your symptoms match [type]" with a line that it is not a medical diagnosis and which tests confirm it. Treat scoring cut-offs, exclusions, calorie floor, prediction pace and named PCOS types as open until the doctor picks an option for each on the [sign-off sheet](https://claude.ai/artifact/3WNH2yX9op8Ly7Dq5Ve3yT).
@@ -90,6 +90,42 @@ IDs D-004 to D-006 are used by proposals in draft [PR #2](https://github.com/tus
 - **Implementation:** [AGENTS.md](../AGENTS.md) and [README.md](../README.md) updated; the PR template removed.
 - **Revisit when:** Production deployment from `main` is configured, since every merge would then be a release.
 - **Supersedes:** the pull-request requirement in D-003. Task branches, separate worktrees and `main` as the future production source still stand.
+
+## D-011 — Technology stack
+
+- **Status:** accepted.
+- **Date:** 2026-11-15.
+- **Decision owner:** Tushar (approved the build plan).
+- **Decision:** TypeScript on Node 24, Next.js (App Router). Firestore in production; JSON files under `.data/` on localhost behind the same `Store` interface. Container on Cloud Run later, in the same GCP account as tarot.
+- **Reason:** Matches tarot's runtime, database and hosting, so there is one set of tools to operate. Firestore has no server to manage and no fixed monthly cost. The Firestore emulator needs Java, which is not installed locally, hence the file driver for development.
+- **Evidence:** Tarot's `.nvmrc`, Dockerfile and Firestore usage, inspected 2026-11-15. Founder approved the plan and confirmed Firestore for both projects.
+- **Implementation:** Built. The Firestore driver has not been run against a real database yet.
+- **Revisit when:** Funnel analysis needs queries Firestore handles badly; Postgres was the considered alternative.
+- **Supersedes:** nothing.
+
+## D-012 — The doctor's twelve answers are the medical rules
+
+- **Status:** accepted; three drafts still need her approval.
+- **Date:** 2026-11-15.
+- **Decision owner:** Tushar, relaying the doctor's answers `1A 2A 3A 4A 5A 6A 7C 8B 9B 10A 11C 12A`.
+- **Decision:** The app follows her answers as recorded in [MEDICAL_RULES.md](MEDICAL_RULES.md): "your symptoms match" wording, four areas, four PCOS types, simple-count scoring, the exclusion list, calories never below BMR, pace capped at 1 kg a week, five suggested tests, low-GI Indian meals with protein at every meal, and no naming of the doctor.
+- **Reason:** These are medical judgements and hers to make.
+- **Evidence:** Answer code pasted by the founder on 2026-11-15.
+- **Implementation:** Built and unit-tested. The question list, type-selection rules and meal library were drafted by an AI agent and are not yet approved by her.
+- **Revisit when:** Her three-monthly review (next due 2027-02-15), or when she reviews the drafts.
+- **Supersedes:** D-009.
+
+## D-013 — Plan by email, login by mobile number, payments and tracking later
+
+- **Status:** accepted.
+- **Date:** 2026-11-15.
+- **Decision owner:** Tushar.
+- **Decision:** The plan is delivered by email, not WhatsApp. The mobile number is collected so customers can log in with a one-time code. Razorpay and the Meta Pixel are added later. Reviews and the live counter wait for real figures from the doctor.
+- **Reason:** Founder instruction during the build.
+- **Evidence:** Founder message on 2026-11-15.
+- **Implementation:** Email and mobile are captured before the result; email content is written to a local outbox; login codes are shown on screen in development; checkout is a demo that refuses to run in production.
+- **Revisit when:** Providers are chosen for email, SMS and payments.
+- **Supersedes:** the WhatsApp delivery and check-in in earlier mockups.
 
 ## Adding or changing a decision
 

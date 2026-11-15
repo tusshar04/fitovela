@@ -2,7 +2,17 @@
 
 Fitovela is an early-stage website concept for personalized diet plans for women, with visitors arriving from category-specific Meta ads.
 
-The project is in planning. There is no application, chosen technology stack, payment integration, or deployment pipeline yet.
+A first working build runs on localhost. Payments, email, SMS codes and deployment are not connected yet; see [State](docs/STATE.md).
+
+## Run it
+
+```sh
+nvm use            # Node 24.19, same as tarot
+npm install
+npm run dev        # http://localhost:3000
+```
+
+Landing variants: `/?h=a`, `/?h=b`, `/?h=c`; add `&c=pcos|thyroid|menopause|diabetes|weightloss` for the ad category. Local data is written to `.data/` (sessions, orders, the email outbox and the event log).
 
 ## Start here
 
@@ -14,6 +24,7 @@ The project is in planning. There is no application, chosen technology stack, pa
 | [Decisions](docs/DECISIONS.md) | Reasons for important choices and their approval/supersession history. |
 | [State](docs/STATE.md) | Active ownership, current progress, and the next handoff. |
 | [Learnings](docs/LEARNINGS.md) | Verified discoveries and prevention of recurring mistakes. |
+| [Medical rules](docs/MEDICAL_RULES.md) | The doctor's answers, how the app applies them, and drafts awaiting her approval. |
 
 Read the shared instructions and current state before starting work. Each topic has one authoritative home; other documents should link to it.
 
@@ -45,7 +56,8 @@ The primary checkout stays on `main`; update it with `git pull --ff-only` only w
 
 ## Current tooling
 
-- Build, lint, type-check, and test commands: not yet selected.
+- Stack: TypeScript, Next.js, Node 24. Firestore in production (`STORE_DRIVER=firestore`), JSON files under `.data/` locally.
+- Checks: `npm test` (unit tests for every medical rule and the plan generator), `npm run typecheck`, `npm run build`.
 - CI, branch protection, hosting, and production deployment: not yet configured.
 - Documentation checks: `git diff --check` and verification of local Markdown links.
 
