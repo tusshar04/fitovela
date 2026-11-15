@@ -162,6 +162,8 @@ export function generatePlan(input: PlanInput, library: Meal[] = MEALS): Plan {
     s += m.tags.filter((t) => preferTags.includes(t)).length * 1.5;
     if (m.gi === 'low') s += 1;
     if (input.diet !== 'veg' && m.diet === input.diet) s += 1;
+    // On low-calorie days protein matters most: favour dishes with more protein per calorie.
+    if (input.targetKcal <= 1300) s += (m.protein / m.kcal) * 40;
     return s;
   };
 
@@ -193,16 +195,24 @@ export function generatePlan(input: PlanInput, library: Meal[] = MEALS): Plan {
     let total = chosen.reduce((n, c) => n + c.meal.kcal, 0);
 
     // Too high: swap the heaviest main for the lightest unused option, up to three times.
-    for (let tries = 0; tries < 3 && total > input.targetKcal + 80; tries += 1) {
-      const heaviest = [...chosen].sort((a, b) => b.meal.kcal - a.meal.kcal)[0];
-      const lighterOption = heaviest.pool
-        .filter((m) => !usedToday.has(m.id) && m.kcal < heaviest.meal.kcal)
-        .sort((a, b) => a.kcal - b.kcal)[0];
-      if (!lighterOption) break;
-      usedToday.delete(heaviest.meal.id);
-      usedToday.add(lighterOption.id);
-      total += lighterOption.kcal - heaviest.meal.kcal;
-      heaviest.meal = lighterOption;
+    // Each pass trades the meal with the most room to spare for the lighter option that lands
+    // the day closest to the target, keeping as much protein as it can.
+    for (let tries = 0; tries < 8 && total > input.targetKcal + 60; tries += 1) {
+      const over = total - input.targetKcal;
+      let best: { slot: (typeof chosen)[number]; option: Meal; miss: number } | null = null;
+      for (const c of chosen) {
+        for (const option of c.pool) {
+          if (usedToday.has(option.id) || option.kcal >= c.meal.kcal) continue;
+          const saved = c.meal.kcal - option.kcal;
+          const miss = Math.abs(over - saved) - (option.protein - c.meal.protein) * 2;
+          if (!best || miss < best.miss) best = { slot: c, option, miss };
+        }
+      }
+      if (!best) break;
+      usedToday.delete(best.slot.meal.id);
+      usedToday.add(best.option.id);
+      total += best.option.kcal - best.slot.meal.kcal;
+      best.slot.meal = best.option;
     }
 
     // Too low: add protein-first extras, at most two per meal.

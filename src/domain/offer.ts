@@ -15,11 +15,13 @@ export interface Tier {
 
 export const TIERS: Record<TierId, Tier> = {
   w1: { id: 'w1', name: '1-week trial', days: 7, launch: 199, regular: 399 },
-  w4: { id: 'w4', name: '4-week plan', days: 28, launch: 499, regular: 999, popular: true },
-  w12: { id: 'w12', name: '12-week plan', days: 84, launch: 999, regular: 1999 },
+  w4: { id: 'w4', name: '4-week plan', days: 28, launch: 499, regular: 999 },
+  // The result is framed as a 12-week target, so the plan that covers it is the default.
+  w12: { id: 'w12', name: '12-week plan', days: 84, launch: 999, regular: 1999, popular: true },
 };
 
 export const TIER_ORDER: TierId[] = ['w1', 'w4', 'w12'];
+export const DEFAULT_TIER: TierId = 'w12';
 
 export const OFFER_WINDOW_MINUTES = 15;
 

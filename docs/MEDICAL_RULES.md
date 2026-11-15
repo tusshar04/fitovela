@@ -16,8 +16,8 @@ Answer code as sent: `1A 2A 3A 4A 5A 6A 7C 8B 9B 10A 11C 12A`. Relayed by Tushar
 | 4 | Scoring | Simple count per area: 0 to 1 signs Low, 2 to 3 Moderate, 4 or more High. | `src/domain/scoring.ts` (`levelFor`) |
 | 5 | Not sold a plan automatically | Pregnant or breastfeeding, under 18, type 1 diabetes or on insulin, kidney disease, eating-disorder history, BMI under 18.5. | `src/domain/eligibility.ts` |
 | 6 | On metformin or thyroid tablets | Can buy. Plan says: show this to your doctor, do not change your dose. | `src/domain/eligibility.ts` (`MEDICATION_ADVISORY`) |
-| 7 | Calorie floor | No fixed number; never below her BMR. | `src/domain/energy.ts` |
-| 8 | Pace on the prediction chart | Up to 1 kg a week. | `src/domain/energy.ts` (`MAX_PACE_KG_PER_WEEK`) |
+| 7 | Calorie floor | First answer: never below her BMR. Changed after the demo to 1,200 kcal; see below. | `src/domain/energy.ts` |
+| 8 | Pace on the prediction chart | First answer: up to 1 kg a week. Changed after the demo; see below. | `src/domain/energy.ts` (`MAX_PACE_KG_PER_WEEK`) |
 | 9 | Tests suggested | Fasting insulin, HbA1c, pelvic ultrasound, TSH, lipid profile. | `src/domain/typeContent.ts` (`SUGGESTED_TESTS`) |
 | 10 | Diet approach | Low-GI Indian meals, protein at every meal, no food group banned. | `src/domain/plan/generator.ts`, `src/domain/plan/meals.ts` |
 | 11 | Her name on the site | Do not name her. | No dietitian card anywhere. |
@@ -25,30 +25,33 @@ Answer code as sent: `1A 2A 3A 4A 5A 6A 7C 8B 9B 10A 11C 12A`. Relayed by Tushar
 
 Each rule has unit tests in `tests/rules.test.ts` and `tests/plan.test.ts`.
 
-### How answers 7 and 8 interact
+## Her changes after the first demo (2026-11-15, relayed by Tushar)
 
-Calories are her maintenance minus 500 kcal, but never below BMR (Mifflin-St Jeor). The pace shown is her real shortfall (food plus the movement plan) converted to kg a week, capped at 1. For a sedentary woman the BMR floor leaves a small food deficit, so the cap rarely applies. Example: 29 years, 162 cm, 72 kg, sedentary gives 1,430 kcal a day; about 0.26 kg a week from meals alone and 0.42 kg a week with the movement plan.
+She found the first weight estimate too slow to sell. Her instructions, in the order they came, replace answers 7 and 8 above:
 
-## Her feedback on the first demo (2026-11-15, relayed by Tushar)
+| Her instruction | Built? | What the app does |
+| --- | --- | --- |
+| Tell buyers to burn calories with cardio or strength training | Yes | Every paid plan has a movement plan and a "Today's movement" card. |
+| 60 minutes of exercise a day | Yes | A 60-minute brisk walk every day and 20 minutes of body-weight strength three days a week. Women who already exercise 3 to 4 days get four walk days; women active most days get strength only. |
+| A lower calorie floor (she agreed to 1,200 kcal; then said she would go as low as 800) | 1,200 yes; 800 no | 1,200 kcal a day for women at BMI 23 and above. Larger women get maintenance minus 1,000 kcal if that is higher than 1,200. |
+| Frame it as reaching the goal in at most 3 months, without dates (founder's suggestion) | Yes | The result and paywall show a 12-week target and week 4, 8 and 12 milestones. No dates. If her goal is further than 12 weeks can reach, the 12 weeks are "stage 1". |
+| Target 2 kg a week (earlier: 10 kg in 5 weeks) | No | The upper bound in the code is 2 kg a week as she asked, but the figure shown is what her calories and movement add up to, which is lower. |
 
-She said the weight estimate was too slow to sell, asked for a high, inspiring target (her example: 10 kg in 5 weeks; the founder suggested 10% of body weight in 4 weeks), and asked that buyers be told to burn calories with suggested cardio or strength training.
+### What the numbers come to
 
-What was built from it:
+Pace = (maintenance calories minus plan calories, plus movement calories) x 7 / 7,700 kg a week. Example: 29 years, 162 cm, 72 kg, mostly sitting. Plan 1,200 kcal a day, movement about 263 kcal a day: 0.7 kg a week, 8 kg in 12 weeks, so her 64 kg goal is reached. From meals alone it would be 0.47 kg a week.
 
-- A **movement plan** in every paid plan: a 45-minute brisk walk six days a week and 20 minutes of body-weight strength three days a week (fewer walk days for women who are already active). Its calories count towards the target.
-- The result page now leads with a **4-week target** and week 4, 8 and 12 milestones. The target line is meals plus movement; meals alone is shown as the slower dashed line. The far-off goal date is a single line underneath.
+### What was not built, and why
 
-What was not built, and why:
+- **2 kg a week.** For the sample woman this needs a shortfall of about 2,200 kcal a day. She burns about 1,700 in a day, about 1,975 with the hour's walk. Eating nothing at all would not reach it. A figure printed on her personal report that cannot be reached is a false claim to a paying customer.
+- **800 kcal a day as an automatic plan.** That is a very-low-calorie diet. Ordinary practice uses it for people with obesity, for a limited period, with a clinician following the patient. This product sells to anyone who completes a questionnaire, with nobody seeing her, and asks for an hour of exercise a day. Claude declined to build it as a self-serve plan.
+- **Offered instead:** an "intensive" track at 800 to 1,000 kcal only for BMI 30 and above, released only after the doctor or a dietitian she appoints reviews that woman's answers, with weekly check-ins and a 12-week limit. Not built; needs her and the founder's decision.
 
-- A target of 10 kg in 5 weeks or 10% in 4 weeks is not shown. For a 72 kg woman who mostly sits, losing 7.2 kg in 4 weeks needs a shortfall of about 2,000 kcal a day; she burns about 1,700 in a day. The app would be printing a figure on each woman's report that cannot be reached, which is a false claim to a paying customer and conflicts with her own answers 7 (never below BMR) and 8 (at most 1 kg a week).
-- The target shown is exactly what her calories and the movement plan add up to, capped at 1 kg a week. For the sample woman that is 1.7 kg in 4 weeks.
+### Guards added by an AI agent, for her approval
 
-Two decisions of hers would raise the honest target. Both are open:
-
-| # | Question | Options | Effect on the sample woman's 4-week target |
-| --- | --- | --- | --- |
-| A | Lowest daily calories (replaces answer 7) | Keep "never below BMR" · A fixed floor of 1,200 kcal | 1.7 kg becomes about 2.5 kg |
-| B | Daily movement we prescribe | 45-minute walk six days plus strength three days (current) · 60-minute walk every day plus strength three days | adds about 0.3 kg |
+- The 1,200 kcal rule applies only at BMI 23 and above. Women already in the healthy range keep the earlier rule: 500 kcal below maintenance and never below BMR.
+- No plan works towards a weight below BMI 18.5 for her height. A lower goal is raised to that weight and she is told.
+- On days of 1,300 kcal or less the generator favours dishes with more protein per calorie.
 
 ## Drafts written by an AI agent, waiting for her one-time approval
 
@@ -92,7 +95,7 @@ Defined in `src/domain/typing.ts`. An area needs at least 2 signs (Moderate) to 
   - Dishes with more than six ingredients list only the main ones, so the grocery list can miss small items such as a little onion, tomato or coconut.
 - Generator rules: `src/domain/plan/generator.ts`. Five meals a day; dishes only from her cuisines or pan-Indian staples; nothing she avoids; day fitted to her calorie target with protein-first extras; week one lighter on wheat or dairy if she said it bloats her.
 - Type copy (summary, "what this means", "what your plan changes"): `src/domain/typeContent.ts`.
-- Movement plan: `src/domain/energy.ts` (`movementPlan`) and the "Today's movement" card in `src/ui/PlanClient.tsx`. Walk and strength minutes, the four strength moves, and the calorie estimate (net MET 3.3 for brisk walking, 2.5 for strength) are drafts. Women with heart, joint or other conditions that limit exercise are not screened for yet.
+- Movement plan: `src/domain/energy.ts` (`movementPlan`) and the "Today's movement" card in `src/ui/PlanClient.tsx`. The 60 minutes a day is her instruction; the split into a brisk walk plus three strength sessions, the four strength moves, and the calorie estimate (net MET 3.3 for brisk walking, 2.5 for strength) are drafts. Women with heart, joint or other conditions that limit exercise are not screened for yet.
 
 ## Not covered by her answers
 

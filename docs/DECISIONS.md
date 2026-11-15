@@ -129,7 +129,7 @@ IDs D-004 to D-006 are used by proposals in draft [PR #2](https://github.com/tus
 
 ## D-014 — Lead with a 4-week target built from meals plus movement; no targets the plan cannot reach
 
-- **Status:** proposed by Claude; implemented; awaiting the founder's and doctor's decision.
+- **Status:** superseded by D-015. The founder and doctor did not accept the 4-week framing.
 - **Date:** 2026-11-15.
 - **Proposer:** Claude. The founder asked for a dynamic target of about 10% of body weight in 4 weeks, after the doctor asked for an inspiring target such as 10 kg in 5 weeks and for cardio and strength guidance.
 - **Proposal:** Add a movement plan to every paid plan. Lead the result and paywall with a 4-week target and milestones at the pace her calories and movement actually deliver, capped at 1 kg a week. Do not show a target the plan cannot reach.
@@ -138,6 +138,19 @@ IDs D-004 to D-006 are used by proposals in draft [PR #2](https://github.com/tus
 - **Implementation:** `src/domain/energy.ts`, `src/ui/TargetCard.tsx`, the paywall and the plan page. Unit-tested.
 - **Revisit when:** The doctor answers the two open questions (calorie floor, movement minutes), or ad tests show the target framing does not convert.
 - **Supersedes:** the single far-off goal date on the result page.
+
+## D-015 — 12-week transformation: 1,200 kcal floor, an hour of movement a day, no dates
+
+- **Status:** accepted for the parts built; two requests not built and open.
+- **Date:** 2026-11-15.
+- **Decision owner:** Tushar, relaying the doctor.
+- **Decision:** Show a 12-week target with week 4 and 8 milestones and no dates (founder's suggestion: "reach your goal in at most 3 months"). Calorie floor 1,200 kcal and 60 minutes of exercise a day (doctor). The 12-week plan is the default tier. The 7-day money-back guarantee stays.
+- **Not built:** the doctor also offered to go as low as 800 kcal a day and asked for a target of 2 kg a week. Claude declined both for a self-serve plan: 2 kg a week cannot be reached by most users even on 800 kcal, and an unsupervised 800 kcal diet for anyone who pays carries a real risk of harm. A supervised intensive track for BMI 30 and above was offered instead.
+- **Reason:** A near, concrete target sells; the figure must still be what the plan delivers.
+- **Evidence:** Arithmetic and reasoning in [MEDICAL_RULES.md](MEDICAL_RULES.md). No conversion data yet.
+- **Implementation:** `src/domain/energy.ts`, `src/ui/TargetCard.tsx`, the paywall, the plan generator and the plan page. Unit-tested. The BMI 23 threshold for the strict rule and the healthy-minimum goal guard were added by Claude and need the doctor's approval.
+- **Revisit when:** The founder and doctor decide on a supervised intensive track, or ad tests show the framing does not convert.
+- **Supersedes:** D-014, and the doctor's first answers 7 and 8 in D-012.
 
 ## Adding or changing a decision
 

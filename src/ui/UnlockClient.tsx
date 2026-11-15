@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { MEDICATION_ADVISORY } from '@/domain/eligibility';
-import { perDay, type Tier, type TierId } from '@/domain/offer';
+import { DEFAULT_TIER, perDay, type Tier, type TierId } from '@/domain/offer';
 import { Plus, Shield, Tick } from './bits';
 
 interface Props {
@@ -16,9 +16,9 @@ interface Props {
   goalKg: number;
   bmi: number;
   targetKcal: number;
-  fourWeekKg: number;
-  fourWeekLossKg: number;
-  fourWeekDate: string;
+  week12Kg: number;
+  week12LossKg: number;
+  reachesGoal: boolean;
   movementLine: string;
   toLoseKg: number;
   planChanges: string[];
@@ -29,7 +29,6 @@ interface Props {
 }
 
 const rupees = (n: number) => `₹${n.toLocaleString('en-IN')}`;
-const longDate = (iso: string) => new Date(`${iso}T00:00:00Z`).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', timeZone: 'UTC' });
 
 const FAQ = [
   ['Is this a medical diagnosis?', 'No. It is a nutrition plan based on a symptom assessment. Only a doctor and tests can diagnose a condition.'],
@@ -41,7 +40,7 @@ const FAQ = [
 
 export function UnlockClient(props: Props) {
   const router = useRouter();
-  const [selected, setSelected] = useState<TierId>('w4');
+  const [selected, setSelected] = useState<TierId>(DEFAULT_TIER);
   const [left, setLeft] = useState<number>(() => Math.max(0, new Date(props.offerEndsAt).getTime() - Date.now()));
   const [email, setEmail] = useState(props.email);
   const [phone, setPhone] = useState(props.phone);
@@ -117,7 +116,7 @@ export function UnlockClient(props: Props) {
 
       <section style={{ margin: '16px 20px 0', border: '2px solid var(--line)', borderRadius: 22, overflow: 'hidden', display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))' }}>
         <div style={{ height: 40, background: 'var(--card)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 800 }}>Now</div>
-        <div style={{ height: 40, background: 'var(--tint)', color: 'var(--pink)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 800 }}>Your goal</div>
+        <div style={{ height: 40, background: 'var(--tint)', color: 'var(--pink)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 800 }}>In 12 weeks</div>
         <div className="stack" style={{ padding: 16, gap: 12, borderRight: '2px solid var(--line)' }}>
           <div className="stack" style={{ gap: 2 }}>
             <span className="small" style={{ fontWeight: 700 }}>Weight</span>
@@ -131,11 +130,11 @@ export function UnlockClient(props: Props) {
         <div className="stack" style={{ padding: 16, gap: 12 }}>
           <div className="stack" style={{ gap: 2 }}>
             <span className="small" style={{ fontWeight: 700 }}>Weight</span>
-            <span style={{ fontSize: 24, lineHeight: 1.1, fontWeight: 800, color: 'var(--pink)' }}>{props.toLoseKg > 0 ? `${props.goalKg} kg` : 'Hold steady'}</span>
+            <span style={{ fontSize: 24, lineHeight: 1.1, fontWeight: 800, color: 'var(--pink)' }}>{props.toLoseKg > 0 ? `${props.week12Kg} kg` : 'Hold steady'}</span>
           </div>
           <div className="stack" style={{ gap: 2 }}>
-            <span className="small" style={{ fontWeight: 700 }}>{props.fourWeekLossKg > 0 ? `4-week target, by ${longDate(props.fourWeekDate)}` : 'Daily calories'}</span>
-            <span style={{ fontSize: 18, fontWeight: 800 }}>{props.fourWeekLossKg > 0 ? `${props.fourWeekKg} kg` : `${props.targetKcal} kcal`}</span>
+            <span className="small" style={{ fontWeight: 700 }}>{props.week12LossKg <= 0 ? 'Daily calories' : props.reachesGoal ? 'You lose' : 'Then stage 2 to'}</span>
+            <span style={{ fontSize: 18, fontWeight: 800 }}>{props.week12LossKg <= 0 ? `${props.targetKcal} kcal` : props.reachesGoal ? `${props.week12LossKg} kg` : `${props.goalKg} kg`}</span>
           </div>
         </div>
       </section>

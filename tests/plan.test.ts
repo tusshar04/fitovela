@@ -70,10 +70,29 @@ describe('plan generator', () => {
     expect(a.days.map((d) => d.meals.map((m) => m.dish.id))).toEqual(b.days.map((d) => d.meals.map((m) => m.dish.id)));
   });
 
-  it.each([1300, 1430, 1600, 1850])('lands each day near a %i kcal target', (targetKcal) => {
+  it.each([1200, 1300, 1430, 1600, 1850])('lands each day near a %i kcal target', (targetKcal) => {
     const plan = generatePlan({ ...base, targetKcal });
     for (const d of plan.days) {
       expect(Math.abs(d.kcal - targetKcal), `day ${d.day}: ${d.kcal}`).toBeLessThanOrEqual(130);
+    }
+  });
+
+  it('holds the 1,200 kcal day for every diet, cuisine pair and common avoidance', () => {
+    const cases: Partial<PlanInput>[] = [
+      { diet: 'nonveg', cuisines: ['bengali'] },
+      { diet: 'egg', cuisines: ['punjabi', 'gujarati'] },
+      { diet: 'veg', cuisines: ['rajasthani'], avoid: ['dairy'] },
+      { diet: 'veg', cuisines: ['south'], avoid: ['wheat', 'onion_garlic'] },
+      { diet: 'veg', cuisines: ['kerala', 'hyderabadi'], weekOneLighterOn: 'dairy' },
+    ];
+    for (const c of cases) {
+      const plan = generatePlan({ ...base, targetKcal: 1200, ...c });
+      const avgKcal = plan.days.reduce((n, d) => n + d.kcal, 0) / plan.days.length;
+      const avgProtein = plan.days.reduce((n, d) => n + d.protein, 0) / plan.days.length;
+      expect(Math.abs(avgKcal - 1200), JSON.stringify(c)).toBeLessThanOrEqual(80);
+      expect(Math.max(...plan.days.map((d) => d.kcal)), JSON.stringify(c)).toBeLessThanOrEqual(1360);
+      expect(Math.min(...plan.days.map((d) => d.kcal)), JSON.stringify(c)).toBeGreaterThanOrEqual(1100);
+      expect(avgProtein, JSON.stringify(c)).toBeGreaterThanOrEqual(50);
     }
   });
 

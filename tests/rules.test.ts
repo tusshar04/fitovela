@@ -108,61 +108,84 @@ describe('5A and 6A: who can buy', () => {
   });
 });
 
-describe('7C and 8B: calories and pace', () => {
+describe('calories, movement and the 12-week target', () => {
   it('uses Indian BMI cut-offs', () => {
     expect(bmi(metrics)).toBe(27.4);
     expect([18.4, 18.5, 22.9, 23, 24.9, 25].map(bmiBand)).toEqual(['under', 'healthy', 'healthy', 'over', 'over', 'obese']);
   });
 
-  it('never sets calories below BMR', () => {
-    for (const activity of ['sedentary', 'light', 'moderate', 'active'] as const) {
-      for (const m of [metrics, { age: 52, heightCm: 150, weightKg: 58, goalKg: 50 }, { age: 22, heightCm: 175, weightKg: 110, goalKg: 70 }]) {
-        expect(energyPlan(m, activity).targetKcal).toBeGreaterThanOrEqual(bmr(m));
+  const women: Metrics[] = [metrics, { age: 52, heightCm: 150, weightKg: 58, goalKg: 50 }, { age: 22, heightCm: 175, weightKg: 110, goalKg: 70 }, { age: 30, heightCm: 160, weightKg: 56, goalKg: 52 }];
+  const activities = ['sedentary', 'light', 'moderate', 'active'] as const;
+
+  it('never sets calories below 1,200 for women above the healthy BMI range', () => {
+    for (const activity of activities) {
+      for (const m of women.filter((w) => bmi(w) >= 23)) {
+        const e = energyPlan(m, activity);
+        expect(e.strict).toBe(true);
+        expect(e.targetKcal).toBeGreaterThanOrEqual(1200);
       }
     }
   });
 
-  it('caps the shown pace at 1 kg a week', () => {
-    const heavy = energyPlan({ age: 25, heightCm: 180, weightKg: 160, goalKg: 80 }, 'active');
-    expect(heavy.paceKgPerWeek).toBeLessThanOrEqual(1);
+  it('keeps the gentler rule for women already in the healthy range: never below BMR', () => {
+    const m: Metrics = { age: 30, heightCm: 160, weightKg: 56, goalKg: 52 };
+    for (const activity of activities) {
+      const e = energyPlan(m, activity);
+      expect(e.strict).toBe(false);
+      expect(e.targetKcal).toBeGreaterThanOrEqual(bmr(m));
+    }
   });
 
-  it('builds the target from the real deficit: meals plus the movement plan', () => {
-    const now = new Date('2026-11-15T00:00:00Z');
-    const e = energyPlan(metrics, 'sedentary', now);
-    expect(e.targetKcal).toBe(1430);
-    expect(e.mealsOnlyPaceKgPerWeek).toBeCloseTo(0.26, 2);
-    // 45-minute brisk walk six days and 20 minutes of strength three days, for a 72 kg woman.
-    expect(e.movement).toEqual({ walkMinutes: 45, walkDays: 6, strengthMinutes: 20, strengthDays: 3, kcalPerDay: 178 });
-    expect(e.paceKgPerWeek).toBeCloseTo(0.42, 2);
-    expect(e.fourWeekLossKg).toBe(1.7);
-    expect(e.fourWeekKg).toBe(70.3);
-    expect(e.fourWeekDate).toBe('2026-12-13');
-    expect(e.weeksToGoal).toBe(20);
-    expect(e.goalDate).toBe('2027-04-04');
+  it('builds the 12-week target from the real shortfall: meals plus the movement plan', () => {
+    const e = energyPlan(metrics, 'sedentary');
+    expect(e.targetKcal).toBe(1200);
+    expect(e.deficit).toBe(512);
+    // 60-minute brisk walk every day and 20 minutes of strength three days, for a 72 kg woman.
+    expect(e.movement).toEqual({ walkMinutes: 60, walkDays: 7, strengthMinutes: 20, strengthDays: 3, kcalPerDay: 263 });
+    expect(e.mealsOnlyPaceKgPerWeek).toBeCloseTo(0.47, 2);
+    expect(e.paceKgPerWeek).toBeCloseTo(0.7, 2);
+    expect(e.week12Kg).toBe(64);
+    expect(e.week12LossKg).toBe(8);
+    expect(e.reachesGoal).toBe(true);
+    expect(e.weeksToGoal).toBe(12);
   });
 
-  it('never shows a target faster than the calories can deliver, or past her goal', () => {
-    for (const activity of ['sedentary', 'light', 'moderate', 'active'] as const) {
-      for (const m of [metrics, { age: 52, heightCm: 150, weightKg: 58, goalKg: 57 }, { age: 22, heightCm: 175, weightKg: 110, goalKg: 70 }]) {
+  it('makes the 12 weeks stage one when her goal is further than the plan can reach', () => {
+    const e = energyPlan({ age: 35, heightCm: 160, weightKg: 95, goalKg: 65 }, 'light');
+    expect(e.targetKcal).toBe(1220);
+    expect(e.paceKgPerWeek).toBeCloseTo(1.22, 2);
+    expect(e.week12Kg).toBe(80.4);
+    expect(e.reachesGoal).toBe(false);
+  });
+
+  it('never shows a pace faster than the calories and movement deliver, or a target past her goal', () => {
+    for (const activity of activities) {
+      for (const m of women) {
         const e = energyPlan(m, activity);
         const deliverable = ((e.deficit + e.movement.kcalPerDay) * 7) / 7700;
-        expect(e.paceKgPerWeek).toBeLessThanOrEqual(Math.min(1, deliverable) + 0.005);
+        expect(e.paceKgPerWeek).toBeLessThanOrEqual(Math.min(2, deliverable) + 0.005);
         expect(e.paceKgPerWeek).toBeGreaterThanOrEqual(e.mealsOnlyPaceKgPerWeek);
-        expect(e.fourWeekKg).toBeGreaterThanOrEqual(m.goalKg);
+        expect(e.week12Kg).toBeGreaterThanOrEqual(e.goalKg);
       }
     }
+  });
+
+  it('will not work towards a weight below the healthy minimum for her height', () => {
+    const e = energyPlan({ age: 28, heightCm: 160, weightKg: 62, goalKg: 42 }, 'light');
+    expect(e.goalKg).toBe(47.4);
+    expect(e.goalAdjusted).toBe(true);
+    expect(e.week12Kg).toBeGreaterThanOrEqual(47.4);
   });
 
   it('asks already-active women for strength work only', () => {
     expect(energyPlan(metrics, 'active').movement.walkDays).toBe(0);
-    expect(energyPlan(metrics, 'moderate').movement.walkDays).toBe(3);
+    expect(energyPlan(metrics, 'moderate').movement.walkDays).toBe(4);
   });
 
   it('holds weight steady when the goal is not lower', () => {
     const e = energyPlan({ ...metrics, goalKg: 72 }, 'light');
     expect(e.paceKgPerWeek).toBe(0);
-    expect(e.goalDate).toBeNull();
+    expect(e.week12LossKg).toBe(0);
   });
 });
 

@@ -59,7 +59,7 @@ Chosen by the doctor (her answer 1A, [D-012](DECISIONS.md)):
 
 The founder wants the questionnaire to feel like a diagnosis. The product delivers that through structure (sections per body system, signals counting up, follow-up questions that react to her answers, a named type, a report) while the sentence itself says "match".
 
-The weight section leads with a 4-week target and milestones at weeks 4, 8 and 12, built from her meals plus a movement plan (brisk walk and strength sessions). The target is what those actually add up to, capped at 1 kg a week ([D-014](DECISIONS.md)). The doctor asked for a more aggressive target; two open questions to her in [MEDICAL_RULES.md](MEDICAL_RULES.md) would raise it honestly.
+The weight section is a **12-week transformation**: a target weight at week 12 with milestones at weeks 4 and 8, and no dates ([D-015](DECISIONS.md)). It is built from her meals (1,200 kcal a day for most women, on the doctor's instruction) plus an hour of movement a day, and shows what those add up to. If her goal is within reach, the headline is her goal; if not, the 12 weeks are "stage 1". The 12-week plan is the default tier. The doctor also asked for 800 kcal plans and a 2 kg a week target; neither is built, for the reasons in [MEDICAL_RULES.md](MEDICAL_RULES.md).
 
 ## Offer
 

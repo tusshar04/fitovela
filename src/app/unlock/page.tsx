@@ -61,12 +61,12 @@ export default async function UnlockPage() {
       recap={a.recap}
       answerCount={Object.keys(session.answers).length}
       weightKg={a.metrics.weightKg}
-      goalKg={a.metrics.goalKg}
+      goalKg={a.energy.goalKg}
       bmi={a.bmi}
       targetKcal={a.energy.targetKcal}
-      fourWeekKg={a.energy.fourWeekKg}
-      fourWeekLossKg={a.energy.fourWeekLossKg}
-      fourWeekDate={a.energy.fourWeekDate}
+      week12Kg={a.energy.week12Kg}
+      week12LossKg={a.energy.week12LossKg}
+      reachesGoal={a.energy.reachesGoal}
       movementLine={movementSentence(a.energy)}
       toLoseKg={a.energy.toLoseKg}
       planChanges={a.content.planChanges}

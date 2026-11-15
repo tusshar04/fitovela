@@ -44,13 +44,13 @@ First working build. The full funnel runs on localhost: landing, adaptive questi
 | Privacy, terms, refund policy | Placeholder pages. | Written and reviewed. |
 | Medical drafts | Question list, type rules, meal library and copy written by an AI agent. | The doctor's one-time approval ([MEDICAL_RULES.md](MEDICAL_RULES.md)). |
 
-### FTV-005 — target and movement plan (Claude, 2026-11-15, merged)
+### FTV-005 and FTV-006 — movement plan and 12-week target (Claude, 2026-11-15, merged)
 
-After the doctor's feedback on the demo: a movement plan in every paid plan, and a 4-week target with milestones in place of the far-off goal date. A 10%-in-4-weeks target was requested and not built ([D-014](DECISIONS.md), proposed). Two questions to the doctor are open in [MEDICAL_RULES.md](MEDICAL_RULES.md).
+After the doctor's feedback on the demo: a movement plan in every paid plan (now 60 minutes a day), a 1,200 kcal floor above the healthy BMI range, and a 12-week target with no dates, with the 12-week plan as the default tier ([D-015](DECISIONS.md)). She also asked for 800 kcal plans and a 2 kg a week target; neither is built. A supervised "intensive" track is on offer as the way to do 800 kcal; see [MEDICAL_RULES.md](MEDICAL_RULES.md).
 
 ### Exact next step
 
-1. Tushar reviews the build on localhost and decides D-014.
+1. Tushar reviews the build on localhost, and decides with the doctor whether to run a supervised intensive track.
 2. Send the doctor the three drafts in [MEDICAL_RULES.md](MEDICAL_RULES.md) for approval.
 3. Decide the GCP project for deployment (recommended: a new project under the same account as tarot), then a deployment task: Dockerfile, Cloud Run, Firestore, secrets.
 

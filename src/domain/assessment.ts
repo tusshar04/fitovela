@@ -51,7 +51,8 @@ export function buildAssessment(answers: Answers, now: Date = new Date()): Asses
   const levels = areaLevels(counts);
   const result = determineType(answers, markers, counts);
   const activity = (typeof answers.activity === 'string' ? answers.activity : 'sedentary') as Activity;
-  const energy = energyPlan(metrics, activity, now);
+  void now;
+  const energy = energyPlan(metrics, activity);
   const bmiValue = bmi(metrics);
 
   const cuisines = asList(answers.cuisine) as Cuisine[];
@@ -69,7 +70,7 @@ export function buildAssessment(answers: Answers, now: Date = new Date()): Asses
   const signLines: string[] = picked.map((m) => MARKERS[m].label);
   const recap: string[] = [...signLines];
   recap.push(cuisines.length ? `${DIET_LABEL[diet]}, ${cuisineLabels(cuisines)}` : DIET_LABEL[diet]);
-  if (energy.toLoseKg > 0) recap.push(`Your goal: ${metrics.weightKg} kg to ${metrics.goalKg} kg`);
+  if (energy.toLoseKg > 0) recap.push(`Your goal: ${metrics.weightKg} kg to ${energy.goalKg} kg`);
 
   const bloat = answers.bloat_when;
   const weekOneLighterOn = bloat === 'wheat' || bloat === 'dairy' ? bloat : null;
