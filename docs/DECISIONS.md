@@ -190,7 +190,7 @@ IDs D-004 to D-006 are used by proposals in draft [PR #2](https://github.com/tus
 
 ## D-019 — Prices: 399, 599 and 799
 
-- **Status:** accepted and implemented.
+- **Status:** superseded by [D-023](#d-023--prices-199-299-and-399-harder-selling-copy-less-detail-before-she-pays) the same day (the prices only; the 12-week steer stands).
 - **Date:** 2026-11-15.
 - **Decision owner:** Tushar.
 - **Decision:** Launch prices are INR 399 for 1 week, 599 for 4 weeks and 799 for 12 weeks. The 12-week plan is the one everyone should buy: it stays the default and is labelled "Most popular · Best value". The intensive track costs the same as the standard plan.
@@ -238,6 +238,20 @@ IDs D-004 to D-006 are used by proposals in draft [PR #2](https://github.com/tus
 - **Consequences to know:** The paywall headline is now four weeks while the tier to steer everyone to is 12 weeks ([D-019](DECISIONS.md)); watch whether the 4-week tier's share rises. Her target weight still appears in the paywall recap and the folded numbers chart. The doctor's answer 3A named four PCOS types; three are now reachable.
 - **Revisit when:** The doctor rules on the new lines; Meta rejects an ad over the landing page's wording; or the tier mix moves away from 12 weeks.
 - **Supersedes:** the "weight once, on the week 12 stop" part of D-017 and the "Your next 12 weeks" framing of D-016. Narrows answer 3 in D-012.
+
+## D-023 — Prices 199, 299 and 399; harder-selling copy; less detail before she pays
+
+- **Status:** accepted; implemented.
+- **Date:** 2026-11-15.
+- **Decision owner:** Tushar.
+- **Decision:** (1) Launch prices are INR 199 for 1 week, 299 for 4 weeks and 399 for 12 weeks. (2) The timeline sells hard: its lines name the moments she is embarrassed by (sucking her stomach in, loose clothes to cover up, the back row in photos, relatives' comments) and take them away. (3) Before she pays, the pages say only "Your basic movement plan"; the walk and strength details appear in the plan she buys. (4) The paywall says "Protein-rich meals from everyday home food, covering your basic protein needs" in place of "Protein at every meal". (5) The "Birth-control pill" tick box is removed from the medicines question.
+- **Reason:** Founder instructions of 2026-11-15: the new prices; "we need to sell hard ... your goal is to write best marketing lines for the business", with Meta's ad review his to deal with; seeing the exercise detail puts buyers off; and many women read "protein" as protein powder, which carries a taboo.
+- **Evidence:** Founder messages. No conversion data. Standard plans were checked to give 58 g of protein a day or more across diets, cuisines and calorie targets, which is what the "covering" line rests on.
+- **Limits the agent kept:** no "will", guarantee or cure; skin, cycles, dark patches and bloating keep "start to" or "can"; nothing about hair; the doctor's thresholds still decide when a line appears; "the first person asks" shows in week 4 only when her target loss by then is about 2.5 kg. On the intensive track the protein line drops "covering your basic protein needs", because vegetarian days there sit at about 45 g. The folded numbers on the result page still say the target assumes her meals and her movement plan every day.
+- **Implementation:** `src/domain/offer.ts`, `src/domain/journey.ts`, `src/domain/typeContent.ts`, `src/ui/UnlockClient.tsx`, `src/ui/TargetCard.tsx`, `src/app/result/page.tsx`, `src/domain/questions.ts`. The regular prices after the 15-minute window (INR 399, 599 and 799, twice the launch price rounded up to end in 99) were chosen by Claude and are not confirmed by the founder.
+- **Consequences to know:** At INR 399 a sale has to cover the ad cost of every visitor who does not buy; no ad-cost figure exists yet. A buyer learns that the movement plan is 60 minutes a day only after paying; the 7-day refund covers her. The paywall FAQ says "No powders or supplements", which is not true of the intensive plan (a daily multivitamin and, on low-protein days, a scoop of protein).
+- **Revisit when:** Ad tests give a cost per purchase; refund requests cite the movement plan; or the doctor rules on the lines.
+- **Supersedes:** the prices in D-019; the "never tell her that her body looks bad" limit recorded in D-022.
 
 ## Adding or changing a decision
 

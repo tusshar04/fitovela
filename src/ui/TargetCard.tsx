@@ -5,14 +5,6 @@
 import { TARGET_WEEKS, weightAtWeek, type EnergyPlan } from '@/domain/energy';
 import type { Metrics } from '@/domain/types';
 
-export function movementSentence(energy: EnergyPlan): string {
-  const mv = energy.movement;
-  const strength = `${mv.strengthMinutes}-minute strength sessions ${mv.strengthDays} days a week`;
-  if (mv.walkDays === 0) return `${strength}, on top of the activity you already do`;
-  const days = mv.walkDays === 7 ? 'every day' : `${mv.walkDays} days a week`;
-  return `a ${mv.walkMinutes}-minute brisk walk ${days} and ${strength}`;
-}
-
 export function TargetCard({ metrics, energy }: { metrics: Metrics; energy: EnergyPlan }) {
   if (energy.paceKgPerWeek <= 0 || energy.week12LossKg <= 0) return null;
 
@@ -82,7 +74,7 @@ export function TargetCard({ metrics, energy }: { metrics: Metrics; energy: Ener
         </div>
       ) : null}
       <p className="small" style={{ marginTop: 8 }}>
-        This is a target, not a promise. It assumes you follow your meals ({energy.targetKcal.toLocaleString('en-IN')} kcal a day) and your movement plan: {movementSentence(energy)}. Individual results vary.
+        This is a target, not a promise. It assumes you follow your meals ({energy.targetKcal.toLocaleString('en-IN')} kcal a day) and your movement plan every day. Individual results vary.
       </p>
     </div>
   );

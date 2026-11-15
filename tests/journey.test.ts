@@ -32,13 +32,13 @@ describe('journey', () => {
     expect(hers).toContain('something sweet');
     expect(hers).toContain('bloat');
     expect(hers).toContain('waistband');
-    expect(hers).toContain('puffiness');
+    expect(hers).toContain('puffy morning face');
     expect(hers).toContain('chin and jawline');
-    expect(hers).toContain('properly rested');
+    expect(hers).toContain('wake up fresh');
     expect(hers).toContain('dark patches');
 
     const none = text([]);
-    for (const word of ['sweet', 'bloat', 'waistband', 'puffiness', 'jawline', 'Cycles', 'rested', 'patches', 'after lunch']) expect(none).not.toContain(word);
+    for (const word of ['sweet', 'bloat', 'waistband', 'stomach in', 'puffy', 'jawline', 'Cycles', 'fall asleep', 'patches', 'after lunch']) expect(none).not.toContain(word);
   });
 
   it('founder: no weight on any stop, whatever she ticked and whichever plan', () => {
@@ -59,7 +59,7 @@ describe('journey', () => {
   it('doctor: skin on the chin and jawline starts to respond in week 3', () => {
     const stops = buildJourney(['p_acne'], energy, 72);
     const week3 = stops.find((s) => s.week === 3)!;
-    expect(week3.title).toBe('Your skin calms down');
+    expect(week3.title).toBe('Your skin starts to clear');
     expect(week3.lines[0]).toContain('chin and jawline start to');
     expect(stops.filter((s) => s.week !== 3).map(stopText).join(' ')).not.toContain('jawline');
   });
@@ -67,20 +67,22 @@ describe('journey', () => {
   it('doctor: at about 1 kg down her clothes sit looser, on the first stop that reaches it', () => {
     // 0.7 kg a week: 1.4 kg by week 2.
     const fast = buildJourney(['i_belly'], energy, 72);
-    expect(fast[1].title).toBe('Your clothes notice');
-    expect(fast[1].lines[0]).toContain('waistband loosens');
+    expect(fast[1].title).toBe('Your clothes stop fighting you');
+    expect(fast[1].lines[0]).toContain('waistband that dug in all day loosens');
 
     // A slower pace: a woman in the healthy range reaches 1 kg later, so the line moves with it.
     const slowMetrics: Metrics = { age: 30, heightCm: 160, weightKg: 56, goalKg: 52 };
     const slowEnergy = energyPlan(slowMetrics, 'sedentary');
     const slow = buildJourney([], slowEnergy, 56);
-    const withLine = slow.filter((s) => s.lines.some((l) => l.includes('sit looser')));
+    const withLine = slow.filter((s) => s.lines.some((l) => l.includes('stop clinging')));
     expect(withLine).toHaveLength(1);
     expect(withLine[0].week).toBeGreaterThan(2);
     expect(slowEnergy.paceKgPerWeek * withLine[0].week).toBeGreaterThanOrEqual(0.95);
-    expect(slow[1].title).not.toBe('Your clothes notice');
-    // "Getting dressed" is a clothes line too: only once her clothes line has appeared.
-    expect(slow.find((s) => s.week === 4)!.lines.join(' ').includes('Getting dressed')).toBe(withLine[0].week < 4);
+    expect(slow[1].title).not.toBe('Your clothes stop fighting you');
+    // "No more loose clothes to cover up" is a clothes line too: only once her clothes line has appeared.
+    const week4 = slow.find((s) => s.week === 4)!;
+    expect(week4.lines.join(' ').includes('loose clothes')).toBe(withLine[0].week <= 4);
+    expect(week4.title).toBe(withLine[0].week <= 4 ? 'You stop hiding' : 'You feel like yourself again');
   });
 
   it('doctor: no dress-size claim anywhere', () => {
@@ -90,8 +92,8 @@ describe('journey', () => {
   it('week 12 is about how she lives, not a target, even when her goal is further away', () => {
     const big: Metrics = { age: 35, heightCm: 160, weightKg: 95, goalKg: 65 };
     const stops = buildJourney([], energyPlan(big, 'light'), 95);
-    expect(stops[5].title).toBe('Comfortable in your own skin');
-    expect(stops[5].lines.join(' ')).toContain('not on a diet any more');
+    expect(stops[5].title).toBe('You dress to be seen');
+    expect(stops[5].lines.join(' ')).toContain('the outfit you like');
   });
 
   it('doctor: cycles are mentioned only for late or skipped periods and only once 5% of her weight is off', () => {
@@ -104,9 +106,18 @@ describe('journey', () => {
     expect(buildJourney(['p_cycle'], energy, 72).slice(0, 4).map(stopText).join(' ')).not.toMatch(/cycles/i);
   });
 
+  it('"someone asks" comes in week 4 only when about 2.5 kg is off by then, else other people wait for week 8', () => {
+    // 0.7 kg a week: 2.8 kg by week 4.
+    expect(buildJourney([], energy, 72)[3].lines).toContain('The first person asks what you have been doing.');
+    const slowEnergy = energyPlan({ age: 30, heightCm: 160, weightKg: 56, goalKg: 52 }, 'sedentary');
+    expect(slowEnergy.paceKgPerWeek * 4).toBeLessThan(2.5);
+    expect(buildJourney([], slowEnergy, 56)[3].lines.join(' ')).not.toContain('first person');
+  });
+
   it('drops the clothes and "other people" lines when she is not trying to lose', () => {
     const steady = energyPlan({ ...metrics, goalKg: 72 }, 'light');
-    expect(text(['i_cravings', 'i_belly'], steady)).not.toMatch(/looser|waistband|Getting dressed|asking what|hide you/);
+    expect(text(['i_cravings', 'i_belly'], steady)).not.toMatch(/clinging|waistband|loose clothes|photos|first person|relatives|outfit|Weddings/);
+    expect(buildJourney(['i_cravings'], steady, 72)[5].lines).toEqual(['You are not on a diet. This is simply how you eat now.']);
     expect(text(['i_cravings'], steady)).toContain('something sweet');
   });
 
@@ -116,6 +127,7 @@ describe('journey', () => {
     for (const stop of buildJourney(ALL_MARKERS, energy, 72)) {
       for (const line of stop.lines) {
         if (/jawline|Cycles|patches/.test(line)) expect(line).toMatch(/start to|\bcan\b/);
+        if (/bloat/.test(line)) expect(line).toMatch(/starts to/);
       }
     }
   });

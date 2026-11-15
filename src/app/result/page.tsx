@@ -153,7 +153,7 @@ export default async function ResultPage() {
                 ['Lunch', 'Built for your type and goal'],
                 ['Dinner', 'With two swaps for each'],
                 ['Daily calories', `${energy.targetKcal.toLocaleString('en-IN')} kcal, set for you`],
-                ['Movement plan', 'Your walk and strength days'],
+                ['Movement', 'Your basic movement plan'],
               ].map(([k, v]) => (
                 <div key={k} className="locked-row">
                   <b>{k}</b>

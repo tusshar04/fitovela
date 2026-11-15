@@ -15,6 +15,13 @@ export interface TypeContent {
   planChanges: [string, string, string];
 }
 
+// Founder, 2026-11-15: many women read "protein" as protein powder. Say the meals are
+// protein-rich everyday food that cover basic protein needs. Standard plans give 58 g
+// a day or more (checked across diets, cuisines and calorie targets on 2026-11-15).
+export const PROTEIN_LINE = 'Protein-rich meals from everyday home food, covering your basic protein needs';
+// Intensive vegetarian days sit at about 45 g, so the paywall drops the "covering" claim there.
+export const PROTEIN_LINE_INTENSIVE = 'Protein-rich light meals from everyday home food';
+
 export const TYPE_CONTENT: Record<TypeId, TypeContent> = {
   pcos_insulin: {
     name: 'Insulin-resistant',
@@ -28,7 +35,7 @@ export const TYPE_CONTENT: Record<TypeId, TypeContent> = {
     ],
     planChanges: [
       'Slow-digesting swaps for rice and roti, not a ban on them',
-      'Protein at every meal to soften the sugar spike',
+      PROTEIN_LINE,
       'Five regular meals so you are never running on empty',
     ],
   },
@@ -45,7 +52,7 @@ export const TYPE_CONTENT: Record<TypeId, TypeContent> = {
     planChanges: [
       'More turmeric, ginger, greens and millets through the week',
       'A lighter first week on the foods you flagged, so you can see what changes',
-      'Protein at every meal, with no food group banned',
+      PROTEIN_LINE,
     ],
   },
   pcos_adrenal: {
@@ -76,7 +83,7 @@ export const TYPE_CONTENT: Record<TypeId, TypeContent> = {
     ],
     planChanges: [
       'Slow-digesting swaps for rice and roti, not a ban on them',
-      'Protein at every meal to soften the sugar spike',
+      PROTEIN_LINE,
       'Five regular meals so you are never running on empty',
     ],
   },
@@ -109,7 +116,7 @@ export const TYPE_CONTENT: Record<TypeId, TypeContent> = {
     planChanges: [
       'More turmeric, ginger, greens and millets through the week',
       'A lighter first week on the foods you flagged, so you can see what changes',
-      'Protein at every meal, with no food group banned',
+      PROTEIN_LINE,
     ],
   },
   routine: {
@@ -125,7 +132,7 @@ export const TYPE_CONTENT: Record<TypeId, TypeContent> = {
     planChanges: [
       'A fixed rhythm of five meals, planned for the whole week',
       'Portions in katoris and roti counts, so there is no guessing',
-      'Protein at every meal to keep you full for longer',
+      PROTEIN_LINE,
     ],
   },
 };

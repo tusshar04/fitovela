@@ -7,7 +7,6 @@ import { offerEndsAt, TIER_ORDER, TIERS } from '@/domain/offer';
 import { activeProvider } from '@/server/payments';
 import { currentSession, logEvent, saveSession } from '@/server/session';
 import { Logo } from '@/ui/bits';
-import { movementSentence } from '@/ui/TargetCard';
 import { UnlockClient } from '@/ui/UnlockClient';
 
 export const dynamic = 'force-dynamic';
@@ -61,7 +60,6 @@ export default async function UnlockPage() {
       recap={a.recap}
       answerCount={Object.keys(session.answers).length}
       targetKcal={a.energy.targetKcal}
-      movementLine={movementSentence(a.energy)}
       journey={a.journey}
       planChanges={a.content.planChanges}
       intensive={a.intensive.blocks.length === 0 ? { targetKcal: a.intensive.energy.targetKcal, journey: a.intensive.journey } : null}

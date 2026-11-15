@@ -49,11 +49,15 @@ The doctor's three rulings on the timeline are applied (skin at week 3, cycles l
 
 ### FTV-010 and FTV-011 — intensive track, automatic; new prices (Claude, 2026-11-15, merged)
 
-Women at BMI 30 and above can choose an 800 to 1,000 kcal intensive plan on the paywall ([D-018](DECISIONS.md)). On the founder's instruction it is fully automatic ([D-020](DECISIONS.md)): it opens on payment, weekly check-ins open each week, and a stop sign moves her to the standard plan. The first build's clinician review and `/review` page are removed. Prices are now INR 399, 599 and 799 ([D-019](DECISIONS.md)). The clinical settings and 31 light plates are drafts: nine points for the doctor are in [MEDICAL_RULES.md](MEDICAL_RULES.md). Self-review only; run end to end on localhost.
+Women at BMI 30 and above can choose an 800 to 1,000 kcal intensive plan on the paywall ([D-018](DECISIONS.md)). On the founder's instruction it is fully automatic ([D-020](DECISIONS.md)): it opens on payment, weekly check-ins open each week, and a stop sign moves her to the standard plan. The first build's clinician review and `/review` page are removed. Prices were set to INR 399, 599 and 799 ([D-019](DECISIONS.md)); they changed again in FTV-016. The clinical settings and 31 light plates are drafts: nine points for the doctor are in [MEDICAL_RULES.md](MEDICAL_RULES.md). Self-review only; run end to end on localhost.
 
 ### FTV-015 — first-month timeline, no weight on it, pill question removed (Claude, 2026-11-15, merged)
 
 On the founder's instruction, relaying the doctor's view that the pages undersold ([D-022](DECISIONS.md)): the timeline is now "Your first 4 weeks", written to speak to what she is self-conscious about; weeks 8 and 12 are under "Show weeks 8 and 12"; no stop mentions weight. The birth-control pill question and the post-pill type are removed. The new lines are drafts listed for the doctor in [MEDICAL_RULES.md](MEDICAL_RULES.md). Self-review only; no independent reviewer was available.
+
+### FTV-016 — prices 199/299/399, harder copy, less detail before paying (Claude, 2026-11-15, merged)
+
+Founder instructions ([D-023](DECISIONS.md)): new prices; the timeline lines rewritten to sell hard; the paywall and report say only "Your basic movement plan"; "Protein-rich meals from everyday home food" in place of "Protein at every meal"; the "Birth-control pill" tick box removed. Open point: the paywall FAQ says "No powders or supplements", which is not true of the intensive plan. Self-review only; no independent reviewer was available.
 
 ### Exact next step
 

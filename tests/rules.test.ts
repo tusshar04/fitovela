@@ -5,7 +5,7 @@ import { buildAssessment } from '@/domain/assessment';
 import { checkEligibility } from '@/domain/eligibility';
 import { bmi, bmiBand, bmr, energyPlan } from '@/domain/energy';
 import { adaptation, buildSteps, isComplete, questionSteps } from '@/domain/flow';
-import { isLaunchPriceLive, priceFor } from '@/domain/offer';
+import { isLaunchPriceLive, priceFor, TIER_ORDER, TIERS } from '@/domain/offer';
 import { QUESTIONS } from '@/domain/questions';
 import { areaCounts, levelFor, markersFrom } from '@/domain/scoring';
 import { determineType } from '@/domain/typing';
@@ -61,6 +61,7 @@ describe('3A: the PCOS types (post-pill removed by the founder), and the non-PCO
 
   it('founder: no pill question and no post-pill type; an old stored pill answer is ignored', () => {
     expect(QUESTIONS.map((q) => q.id)).not.toContain('pill');
+    expect(QUESTIONS.find((q) => q.id === 'meds')!.options!.map((o) => o.id)).toEqual(['metformin', 'thyroid_tablets', 'other', 'none']);
     expect(typeOf({ ...pcosInsulin, pill: 'yes_worse' })).toBe('pcos_insulin');
   });
 
@@ -225,8 +226,10 @@ describe('adaptive questionnaire', () => {
 describe('launch price window', () => {
   const start = '2026-11-15T10:00:00.000Z';
   it('charges the launch price inside 15 minutes and the regular price after', () => {
-    expect(priceFor('w4', start, new Date('2026-11-15T10:14:59Z'))).toBe(599);
-    expect(priceFor('w4', start, new Date('2026-11-15T10:15:00Z'))).toBe(1199);
+    expect(priceFor('w4', start, new Date('2026-11-15T10:14:59Z'))).toBe(299);
+    expect(priceFor('w4', start, new Date('2026-11-15T10:15:00Z'))).toBe(599);
+    expect(TIER_ORDER.map((id) => TIERS[id].launch)).toEqual([199, 299, 399]);
+    expect(TIER_ORDER.map((id) => TIERS[id].regular)).toEqual([399, 599, 799]);
     expect(isLaunchPriceLive(undefined)).toBe(false);
   });
 });

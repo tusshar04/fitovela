@@ -6,6 +6,7 @@ import { SUPPORT_EMAIL } from '@/domain/company';
 import { MEDICATION_ADVISORY } from '@/domain/eligibility';
 import { FIRST_MONTH_WEEKS, JOURNEY_FOOTNOTE, type JourneyStop } from '@/domain/journey';
 import { DEFAULT_TIER, perDay, type Tier, type TierId } from '@/domain/offer';
+import { PROTEIN_LINE, PROTEIN_LINE_INTENSIVE } from '@/domain/typeContent';
 import { JourneyTimeline } from './JourneyCard';
 import { Plus, Shield, Tick } from './bits';
 
@@ -16,7 +17,6 @@ interface Props {
   recap: string[];
   answerCount: number;
   targetKcal: number;
-  movementLine: string;
   journey: JourneyStop[];
   planChanges: string[];
   /** Present only when the rules allow her to be offered the 800 to 1,000 kcal track. */
@@ -44,6 +44,8 @@ export function UnlockClient(props: Props) {
   const onIntensive = track === 'intensive' && props.intensive !== null;
   const kcal = (onIntensive ? props.intensive!.targetKcal : props.targetKcal).toLocaleString('en-IN');
   const journey = onIntensive ? props.intensive!.journey : props.journey;
+  // The intensive day is three light meals and a snack, so lines about five meals do not apply to it.
+  const planChanges = onIntensive ? props.planChanges.filter((l) => !/\bfive\b/i.test(l)).map((l) => (l === PROTEIN_LINE ? PROTEIN_LINE_INTENSIVE : l)) : props.planChanges;
   const [left, setLeft] = useState<number>(() => Math.max(0, new Date(props.offerEndsAt).getTime() - Date.now()));
   const [email, setEmail] = useState(props.email);
   const [phone, setPhone] = useState(props.phone);
@@ -284,7 +286,7 @@ export function UnlockClient(props: Props) {
           ))}
         </div>
         <div className="stack" style={{ gap: 12, marginTop: 4 }}>
-          {[onIntensive ? `Every day planned: 3 light meals and a snack, about ${kcal} kcal` : `Every day planned: 5 meals, about ${kcal} kcal, in your own cuisine`, ...(onIntensive ? ['A short check-in each week before the next week opens'] : []), 'Two swaps for every single meal', 'A grocery list for each week', `Your movement plan: ${props.movementLine}`, 'Sent to your email, with a login to come back any time', ...props.planChanges].map((line) => (
+          {[onIntensive ? `Every day planned: 3 light meals and a snack, about ${kcal} kcal` : `Every day planned: 5 meals, about ${kcal} kcal, in your own cuisine`, ...(onIntensive ? ['A short check-in each week before the next week opens'] : []), 'Two swaps for every single meal', 'A grocery list for each week', 'Your basic movement plan', 'Sent to your email, with a login to come back any time', ...planChanges].map((line) => (
             <div key={line} className="line-item top" style={{ fontSize: 15 }}>
               <Tick />
               <span>{line}</span>

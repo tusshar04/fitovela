@@ -367,7 +367,6 @@ export const QUESTIONS: Question[] = [
     options: [
       { id: 'metformin', label: 'Metformin' },
       { id: 'thyroid_tablets', label: 'Thyroid tablets' },
-      { id: 'pill', label: 'Birth-control pill' },
       { id: 'other', label: 'Another prescription medicine' },
       NONE,
     ],
