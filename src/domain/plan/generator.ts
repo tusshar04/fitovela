@@ -3,6 +3,7 @@
 // no food group banned. Calories follow energy.ts (never below BMR).
 
 import type { MovementPlan } from '../energy';
+import type { JourneyStop } from '../journey';
 import type { TypeId } from '../typing';
 import { MEALS } from './meals';
 import type { AvoidTag, Cuisine, Diet, Ingredient, Meal, MealSlot, MealTag } from './types';
@@ -67,6 +68,8 @@ export interface Plan {
   generatedAt: string;
   /** Walk and strength prescription. Absent on plans made before it existed. */
   movement?: MovementPlan;
+  /** Week-by-week expectations shown on the plan. Absent on plans made before it existed. */
+  journey?: JourneyStop[];
 }
 
 export interface PlanInput {

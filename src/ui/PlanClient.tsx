@@ -87,6 +87,8 @@ export function PlanClient({ plan, token, tierName, typeName, justBought, email,
   const week = Math.ceil(day / 7);
   const weekDays = plan.days.slice((week - 1) * 7, week * 7);
   const today = plan.days[day - 1];
+  // The latest journey stop she has reached.
+  const thisWeek = (plan.journey ?? []).filter((s) => s.week <= week).pop();
 
   const shown = today.meals.map((m) => {
     const options: PlanDish[] = [m.dish, ...m.swaps];
@@ -128,6 +130,14 @@ export function PlanClient({ plan, token, tierName, typeName, justBought, email,
 
       {view === 'day' ? (
         <>
+          {thisWeek ? (
+            <div className="soft stack" style={{ margin: '14px 20px 0', gap: 2, padding: '12px 16px' }}>
+              <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.08em', color: 'var(--pink)' }}>
+                {thisWeek.week === week ? 'THIS WEEK' : `SINCE WEEK ${thisWeek.week}`} · {thisWeek.title.toUpperCase()}
+              </span>
+              <span style={{ fontSize: 14, fontWeight: 600 }}>{thisWeek.lines[0]}</span>
+            </div>
+          ) : null}
           <div style={{ padding: '14px 20px 0' }}>
             <h1 style={{ fontSize: 28, lineHeight: 1.1, fontWeight: 800, letterSpacing: '-0.02em' }}>
               Today&apos;s <span className="accent">plate</span>

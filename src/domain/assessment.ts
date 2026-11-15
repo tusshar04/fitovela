@@ -2,6 +2,7 @@
 
 import { checkEligibility, type Eligibility } from './eligibility';
 import { bmi, bmiBand, energyPlan, type Activity, type BmiBand, type EnergyPlan } from './energy';
+import { buildJourney, type JourneyStop } from './journey';
 import { MARKERS, optionLabel, type MarkerId } from './questions';
 import { areaCounts, areaLevels, markersFrom, stressCount } from './scoring';
 import { TYPE_CONTENT, type TypeContent } from './typeContent';
@@ -29,6 +30,8 @@ export interface Assessment {
   recap: string[];
   /** Which food week one goes lighter on, from the bloating follow-up. */
   weekOneLighterOn: 'wheat' | 'dairy' | null;
+  /** What she is likely to feel and see, week by week, from her own signs. */
+  journey: JourneyStop[];
 }
 
 const DIET_LABEL: Record<Diet, string> = { veg: 'Vegetarian', egg: 'Vegetarian with eggs', nonveg: 'Non-vegetarian' };
@@ -93,5 +96,6 @@ export function buildAssessment(answers: Answers, now: Date = new Date()): Asses
     avoid,
     recap,
     weekOneLighterOn,
+    journey: buildJourney(markers, energy, metrics.weightKg),
   };
 }

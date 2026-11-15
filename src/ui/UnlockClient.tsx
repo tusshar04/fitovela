@@ -3,7 +3,9 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { MEDICATION_ADVISORY } from '@/domain/eligibility';
+import { JOURNEY_FOOTNOTE, type JourneyStop } from '@/domain/journey';
 import { DEFAULT_TIER, perDay, type Tier, type TierId } from '@/domain/offer';
+import { JourneyTimeline } from './JourneyCard';
 import { Plus, Shield, Tick } from './bits';
 
 interface Props {
@@ -20,6 +22,7 @@ interface Props {
   week12LossKg: number;
   reachesGoal: boolean;
   movementLine: string;
+  journey: JourneyStop[];
   toLoseKg: number;
   planChanges: string[];
   medicationAdvisory: boolean;
@@ -158,7 +161,15 @@ export function UnlockClient(props: Props) {
         </div>
       </section>
 
-      <section className="stack" style={{ padding: '18px 20px 0', gap: 10 }}>
+      <section className="stack" style={{ padding: '24px 20px 0', gap: 14 }}>
+        <h2 className="h2">
+          Your next <span className="accent">12 weeks</span>
+        </h2>
+        <JourneyTimeline stops={props.journey} compact />
+        <p className="small">{JOURNEY_FOOTNOTE}</p>
+      </section>
+
+      <section className="stack" style={{ padding: '22px 20px 0', gap: 10 }}>
         {props.tiers.map((t) => {
           const on = t.id === selected;
           const price = priceOf(t);

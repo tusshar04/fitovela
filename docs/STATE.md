@@ -48,6 +48,10 @@ First working build. The full funnel runs on localhost: landing, adaptive questi
 
 After the doctor's feedback on the demo: a movement plan in every paid plan (now 60 minutes a day), a 1,200 kcal floor above the healthy BMI range, and a 12-week target with no dates, with the 12-week plan as the default tier ([D-015](DECISIONS.md)). She also asked for 800 kcal plans and a 2 kg a week target; neither is built. A supervised "intensive" track is on offer as the way to do 800 kcal; see [MEDICAL_RULES.md](MEDICAL_RULES.md).
 
+### FTV-007 — week-by-week journey (Claude, 2026-11-15, merged)
+
+The result, paywall and plan now lead with a personalised "Your next 12 weeks" timeline; weights are supporting tags and the chart is folded under "See the numbers" ([D-016](DECISIONS.md)). The timeline lines are a draft for the doctor.
+
 ### Exact next step
 
 1. Tushar reviews the build on localhost, and decides with the doctor whether to run a supervised intensive track.

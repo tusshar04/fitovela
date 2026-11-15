@@ -7,7 +7,8 @@ import { SUGGESTED_TESTS } from '@/domain/typeContent';
 import { STRENGTH_LABEL } from '@/domain/typing';
 import { AREAS, AREA_LABEL, LEVEL_LABEL } from '@/domain/types';
 import { currentSession, logEvent } from '@/server/session';
-import { Bars, Lock, Logo } from '@/ui/bits';
+import { Bars, Lock, Logo, Plus } from '@/ui/bits';
+import { JourneyCard } from '@/ui/JourneyCard';
 import { TargetCard } from '@/ui/TargetCard';
 
 export const dynamic = 'force-dynamic';
@@ -92,6 +93,8 @@ export default async function ResultPage() {
           ))}
         </section>
 
+        <JourneyCard stops={a.journey} />
+
         <section className="soft stack" style={{ borderRadius: 22, padding: 18, gap: 12, marginTop: 6 }}>
           <div className="row between" style={{ gap: 12 }}>
             <div className="stack">
@@ -118,7 +121,15 @@ export default async function ResultPage() {
           <p className="small">For Indian adults the healthy range is 18.5 to 22.9.</p>
         </section>
 
-        <TargetCard metrics={metrics} energy={energy} />
+        {energy.week12LossKg > 0 ? (
+          <details className="numbers">
+            <summary>
+              <span>See the numbers, week by week</span>
+              <Plus />
+            </summary>
+            <TargetCard metrics={metrics} energy={energy} />
+          </details>
+        ) : null}
 
         {a.eligibility.eligible ? (
           <>

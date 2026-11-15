@@ -152,6 +152,18 @@ IDs D-004 to D-006 are used by proposals in draft [PR #2](https://github.com/tus
 - **Revisit when:** The founder and doctor decide on a supervised intensive track, or ad tests show the framing does not convert.
 - **Supersedes:** D-014, and the doctor's first answers 7 and 8 in D-012.
 
+## D-016 — Sell the week-by-week experience; the numbers support it
+
+- **Status:** accepted for the approach; the wording is a draft.
+- **Date:** 2026-11-15.
+- **Decision owner:** Tushar.
+- **Decision:** Lead the result and paywall with a week-by-week timeline of what she is likely to feel and see ("week 1 you feel it, week 2 your clothes notice…"), personalised from her own answers. Weights become small tags; the chart is folded away. Lines are worded as likely, not promised. Price, the 1,200 kcal and hour-a-day requirement, and the not-a-diagnosis line stay visible.
+- **Reason:** The founder judged that a weight figure alone will not sell and asked for a presentation that motivates. Her own complaints, answered week by week, are more persuasive than a number and stay truthful.
+- **Evidence:** Founder instruction on 2026-11-15. The individual claims are plausible for a low-GI, protein-forward plan with daily walking but have not been reviewed by the doctor.
+- **Implementation:** `src/domain/journey.ts`, `src/ui/JourneyCard.tsx`, result page, paywall and plan page. Unit-tested, including a check that no line uses "will", "guarantee" or "cure".
+- **Revisit when:** The doctor reviews the lines, or real customer feedback shows which changes women actually report.
+- **Supersedes:** nothing; it sits on top of D-015.
+
 ## Adding or changing a decision
 
 Assign the next stable ID and record status, date, owner, choice, reason, evidence, implementation status, and revisit conditions. Identify who accepted a decision; do not represent an agent suggestion as founder approval.

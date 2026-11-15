@@ -43,6 +43,7 @@ export async function POST(req: Request) {
     medicationAdvisory: assessment.eligibility.medicationAdvisory,
     movement: assessment.energy.movement,
   });
+  order.plan.journey = assessment.journey;
   order.status = 'paid';
   order.paidAt = new Date().toISOString();
   order.planToken = newId(24);

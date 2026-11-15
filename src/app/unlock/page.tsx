@@ -68,6 +68,7 @@ export default async function UnlockPage() {
       week12LossKg={a.energy.week12LossKg}
       reachesGoal={a.energy.reachesGoal}
       movementLine={movementSentence(a.energy)}
+      journey={a.journey}
       toLoseKg={a.energy.toLoseKg}
       planChanges={a.content.planChanges}
       medicationAdvisory={a.eligibility.medicationAdvisory}
