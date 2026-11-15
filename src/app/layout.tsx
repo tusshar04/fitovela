@@ -1,9 +1,17 @@
 import type { Metadata, Viewport } from 'next';
-import { Instrument_Serif, Plus_Jakarta_Sans } from 'next/font/google';
+import localFont from 'next/font/local';
 import './globals.css';
 
-const sans = Plus_Jakarta_Sans({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800'], variable: '--font-sans', display: 'swap' });
-const serif = Instrument_Serif({ subsets: ['latin'], weight: '400', style: ['normal', 'italic'], variable: '--font-serif', display: 'swap' });
+// Fonts are bundled in src/fonts so a build never depends on downloading them.
+const sans = localFont({ src: '../fonts/plus-jakarta-sans-latin-wght-normal.woff2', weight: '200 800', variable: '--font-sans', display: 'swap' });
+const serif = localFont({
+  src: [
+    { path: '../fonts/instrument-serif-latin-400-normal.woff2', weight: '400', style: 'normal' },
+    { path: '../fonts/instrument-serif-latin-400-italic.woff2', weight: '400', style: 'italic' },
+  ],
+  variable: '--font-serif',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: 'Fitovela · Free symptom assessment for women',
