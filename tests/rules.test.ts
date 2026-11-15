@@ -6,6 +6,7 @@ import { checkEligibility } from '@/domain/eligibility';
 import { bmi, bmiBand, bmr, energyPlan } from '@/domain/energy';
 import { adaptation, buildSteps, isComplete, questionSteps } from '@/domain/flow';
 import { isLaunchPriceLive, priceFor } from '@/domain/offer';
+import { QUESTIONS } from '@/domain/questions';
 import { areaCounts, levelFor, markersFrom } from '@/domain/scoring';
 import { determineType } from '@/domain/typing';
 import type { Answers, Metrics } from '@/domain/types';
@@ -18,7 +19,6 @@ const pcosInsulin: Answers = {
   struggle: 'eat_little',
   cycle: 'skip',
   hormone_signs: ['acne', 'hair_thin'],
-  pill: 'no',
   insulin_signs: ['cravings', 'belly', 'crash'],
   cravings_time: 'within_hour',
   family: 'yes',
@@ -56,11 +56,12 @@ describe('4A: simple count scoring', () => {
   });
 });
 
-describe('3A: the four PCOS types, and the non-PCOS types', () => {
+describe('3A: the PCOS types (post-pill removed by the founder), and the non-PCOS types', () => {
   it('insulin-resistant PCOS', () => expect(typeOf(pcosInsulin)).toBe('pcos_insulin'));
 
-  it('post-pill PCOS when signs followed stopping the pill', () => {
-    expect(typeOf({ ...pcosInsulin, pill: 'yes_worse' })).toBe('pcos_postpill');
+  it('founder: no pill question and no post-pill type; an old stored pill answer is ignored', () => {
+    expect(QUESTIONS.map((q) => q.id)).not.toContain('pill');
+    expect(typeOf({ ...pcosInsulin, pill: 'yes_worse' })).toBe('pcos_insulin');
   });
 
   it('inflammatory PCOS when inflammation leads', () => {
@@ -190,24 +191,22 @@ describe('calories, movement and the 12-week target', () => {
 });
 
 describe('adaptive questionnaire', () => {
-  it('adds the pill and cravings follow-ups only when her answers call for them', () => {
+  it('adds the cravings follow-up only when her answers call for it', () => {
     const ids = (a: Answers) => questionSteps(a).map((q) => q.id);
-    expect(ids(pcosInsulin)).toContain('pill');
     expect(ids(pcosInsulin)).toContain('cravings_time');
     const none: Answers = { ...pcosInsulin, cycle: 'regular', hormone_signs: ['none'], insulin_signs: ['none'] };
-    expect(ids(none)).not.toContain('pill');
     expect(ids(none)).not.toContain('cravings_time');
   });
 
-  it('asks the menopause follow-up, not the pill one, when periods have stopped', () => {
-    const ids = questionSteps({ ...pcosInsulin, cycle: 'stopped' }).map((q) => q.id);
-    expect(ids).toContain('meno');
-    expect(ids).not.toContain('pill');
+  it('asks the menopause follow-up only when periods have stopped', () => {
+    const ids = (a: Answers) => questionSteps(a).map((q) => q.id);
+    expect(ids({ ...pcosInsulin, cycle: 'stopped' })).toContain('meno');
+    expect(ids(pcosInsulin)).not.toContain('meno');
   });
 
   it('reports true skip and add counts once the answers are in', () => {
-    expect(adaptation({ struggle: 'cravings', cycle: 'regular', hormone_signs: ['none'] })).toEqual({ skipped: 2, added: 0 });
-    expect(adaptation({ struggle: 'cravings', cycle: 'skip', hormone_signs: ['acne'] })).toEqual({ skipped: 1, added: 1 });
+    expect(adaptation({ struggle: 'cravings', cycle: 'regular', hormone_signs: ['none'] })).toEqual({ skipped: 1, added: 0 });
+    expect(adaptation({ struggle: 'cravings', cycle: 'stopped', hormone_signs: ['acne'] })).toEqual({ skipped: 0, added: 1 });
   });
 
   it('places the two interstitial screens', () => {

@@ -12,7 +12,7 @@ Answer code as sent: `1A 2A 3A 4A 5A 6A 7C 8B 9B 10A 11C 12A`. Relayed by Tushar
 | --- | --- | --- | --- |
 | 1 | Result wording | "Your symptoms match [type]." Not a diagnosis; confirm with tests. | `src/app/result/page.tsx`, `src/domain/typeContent.ts` |
 | 2 | Areas reported | All four: PCOS / PCOD signs, insulin resistance, inflammation, thyroid. | `src/domain/questions.ts` (`MARKERS`) |
-| 3 | PCOS types named | Four: insulin-resistant, inflammatory, post-pill, adrenal. | `src/domain/typing.ts` |
+| 3 | PCOS types named | Four: insulin-resistant, inflammatory, post-pill, adrenal. **Post-pill removed by the founder on 2026-11-15** ([D-022](DECISIONS.md)); three remain. | `src/domain/typing.ts` |
 | 4 | Scoring | Simple count per area: 0 to 1 signs Low, 2 to 3 Moderate, 4 or more High. | `src/domain/scoring.ts` (`levelFor`) |
 | 5 | Not sold a plan automatically | Pregnant or breastfeeding, under 18, type 1 diabetes or on insulin, kidney disease, eating-disorder history, BMI under 18.5. | `src/domain/eligibility.ts` |
 | 6 | On metformin or thyroid tablets | Can buy. Plan says: show this to your doctor, do not change your dose. | `src/domain/eligibility.ts` (`MEDICATION_ADVISORY`) |
@@ -117,20 +117,21 @@ Defined in `src/domain/questions.ts`. Markers per area:
 - **Thyroid (6):** feeling cold when others do not; constipation; dry skin or brittle nails; hair fall all over; tired after a full night of sleep; a diagnosed thyroid problem.
 - **Stress (4, used only to pick the adrenal type):** under six hours of sleep; tired but wired at night; high stress most days; waking up tired.
 
-Follow-up questions (pill history, craving timing, bloating trigger, menopause changes, thyroid dose stability) appear only when an earlier answer calls for them. The "Noted" explanations shown after follow-ups are also drafts.
+Follow-up questions (craving timing, bloating trigger, menopause changes, thyroid dose stability) appear only when an earlier answer calls for them. The "Noted" explanations shown after follow-ups are also drafts.
 
 ### 2. Rules that pick the type
 
 Defined in `src/domain/typing.ts`. An area needs at least 2 signs (Moderate) to name a type.
 
 - PCOS signs at Moderate or above:
-  - signs started or worsened after stopping the pill: **post-pill PCOS**
-  - otherwise insulin at Moderate or above and not below inflammation: **insulin-resistant PCOS**
+  - insulin at Moderate or above and not below inflammation: **insulin-resistant PCOS**
   - otherwise inflammation at Moderate or above: **inflammatory PCOS**
   - otherwise 2 or more stress signs: **adrenal PCOS**
   - otherwise: **insulin-resistant PCOS** as the default
 - PCOS signs Low: the highest of insulin, thyroid, inflammation names the type if it reaches Moderate (**insulin-resistance**, **slow-thyroid**, **inflammation**). A diagnosed thyroid problem wins ties.
 - Nothing reaches Moderate: **routine-led type** ("no strong hormonal pattern").
+
+The question "Did you stop a birth-control pill in the last 12 months?" and the **post-pill PCOS** type were removed on 2026-11-15 on the founder's instruction: few women in India use the pill for birth control, so the page did not apply to this audience. A woman who would have been typed post-pill now falls to one of the three remaining PCOS types. "Birth-control pill" is still one of the tick boxes on the medicines safety check.
 
 "Markers matched" is her signs out of all markers in the areas behind her type. "Strong match" is 60% or more, "Clear match" 40% or more, otherwise "Early signs".
 
@@ -145,19 +146,20 @@ Defined in `src/domain/typing.ts`. An area needs at least 2 signs (Moderate) to 
   - Dishes with more than six ingredients list only the main ones, so the grocery list can miss small items such as a little onion, tomato or coconut.
 - Generator rules: `src/domain/plan/generator.ts`. Five meals a day; dishes only from her cuisines or pan-Indian staples; nothing she avoids; day fitted to her calorie target with protein-first extras; week one lighter on wheat or dairy if she said it bloats her.
 - Type copy (summary, "what this means", "what your plan changes"): `src/domain/typeContent.ts`.
-- "Your next 12 weeks" timeline: `src/domain/journey.ts`. What she is likely to feel and see at weeks 1, 2, 3, 4, 8 and 12, picked from the signs she ticked.
-  - **Ruled on by the doctor (2026-11-15, relayed by Tushar):**
-    - Skin on the chin and jawline starts to respond from week 3. Shown at week 3 to women who ticked acne.
-    - Cycles can start to become more regular once 5% of body weight is off: approved. Shown only to women who ticked late or skipped periods.
-    - No dress-size claim. Instead: at about 1 kg down, women start to feel lighter and their clothes sit looser. The line appears on the first stop where her target loss reaches 1 kg.
-  - **Still drafts, each needing her yes or no:**
-    - Week 1: sugar cravings after meals start to fade; staying full for longer; bloating often eases; the sleepy hour after lunch gets lighter.
-    - Week 2: less puffiness in the face and fingers; the slump after lunch is mostly gone.
-    - Week 3: the daily walk often pays back in deeper sleep.
-    - Week 4: "four weeks in, the meals and the walk take less thought".
-    - Week 8: "this is usually when friends and family start to notice".
-  - **Weight is shown once (founder, 2026-11-15, [D-017](DECISIONS.md)).** The timeline no longer says "about 1.4 kg down" or "down about 2.8 kg" and carries no weight tags on weeks 4 and 8. Her target appears only as a tag on the week 12 stop. The doctor's thresholds (1 kg for "feel lighter", 5% for cycles) still decide when a line appears; they are just not printed. The cycles line now reads "Cycles can start to become more regular."
-  - All lines use "often", "can" or "start to", and the page says they are what many women notice, not guarantees.
+- "Your first 4 weeks" timeline: `src/domain/journey.ts`. What she is likely to feel and see at weeks 1, 2, 3 and 4, picked from the signs she ticked. Weeks 8 and 12 are folded under "Show weeks 8 and 12".
+  - **Founder and doctor (2026-11-15, relayed by Tushar, [D-022](DECISIONS.md)):** the earlier timeline undersold. Sell the first month; every stop speaks to something she is self-conscious about and how good it feels when it eases; no weight on any stop, so the week 12 target tag and the "goal reached" and "stage 1" lines are gone. The lines are now in the present tense ("goes quiet", "loosens") in place of "often".
+  - **Ruled on by the doctor earlier the same day, and kept:**
+    - Skin on the chin and jawline starts to respond from week 3. Shown at week 3 to women who ticked acne, as "start to calm down".
+    - Cycles can start to become more regular once 5% of body weight is off: approved. Shown only to women who ticked late or skipped periods, at week 8 or 12.
+    - No dress-size claim. At about 1 kg down her clothes sit looser. The clothes line appears on the first stop where her target loss reaches 1 kg. The thresholds are not printed.
+  - **New wording, written by an AI agent, each line needing her yes or no:**
+    - Week 1: "The pull towards something sweet after meals goes quiet. It was never about your willpower."; "You stay full between meals and stop hunting for a snack an hour after lunch."; "The bloat that tightens your clothes by evening starts to ease."; "No more fighting sleep after lunch."; "Your energy stays steady from morning to night, with no crash."
+    - Week 2: "Your waistband loosens. Your jeans button without the deep breath." (belly) or "Your clothes start to sit looser, and you stop tugging at your top."; "Less puffiness in the mirror each morning. Your face looks fresher."; "Your mornings get regular and the heavy feeling lifts." (constipation, new claim); "The slump after lunch is gone."
+    - Week 3: "Your chin and jawline start to calm down. Fewer mornings spent covering up."; "Sleep comes easier, and you wake up properly rested."; "The walk that felt like a chore now feels easy, and you go further."
+    - Week 4: "You catch your reflection and like what you see."; "Getting dressed stops being a daily battle." (only once the clothes line has appeared).
+    - Week 8: "Friends and family start asking what you have changed."
+    - Week 12: "The dark patches on your neck and underarms can start to fade as your insulin settles." (new claim, only for women who ticked dark patches); "You pick clothes because you like them, not because they hide you."; "You are not on a diet any more. This is simply how you eat."
+  - **Limits kept in the code and its tests:** no "will", "guarantee" or "cure"; skin, cycles and dark patches keep "start to" or "can"; nothing is said about hair growth or hair fall; a line appears only for a sign she ticked; the clothes and "other people" lines are dropped for a woman who is not trying to lose. The page still says these are what many women notice and that every body moves at its own pace.
 - Movement plan: `src/domain/energy.ts` (`movementPlan`) and the "Today's movement" card in `src/ui/PlanClient.tsx`. The 60 minutes a day is her instruction; the split into a brisk walk plus three strength sessions, the four strength moves, and the calorie estimate (net MET 3.3 for brisk walking, 2.5 for strength) are drafts. Women with heart, joint or other conditions that limit exercise are not screened for yet.
 
 ## Not covered by her answers

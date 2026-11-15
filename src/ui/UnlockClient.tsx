@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { SUPPORT_EMAIL } from '@/domain/company';
 import { MEDICATION_ADVISORY } from '@/domain/eligibility';
-import { JOURNEY_FOOTNOTE, type JourneyStop } from '@/domain/journey';
+import { FIRST_MONTH_WEEKS, JOURNEY_FOOTNOTE, type JourneyStop } from '@/domain/journey';
 import { DEFAULT_TIER, perDay, type Tier, type TierId } from '@/domain/offer';
 import { JourneyTimeline } from './JourneyCard';
 import { Plus, Shield, Tick } from './bits';
@@ -170,9 +170,9 @@ export function UnlockClient(props: Props) {
 
       <section className="sec" style={{ padding: '30px 22px 0' }}>
         <h2 className="h2">
-          Your next <span className="accent">12 weeks</span>
+          Your first <span className="accent">{FIRST_MONTH_WEEKS} weeks</span>
         </h2>
-        <JourneyTimeline stops={journey} compact />
+        <JourneyTimeline stops={journey} />
         <p className="small">{JOURNEY_FOOTNOTE}</p>
       </section>
 

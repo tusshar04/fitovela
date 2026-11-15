@@ -1,5 +1,7 @@
 // Picks the result type from the area counts. DRAFT rules by an AI agent, built on
 // the doctor's answers 2A (four areas), 3A (four PCOS types) and 4A (simple count).
+// Founder, 2026-11-15: the post-pill type and its question are removed, because few
+// women in India use the pill for birth control. Three PCOS types remain.
 // The exact rules below need her approval. See docs/MEDICAL_RULES.md.
 
 import { MARKERS, type MarkerId } from './questions';
@@ -9,7 +11,6 @@ import type { Answers, Area } from './types';
 export type TypeId =
   | 'pcos_insulin'
   | 'pcos_inflammatory'
-  | 'pcos_postpill'
   | 'pcos_adrenal'
   | 'insulin'
   | 'thyroid'
@@ -39,10 +40,7 @@ export function determineType(answers: Answers, markers: MarkerId[], counts: Rec
   let includeStress = false;
 
   if (counts.pcos >= MIN_SIGNS) {
-    if (answers.pill === 'yes_worse') {
-      type = 'pcos_postpill';
-      driving = ['pcos'];
-    } else if (counts.insulin >= MIN_SIGNS && counts.insulin >= counts.inflammation) {
+    if (counts.insulin >= MIN_SIGNS && counts.insulin >= counts.inflammation) {
       type = 'pcos_insulin';
       driving = ['pcos', 'insulin'];
     } else if (counts.inflammation >= MIN_SIGNS) {

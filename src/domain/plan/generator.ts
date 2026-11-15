@@ -115,7 +115,6 @@ const ADD_ONS: AddOnDef[] = [
 const TYPE_TAGS: Record<TypeId, MealTag[]> = {
   pcos_insulin: ['steady_energy', 'high_fibre'],
   pcos_inflammatory: ['anti_inflammatory', 'high_fibre'],
-  pcos_postpill: ['steady_energy', 'thyroid_support'],
   pcos_adrenal: ['steady_energy'],
   insulin: ['steady_energy', 'high_fibre'],
   thyroid: ['thyroid_support', 'high_fibre'],

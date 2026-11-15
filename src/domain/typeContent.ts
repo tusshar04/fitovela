@@ -48,22 +48,6 @@ export const TYPE_CONTENT: Record<TypeId, TypeContent> = {
       'Protein at every meal, with no food group banned',
     ],
   },
-  pcos_postpill: {
-    name: 'Post-pill',
-    accent: 'PCOS type',
-    plain: 'post-pill PCOS',
-    summary: 'Your signs started or got worse after stopping the pill. Cycles and skin can take months to settle afterwards, and weight often creeps up in the meantime.',
-    means: [
-      'This pattern often settles with time, and steady food habits help it along.',
-      'Skipping meals or crash dieting now tends to make cycles more irregular.',
-      'Your body needs regular, well-built meals more than it needs fewer calories.',
-    ],
-    planChanges: [
-      'Regular meal times with protein at every meal',
-      'Plenty of dals, greens, nuts and seeds through the week',
-      'No crash targets: a steady pace your body can keep',
-    ],
-  },
   pcos_adrenal: {
     name: 'Adrenal',
     accent: 'PCOS type',

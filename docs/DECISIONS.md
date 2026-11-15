@@ -226,6 +226,19 @@ IDs D-004 to D-006 are used by proposals in draft [PR #2](https://github.com/tus
 - **Revisit when:** Fitovela should have its own 2Factor or SES keys; deploys should run from GitHub Actions; or traffic needs more than 4 instances.
 - **Supersedes:** the "nothing is deployed" state in D-011 and D-013.
 
+## D-022 — Sell the first month; no weight on the timeline; no pill question
+
+- **Status:** accepted; implemented.
+- **Date:** 2026-11-15.
+- **Decision owner:** Tushar, relaying the doctor's view that the result and paywall undersell.
+- **Decision:** (1) The timeline leads with weeks 1 to 4, written to speak to what she is self-conscious about and how good it feels when it eases. Weeks 8 and 12 are folded under a small "Show weeks 8 and 12" line. (2) No stop mentions weight: the week 12 target tag and the "goal reached" and "stage 1" lines are removed. (3) The question about stopping a birth-control pill is removed, and with it the post-pill PCOS type, because few women in India use the pill for birth control.
+- **Reason:** Founder instruction of 2026-11-15: "we should be selling hard targets in a month", "all the weeks milestone should be hitting user insecurity and making them feel good, no more weight loss point", and the pill page "is not applicable to indian audience".
+- **Limits the agent kept, and told the founder:** the lines name her complaint easing (cravings, bloat, waistband, puffy face, skin, tiredness); they do not tell her that her body looks bad. No "will", guarantee or cure. Skin, cycles and dark patches keep "start to" or "can". Nothing is claimed about hair. The doctor's thresholds (1 kg before the clothes line, 5% before the cycles line, week 3 for skin) still decide when a line appears. The footnote that these are what many women notice stays.
+- **Implementation:** `src/domain/journey.ts`, `src/ui/JourneyCard.tsx`, `src/ui/UnlockClient.tsx`, `src/domain/questions.ts`, `src/domain/typing.ts`, `src/domain/typeContent.ts`; tests in `tests/journey.test.ts` and `tests/rules.test.ts`. The new lines are listed for the doctor in [MEDICAL_RULES.md](MEDICAL_RULES.md).
+- **Consequences to know:** The paywall headline is now four weeks while the tier to steer everyone to is 12 weeks ([D-019](DECISIONS.md)); watch whether the 4-week tier's share rises. Her target weight still appears in the paywall recap and the folded numbers chart. The doctor's answer 3A named four PCOS types; three are now reachable.
+- **Revisit when:** The doctor rules on the new lines; Meta rejects an ad over the landing page's wording; or the tier mix moves away from 12 weeks.
+- **Supersedes:** the "weight once, on the week 12 stop" part of D-017 and the "Your next 12 weeks" framing of D-016. Narrows answer 3 in D-012.
+
 ## Adding or changing a decision
 
 Assign the next stable ID and record status, date, owner, choice, reason, evidence, implementation status, and revisit conditions. Identify who accepted a decision; do not represent an agent suggestion as founder approval.

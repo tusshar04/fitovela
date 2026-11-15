@@ -206,20 +206,35 @@ h1, h2, h3, p { margin: 0; }
 
 /* Week-by-week journey */
 .journey { display: flex; flex-direction: column; }
-.stop { display: grid; grid-template-columns: 34px 15px minmax(0, 1fr); column-gap: 12px; }
-.stop .wk { padding-top: 3px; text-align: right; font-size: 10.5px; line-height: 1.5; font-weight: 700; letter-spacing: 0.08em; color: var(--faint); text-transform: uppercase; white-space: nowrap; }
+.stop { display: grid; grid-template-columns: 50px 15px minmax(0, 1fr); column-gap: 12px; }
+.stop .wk { padding-top: 3px; text-align: right; font-size: 10.5px; line-height: 1.5; font-weight: 700; letter-spacing: 0.08em; color: var(--pink); text-transform: uppercase; white-space: nowrap; }
 .stop .rail { position: relative; }
 .stop .rail::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 1.5px; margin-left: -0.75px; background: var(--line); }
 .stop:first-child .rail::before { top: 9px; }
 .stop.last .rail::before { bottom: auto; height: 9px; }
 .stop .rail i { position: absolute; left: 50%; top: 5px; width: 9px; height: 9px; margin-left: -4.5px; border-radius: 999px; background: #fff; box-shadow: 0 0 0 1.5px var(--pink); }
 .stop.last .rail i { top: 2px; width: 15px; height: 15px; margin-left: -7.5px; background: var(--green-bright); box-shadow: 0 0 0 3px #d8f1e6; }
-.stop .body { display: flex; flex-direction: column; gap: 3px; padding-bottom: 20px; }
+.stop .body { display: flex; flex-direction: column; gap: 4px; padding-bottom: 22px; }
 .stop.last .body { padding-bottom: 0; }
 .stop.last .wk { color: var(--green); }
-.stop .ttl { display: flex; align-items: center; gap: 8px; font-size: 16px; line-height: 1.3; font-weight: 700; letter-spacing: -0.012em; }
-.stop .ln { font-size: 14px; line-height: 1.5; font-weight: 500; color: var(--muted); }
-.stop .kg { background: #e3f4ec; color: var(--green); border-radius: 999px; padding: 2px 9px; font-size: 11.5px; font-weight: 700; letter-spacing: 0; white-space: nowrap; }
+.stop .ttl { font-size: 17.5px; line-height: 1.25; font-weight: 700; letter-spacing: -0.018em; }
+.stop .ln { font-size: 14.5px; line-height: 1.5; font-weight: 500; color: #4a3a48; }
+/* Week 4 closes the first month: the stop the page is selling. */
+.journey:not(.later) .stop.last .body { margin-top: -8px; padding: 12px 14px 13px; border-radius: 16px; background: linear-gradient(135deg, #fdeef4 0%, #fff6dc 100%); }
+.journey:not(.later) .stop.last .rail i { top: 6px; }
+.journey:not(.later) .stop.last .wk { padding-top: 7px; }
+.journey:not(.later) .stop.last .rail::before { height: 13px; }
+/* Weeks 8 and 12: quieter, and folded away until she asks. */
+.journey.later .stop .wk, .journey.later .stop.last .wk { color: var(--faint); }
+.journey.later .stop .ttl { font-size: 15.5px; }
+.journey.later .stop .ln { font-size: 13.5px; color: var(--muted); }
+.journey.later .stop.last .rail i { top: 5px; width: 9px; height: 9px; margin-left: -4.5px; background: #fff; box-shadow: 0 0 0 1.5px var(--pink); }
+.more-weeks { margin-top: 12px; }
+.more-weeks summary { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; font-size: 13px; font-weight: 600; color: var(--muted); cursor: pointer; list-style: none; }
+.more-weeks summary::-webkit-details-marker { display: none; }
+.more-weeks summary svg { width: 14px; height: 14px; }
+.more-weeks[open] { margin-top: 22px; }
+.more-weeks[open] summary { display: none; }
 details.numbers { border-top: 1px solid var(--line); margin-top: 4px; }
 details.numbers summary { min-height: 48px; display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 14px; font-weight: 600; color: var(--muted); cursor: pointer; list-style: none; }
 details.numbers summary::-webkit-details-marker { display: none; }

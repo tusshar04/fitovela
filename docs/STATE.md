@@ -15,7 +15,7 @@ In production, payments off. The app runs on Cloud Run in Mumbai (GCP project `f
 | Cloud Run service `fitovela`, `asia-south1` | Live. Release `8df90e0`. Its own address is `https://fitovela-pflkmzgscq-el.a.run.app`; the Worker forwards to it. |
 | Firestore, `asia-south1` | Live, used by the service. First real use of the Firestore driver. |
 | Domain | **Live at https://fitovela.com.** DNS is at Cloudflare (nameservers `norm` and `teagan.ns.cloudflare.com`, the same account as tarot). The Worker `fitovela-edge` (source in `edge/`) forwards `fitovela.com` to the Cloud Run service; `www` and plain http redirect to `https://fitovela.com`. Checked through the domain: pages, a full assessment, cookies, security headers. The Google load balancer is deleted. Workers free plan: 100,000 requests a day. |
-| Login codes by SMS | Switched on, through tarot's 2Factor key. **Not yet tested with a real phone.** The SMS wording is whatever template tarot's 2Factor account uses. |
+| Login codes by SMS | Switched on, through tarot's 2Factor key. Tested by Tushar with his own phone on 2026-11-15. The SMS wording is whatever template tarot's 2Factor account uses. |
 | Email | **Switched on.** Amazon SES, sender `care@fitovela.com`, domain verified by DKIM on 2026-11-15, Fitovela's own send-only key. Checked against the SES mailbox simulator; no real customer email has been sent yet. |
 | Payments | Code is ready; **switched off**. Needs Razorpay keys in Secret Manager (`razorpay-key-id`, `razorpay-key-secret`, `razorpay-webhook-secret`), the webhook `https://fitovela.com/api/webhooks/razorpay` registered for `payment.captured` and `order.paid`, then `RAZORPAY_ENABLED=1`. Never run against Razorpay. |
 | Mailbox `care@fitovela.com` | Created by Tushar in GoDaddy. It is the address on the site and the sender of plan emails. |
@@ -23,7 +23,7 @@ In production, payments off. The app runs on Cloud Run in Mumbai (GCP project `f
 
 **Deploy:** from a clean `main` equal to `origin/main`, run `scripts/deploy.sh`. It builds the commit, deploys a candidate, checks it and only then moves traffic. **Roll back:** `scripts/deploy.sh rollback` lists revisions and prints the command. Deploys are manual; GitHub Actions is not set up.
 
-**Open, in order:** (1) a real login test by SMS on the live site; (2) payment gateway (Razorpay or Cashfree, founder to decide later) and a real ₹ payment test; (3) business name and address on the policy pages; (4) Meta Pixel; (5) move Cloudflare Workers to the paid plan before ad traffic passes about 2,000 visitors a day.
+**Open, in order:** (1) payment gateway (Razorpay or Cashfree, founder to decide later) and a real ₹ payment test; (2) business name and address on the policy pages; (3) Meta Pixel; (4) switch Cloudflare Workers to the paid plan (USD 5 a month) on the day ads start. The free allowance of 100,000 requests a day is shared with tarot, whose busiest day since late August was about 5,000; Fitovela reaches the limit at roughly 2,000 to 4,000 ad visitors a day.
 
 ### Still stand-ins
 
@@ -50,6 +50,10 @@ The doctor's three rulings on the timeline are applied (skin at week 3, cycles l
 ### FTV-010 and FTV-011 — intensive track, automatic; new prices (Claude, 2026-11-15, merged)
 
 Women at BMI 30 and above can choose an 800 to 1,000 kcal intensive plan on the paywall ([D-018](DECISIONS.md)). On the founder's instruction it is fully automatic ([D-020](DECISIONS.md)): it opens on payment, weekly check-ins open each week, and a stop sign moves her to the standard plan. The first build's clinician review and `/review` page are removed. Prices are now INR 399, 599 and 799 ([D-019](DECISIONS.md)). The clinical settings and 31 light plates are drafts: nine points for the doctor are in [MEDICAL_RULES.md](MEDICAL_RULES.md). Self-review only; run end to end on localhost.
+
+### FTV-015 — first-month timeline, no weight on it, pill question removed (Claude, 2026-11-15, merged)
+
+On the founder's instruction, relaying the doctor's view that the pages undersold ([D-022](DECISIONS.md)): the timeline is now "Your first 4 weeks", written to speak to what she is self-conscious about; weeks 8 and 12 are under "Show weeks 8 and 12"; no stop mentions weight. The birth-control pill question and the post-pill type are removed. The new lines are drafts listed for the doctor in [MEDICAL_RULES.md](MEDICAL_RULES.md). Self-review only; no independent reviewer was available.
 
 ### Exact next step
 

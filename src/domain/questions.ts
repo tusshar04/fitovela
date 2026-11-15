@@ -91,13 +91,6 @@ const NONE: Option = { id: 'none', label: 'None of these', exclusive: true };
 
 const has = (a: Answers, q: string, opt: string) => asList(a[q]).includes(opt);
 
-const pcosSignCount = (a: Answers) => {
-  let n = 0;
-  if (a.cycle === 'late' || a.cycle === 'skip') n += 1;
-  n += asList(a.hormone_signs).filter((o) => o !== 'none').length;
-  return n;
-};
-
 export const QUESTIONS: Question[] = [
   {
     id: 'struggle',
@@ -143,27 +136,6 @@ export const QUESTIONS: Question[] = [
       { id: 'diagnosed', label: 'A doctor has told me I have PCOS or PCOD', marker: 'p_diagnosed' },
       NONE,
     ],
-  },
-  {
-    id: 'pill',
-    section: 'hormones',
-    kind: 'single',
-    eyebrow: 'PART 1 · HORMONE SIGNS',
-    title: 'Did you stop a birth-control pill',
-    accent: 'in the last 12 months?',
-    dependsOn: ['cycle', 'hormone_signs'],
-    showIf: (a) => a.cycle !== 'stopped' && pcosSignCount(a) >= 1,
-    because: () => 'Because you ticked hormone signs',
-    options: [
-      { id: 'yes_worse', label: 'Yes, and things started or got worse after' },
-      { id: 'yes_same', label: 'Yes, but nothing changed' },
-      { id: 'no', label: 'No' },
-    ],
-    noted: {
-      yes_worse: { effect: 'Added to your hormone picture', insight: 'Cycles and skin can take months to settle after the pill. We will look at whether that is your pattern.' },
-      yes_same: { effect: 'One cause ruled out', insight: 'Good to know. Your signs do not seem tied to stopping the pill.' },
-      no: { effect: 'One cause ruled out', insight: 'That rules out one cause, so we can look more closely at insulin next.' },
-    },
   },
   {
     id: 'meno',

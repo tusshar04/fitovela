@@ -19,7 +19,6 @@ const answers = (metrics: Metrics, extra: Partial<Answers> = {}): Answers => ({
   struggle: 'eat_little',
   cycle: 'late',
   hormone_signs: ['acne'],
-  pill: 'no',
   insulin_signs: ['cravings', 'belly'],
   cravings_time: 'within_hour',
   family: 'yes',
