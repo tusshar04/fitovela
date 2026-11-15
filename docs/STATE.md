@@ -6,43 +6,34 @@ This file owns current coordination. Read [AGENTS.md](../AGENTS.md) before actin
 
 ## Current stage
 
-First working build. The full funnel runs on localhost: landing, adaptive questionnaire, result, paywall, demo checkout, generated plan, login. Nothing is deployed. Payments, email sending, SMS codes and ad tracking are not connected yet.
+In production, payments off. The app runs on Cloud Run in Mumbai (GCP project `fitovela-prod`) behind `fitovela.com`, with Firestore as the database. A visitor can take the assessment and see her report and the paywall; she cannot pay yet. See [D-021](DECISIONS.md).
 
-## Current task — FTV-004
+## Production — FTV-012 (Claude, started 2026-11-15)
 
-| Field | Value |
+| Piece | Status on 2026-11-15 |
 | --- | --- |
-| Goal | Build the product from the approved mockups and the doctor's answers, and run it on localhost. |
-| Owner | Claude, assigned by Tushar on 2026-11-15. |
-| Status | Built and merged into `main`. Awaiting the founder's review on localhost. |
-| Branch | `feat/ftv-004-app` (merged). |
-| Run it | `nvm use`, `npm install`, `npm run dev`, then open `http://localhost:3000`. |
-| Checks | `npm test`, `npm run typecheck`, `npm run build`. Results are in the merge commit message. |
-| Review | Self-review only. No independent, medical or legal review. |
+| Cloud Run service `fitovela`, `asia-south1` | Live. First release `6c1d1f1`. Full assessment run against it: answers stored, report and paywall rendered. |
+| Firestore, `asia-south1` | Live, used by the service. First real use of the Firestore driver. |
+| Domain | `fitovela.com` A record at GoDaddy points to the load balancer (`8.232.233.213`); `www` follows it. The Google-managed HTTPS certificate was still being issued when this was written. Check: `gcloud compute ssl-certificates describe fitovela-cert --project fitovela-prod --global`. |
+| Login codes by SMS | Switched on, through tarot's 2Factor key. **Not yet tested with a real phone.** The SMS wording is whatever template tarot's 2Factor account uses. |
+| Email | Code is ready; **switched off**. Needs `fitovela.com` verified as a sender in tarot's Amazon SES account (AWS sign-in needed), then `EMAIL_ENABLED=1` in `scripts/deploy.sh` and read access to the two SES secrets. Until then the plan page tells the customer no email was sent. |
+| Payments | Code is ready; **switched off**. Needs Razorpay keys in Secret Manager (`razorpay-key-id`, `razorpay-key-secret`, `razorpay-webhook-secret`), the webhook `https://fitovela.com/api/webhooks/razorpay` registered for `payment.captured` and `order.paid`, then `RAZORPAY_ENABLED=1`. Never run against Razorpay. |
+| Mailbox `support@fitovela.com` | Not created. One unused Titan Email account is available in GoDaddy; its setup needs a password from Tushar. The site already shows this address. |
+| Policies | Privacy, terms, refund and contact pages are live. Written by an AI agent; not reviewed by a lawyer; no registered business name or address on them yet. |
 
-### What works
+**Deploy:** from a clean `main` equal to `origin/main`, run `scripts/deploy.sh`. It builds the commit, deploys a candidate, checks it and only then moves traffic. **Roll back:** `scripts/deploy.sh rollback` lists revisions and prints the command. Deploys are manual; GitHub Actions is not set up.
 
-- Three landing hooks (`/?h=a`, `b`, `c`; ad category with `&c=pcos|thyroid|menopause|diabetes|weightloss`).
-- About 18 questions that adapt to earlier answers, with the two interstitial screens.
-- Scoring, typing, eligibility and calories per [MEDICAL_RULES.md](MEDICAL_RULES.md).
-- Email and mobile capture, result report, paywall with a real 15-minute launch price, demo checkout.
-- Plan generator (7, 28 or 84 days), swaps, weekly grocery list, private plan link.
-- Login by mobile number and one-time code; `/my-plans`.
-- Funnel event log.
+**Open, in order:** (1) Tushar creates the mailbox; (2) AWS sign-in so the sender can be verified and email switched on; (3) Razorpay account decision and keys; (4) a real login test by SMS and a real ₹ payment test; (5) business name and address on the policy pages; (6) Meta Pixel.
 
-### Stand-ins that must be replaced before launch
+### Still stand-ins
 
 | Area | Today | Needed |
 | --- | --- | --- |
-| Payments | Demo checkout; refuses to run in production. | Razorpay keys, order creation, signature check, webhook. |
-| Email | Written to `.data/outbox/`. | A provider (tarot uses AWS SES). |
-| Login codes | Shown on screen in development. | An SMS provider. |
-| Storage | JSON files under `.data/`. | Firestore driver exists but has never been run against a real database. |
 | Ad tracking | None. | Meta Pixel and Conversions API. |
 | Reviews, live counter | Hidden. | Real ones, to come from the doctor via Tushar. |
 | Photos | Unsplash stand-ins in `public/img/`. | Licensed or shot images. |
-| Privacy, terms, refund policy | Placeholder pages. | Written and reviewed. |
-| Medical drafts | Question list, type rules, meal library and copy written by an AI agent. | The doctor's one-time approval ([MEDICAL_RULES.md](MEDICAL_RULES.md)). |
+| Medical drafts | In force on the doctor's interim answer ("go with your recommendations for now"). | Her review when she returns ([MEDICAL_RULES.md](MEDICAL_RULES.md)). |
+| Deploy automation | A script run by hand. | GitHub Actions with Workload Identity Federation, as tarot has. |
 
 ### FTV-005 and FTV-006 — movement plan and 12-week target (Claude, 2026-11-15, merged)
 
@@ -62,9 +53,7 @@ Women at BMI 30 and above can choose an 800 to 1,000 kcal intensive plan on the 
 
 ### Exact next step
 
-1. Tushar reviews the build on localhost. To see the intensive option, enter a weight that gives a BMI of 30 or more (for example 88 kg at 160 cm). Confirm the regular prices shown struck through (INR 799, 1,199, 1,599).
-2. Send the doctor the drafts in [MEDICAL_RULES.md](MEDICAL_RULES.md): the three earlier drafts and the nine points on the intensive track.
-3. Decide the GCP project for deployment (recommended: a new project under the same account as tarot), then a deployment task: Dockerfile, Cloud Run, Firestore, secrets.
+The "Open, in order" list under Production above.
 
 ## Other open work
 

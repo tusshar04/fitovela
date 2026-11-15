@@ -14,6 +14,17 @@ npm run dev        # http://localhost:3000
 
 Landing variants: `/?h=a`, `/?h=b`, `/?h=c`; add `&c=pcos|thyroid|menopause|diabetes|weightloss` for the ad category. Local data is written to `.data/` (sessions, orders, the email outbox and the event log).
 
+## Production
+
+Live at https://fitovela.com (Cloud Run in Mumbai, GCP project `fitovela-prod`). What is switched on is in [docs/STATE.md](docs/STATE.md).
+
+```
+scripts/deploy.sh            # deploy the tip of main: build, candidate, checks, then traffic
+scripts/deploy.sh rollback   # list revisions and how to go back to one
+```
+
+Secrets are in Secret Manager; none are in this repository. Local development needs none: without keys it uses a demo checkout, writes emails to `.data/outbox/` and shows login codes on screen.
+
 ## Start here
 
 | Document | Owns |
