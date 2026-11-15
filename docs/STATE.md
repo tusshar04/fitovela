@@ -57,7 +57,7 @@ On the founder's instruction, relaying the doctor's view that the pages undersol
 
 ### FTV-016 — prices 199/299/399, harder copy, less detail before paying (Claude, 2026-11-15, merged)
 
-Founder instructions ([D-023](DECISIONS.md)): new prices; the timeline lines rewritten to sell hard; the paywall and report say only "Your basic movement plan"; "Protein-rich meals from everyday home food" in place of "Protein at every meal"; the "Birth-control pill" tick box removed. Open point: the paywall FAQ says "No powders or supplements", which is not true of the intensive plan. Self-review only; no independent reviewer was available.
+Founder instructions ([D-023](DECISIONS.md)): new prices; the timeline lines rewritten to sell hard; the paywall and report say only "Your basic movement plan"; "Protein-rich meals from everyday home food" in place of "Protein at every meal"; the "Birth-control pill" tick box removed. The paywall FAQ says "No powders or supplements" while the intensive plan asks for a multivitamin and sometimes a protein scoop; the founder was shown this and decided both stay. Self-review only; no independent reviewer was available.
 
 ### Exact next step
 
