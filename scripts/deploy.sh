@@ -62,7 +62,7 @@ echo "Deploying"
 gcloud run deploy "$SERVICE" --project "$PROJECT" --region "$REGION" --platform managed --quiet \
   --image "$IMAGE" --service-account "$RUNTIME_SA" --allow-unauthenticated \
   --port 8080 --cpu 1 --memory 512Mi --concurrency 80 --timeout 30 --min-instances 0 --max-instances 4 \
-  --set-env-vars "$ENV" --set-secrets "$SECRETS" --update-labels "git-sha=${SHA:0:12}" "${TRAFFIC[@]}"
+  --set-env-vars "$ENV" --set-secrets "$SECRETS" --update-labels "git-sha=${SHA:0:12}" ${TRAFFIC[@]+"${TRAFFIC[@]}"}
 
 if [[ "$FIRST" == 1 ]]; then
   URL=$(gcloud run services describe "$SERVICE" --project "$PROJECT" --region "$REGION" --format='value(status.url)')
