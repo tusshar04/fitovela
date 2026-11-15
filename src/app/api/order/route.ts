@@ -4,7 +4,8 @@ import { isComplete } from '@/domain/flow';
 import { INTENSIVE_BLOCK_LABEL, intensiveBreakDue } from '@/domain/intensive';
 import { TIERS } from '@/domain/offer';
 import { isTierId, priceFor } from '@/domain/offer';
-import { activeProvider, createRazorpayOrder } from '@/server/payments';
+import { siteOrigin } from '@/server/origin';
+import { activeProvider, cashfreeMode, cashfreeOrderId, createCashfreeOrder, createRazorpayOrder } from '@/server/payments';
 import { currentSession, logEvent, newId, saveSession } from '@/server/session';
 import { getStore, type Order } from '@/server/store';
 import { cleanEmail, cleanPhone } from '@/server/validate';
@@ -63,7 +64,26 @@ export async function POST(req: Request) {
     planToken: newId(24),
   };
   let checkout: Record<string, unknown> | undefined;
-  if (provider === 'razorpay') {
+  if (provider === 'cashfree') {
+    try {
+      const origin = siteOrigin(req);
+      const cf = await createCashfreeOrder({
+        orderId: order.id,
+        amountRupees: order.amountRupees,
+        phone,
+        email,
+        returnUrl: `${origin}/api/order/return?order=${encodeURIComponent(order.id)}`,
+        notifyUrl: `${origin}/api/webhooks/cashfree`,
+        note: `Fitovela ${TIERS[order.tier].name}`,
+        tags: { tier: order.tier, track },
+      });
+      order.providerOrderId = cashfreeOrderId(order.id);
+      checkout = { paymentSessionId: cf.paymentSessionId, mode: cashfreeMode() };
+    } catch (err) {
+      console.error((err as Error).message);
+      return NextResponse.json({ error: 'We could not start the payment. Please try again in a minute.' }, { status: 502 });
+    }
+  } else if (provider === 'razorpay') {
     try {
       const rp = await createRazorpayOrder({ amountRupees: order.amountRupees, receipt: order.id, notes: { orderId: order.id, tier: order.tier, track } });
       order.providerOrderId = rp.id;

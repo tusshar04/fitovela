@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { setLoginCookie } from '@/server/auth';
 import { fulfilOrder } from '@/server/fulfil';
 import { siteOrigin } from '@/server/origin';
-import { activeProvider, verifyPaymentSignature } from '@/server/payments';
+import { activeProvider, cashfreePaymentState, verifyPaymentSignature } from '@/server/payments';
 import { currentSession } from '@/server/session';
 import { getStore } from '@/server/store';
 
@@ -25,7 +25,14 @@ export async function POST(req: Request) {
       if (!order.providerOrderId || text('razorpay_order_id') !== order.providerOrderId || !verifyPaymentSignature(order.providerOrderId, paymentId, text('razorpay_signature'))) {
         return NextResponse.json({ error: 'We could not confirm this payment. If money left your account, write to us and we will sort it out.' }, { status: 400 });
       }
-    } else if (activeProvider() !== 'demo') {
+    } else if (order.provider === 'cashfree') {
+      // Paid only if Cashfree itself says so for this order and amount.
+      const state = await cashfreePaymentState(order).catch(() => null);
+      if (state?.state !== 'paid') {
+        return NextResponse.json({ error: 'We could not confirm this payment. If money left your account, write to us and we will sort it out.' }, { status: 400 });
+      }
+      paymentId = state.paymentId;
+    } else if (order.provider !== 'demo' || activeProvider() !== 'demo') {
       // The demo checkout exists only where no real provider is configured.
       return NextResponse.json({ error: 'Payments are not switched on yet.' }, { status: 503 });
     }

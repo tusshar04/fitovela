@@ -11,7 +11,11 @@ import { UnlockClient } from '@/ui/UnlockClient';
 
 export const dynamic = 'force-dynamic';
 
-export default async function UnlockPage() {
+const PAY_NOTICES = ['failed', 'pending', 'error'] as const;
+
+export default async function UnlockPage({ searchParams }: { searchParams: Promise<{ pay?: string }> }) {
+  const pay = (await searchParams).pay;
+  const payNotice = PAY_NOTICES.find((n) => n === pay) ?? null;
   const session = await currentSession();
   if (!session) redirect('/');
   if (!isComplete(session.answers)) redirect('/quiz');
@@ -66,6 +70,7 @@ export default async function UnlockPage() {
       email={session.lead?.email ?? ''}
       phone={session.lead?.phone ?? ''}
       provider={activeProvider()}
+      payNotice={payNotice}
     />
   );
 }

@@ -33,7 +33,7 @@ export default function PrivacyPage() {
       <ul>
         <li>Google Cloud, which hosts the site and the database on servers in Mumbai, India.</li>
         <li>Our email and SMS delivery providers, who receive your email address or mobile number and the message we send you.</li>
-        <li>Our payment provider, who receives your payment details directly from you.</li>
+        <li>Our payment provider, Cashfree Payments. We pass it your mobile number and email address with your order, so that you do not have to type them again, and it receives your payment details directly from you.</li>
       </ul>
       <p>We will also disclose information if the law requires us to.</p>
 

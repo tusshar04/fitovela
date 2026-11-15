@@ -17,13 +17,13 @@ In production, payments off. The app runs on Cloud Run in Mumbai (GCP project `f
 | Domain | **Live at https://fitovela.com.** DNS is at Cloudflare (nameservers `norm` and `teagan.ns.cloudflare.com`, the same account as tarot). The Worker `fitovela-edge` (source in `edge/`) forwards `fitovela.com` to the Cloud Run service; `www` and plain http redirect to `https://fitovela.com`. Checked through the domain: pages, a full assessment, cookies, security headers. The Google load balancer is deleted. Workers free plan: 100,000 requests a day. |
 | Login codes by SMS | Switched on, through tarot's 2Factor key. Tested by Tushar with his own phone on 2026-11-15. The SMS wording is whatever template tarot's 2Factor account uses. |
 | Email | **Switched on.** Amazon SES, sender `care@fitovela.com`, domain verified by DKIM on 2026-11-15, Fitovela's own send-only key. Checked against the SES mailbox simulator; no real customer email has been sent yet. |
-| Payments | Code is ready; **switched off**. Needs Razorpay keys in Secret Manager (`razorpay-key-id`, `razorpay-key-secret`, `razorpay-webhook-secret`), the webhook `https://fitovela.com/api/webhooks/razorpay` registered for `payment.captured` and `order.paid`, then `RAZORPAY_ENABLED=1`. Never run against Razorpay. |
+| Payments | **Cashfree** code is in place (FTV-018); **switched off** until the founder supplies keys. To switch on: put the production App ID and Secret Key in Secret Manager as `cashfree-app-id` and `cashfree-secret-key`, set `CASHFREE_ENABLED=1` in `scripts/deploy.sh`, deploy, and add the webhook `https://fitovela.com/api/webhooks/cashfree` in the Cashfree dashboard for the payment success event. Checked only against a local stand-in for Cashfree's API; never run against Cashfree itself. The older Razorpay code is still in the repo, unused. |
 | Mailbox `care@fitovela.com` | Created by Tushar in GoDaddy. It is the address on the site and the sender of plan emails. |
 | Policies | Privacy, terms, refund and contact pages are live. Written by an AI agent; not reviewed by a lawyer; no registered business name or address on them yet. |
 
 **Deploy:** from a clean `main` equal to `origin/main`, run `scripts/deploy.sh`. It builds the commit, deploys a candidate, checks it and only then moves traffic. **Roll back:** `scripts/deploy.sh rollback` lists revisions and prints the command. Deploys are manual; GitHub Actions is not set up.
 
-**Open, in order:** (1) payment gateway (Razorpay or Cashfree, founder to decide later) and a real ₹ payment test; (2) business name and address on the policy pages; (3) Meta Pixel; (4) switch Cloudflare Workers to the paid plan (USD 5 a month) on the day ads start. The free allowance of 100,000 requests a day is shared with tarot, whose busiest day since late August was about 5,000; Fitovela reaches the limit at roughly 2,000 to 4,000 ad visitors a day.
+**Open, in order:** (1) Cashfree keys from the founder, then a sandbox payment and a real ₹ payment test before ads start; (2) business name and address on the policy pages; (3) Meta Pixel; (4) switch Cloudflare Workers to the paid plan (USD 5 a month) on the day ads start. The free allowance of 100,000 requests a day is shared with tarot, whose busiest day since late August was about 5,000; Fitovela reaches the limit at roughly 2,000 to 4,000 ad visitors a day.
 
 ### Still stand-ins
 
@@ -62,6 +62,10 @@ Founder instructions ([D-023](DECISIONS.md)): new prices; the timeline lines rew
 ### FTV-017 — launch-price timer restarts on every visit (Claude, 2026-11-15, merged)
 
 Founder instruction ([D-024](DECISIONS.md)): the 15-minute countdown starts again each time she opens or refreshes the paywall, so a returning visitor is offered the launch price again. Self-review only; checked on screen.
+
+### FTV-018 — Cashfree checkout (Claude, 2026-11-15, merged)
+
+Founder instruction: integrate Cashfree with the least typing for the buyer ([D-025](DECISIONS.md)). She gives her email and mobile number once (pre-filled if she gave them at the report step); both go to Cashfree with the order, so its page asks only how she wants to pay. Cashfree returns her to `/api/order/return`, which asks Cashfree whether the order is paid before opening the plan; the webhook delivers the plan if she never comes back. **Not yet run against Cashfree**: there are no keys. Checked against a local stand-in for its API (create, return unpaid, pending, wrong amount, paid; signed, unsigned, duplicate and wrong-amount webhooks) and on screen up to the hand-off, where Cashfree's sandbox rejected the made-up session as expected. Payment code needs independent review under AGENTS.md; none was available, so this is self-review only.
 
 ### Exact next step
 

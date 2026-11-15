@@ -24,10 +24,42 @@ interface Props {
   medicationAdvisory: boolean;
   email: string;
   phone: string;
-  provider: 'demo' | 'razorpay' | null;
+  provider: 'demo' | 'razorpay' | 'cashfree' | null;
+  /** Set when she has just come back from the payment page without a completed payment. */
+  payNotice: 'failed' | 'pending' | 'error' | null;
 }
 
 const rupees = (n: number) => `₹${n.toLocaleString('en-IN')}`;
+
+const PAY_NOTICE = {
+  failed: 'That payment did not go through. Please try again. If money left your account, write to us and we will sort it out.',
+  pending: 'Your payment is still being confirmed by your bank. Your plan will be emailed to you as soon as it is. Please do not pay again.',
+  error: `Your payment went through but we could not open your plan. Write to ${SUPPORT_EMAIL} and we will sort it out today.`,
+} as const;
+
+const CASHFREE_SDK = 'https://sdk.cashfree.com/js/v3/cashfree.js';
+
+/** Adds a script to the page once and resolves when it has loaded. */
+function loadScript(src: string): Promise<void> {
+  return new Promise<void>((resolve, reject) => {
+    const existing = document.querySelector<HTMLScriptElement>(`script[src="${src}"]`);
+    if (existing?.dataset.loaded === '1') return resolve();
+    const script = existing ?? document.createElement('script');
+    script.addEventListener('load', () => {
+      script.dataset.loaded = '1';
+      resolve();
+    });
+    script.addEventListener('error', () => {
+      script.remove();
+      reject(new Error('script did not load'));
+    });
+    if (!existing) {
+      script.src = src;
+      script.async = true;
+      document.head.appendChild(script);
+    }
+  });
+}
 
 const FAQ = [
   ['Is this a medical diagnosis?', 'No. It is a nutrition plan based on a symptom assessment. Only a doctor and tests can diagnose a condition.'],
@@ -49,7 +81,7 @@ export function UnlockClient(props: Props) {
   const [left, setLeft] = useState<number>(() => Math.max(0, new Date(props.offerEndsAt).getTime() - Date.now()));
   const [email, setEmail] = useState(props.email);
   const [phone, setPhone] = useState(props.phone);
-  const [error, setError] = useState('');
+  const [error, setError] = useState<string>(props.payNotice ? PAY_NOTICE[props.payNotice] : '');
   const [busy, setBusy] = useState(false);
   const [checkout, setCheckout] = useState<{ orderId: string; amountRupees: number } | null>(null);
   const formRef = useRef<HTMLDivElement>(null);
@@ -58,6 +90,26 @@ export function UnlockClient(props: Props) {
     const t = setInterval(() => setLeft(Math.max(0, new Date(props.offerEndsAt).getTime() - Date.now())), 1000);
     return () => clearInterval(t);
   }, [props.offerEndsAt]);
+
+  // Fetch Cashfree's checkout script while she reads the page, so the pay button opens it at once.
+  useEffect(() => {
+    if (props.provider === 'cashfree') loadScript(CASHFREE_SDK).catch(() => {});
+  }, [props.provider]);
+
+  // If she presses Back on the payment page, the browser can restore this page as she left it,
+  // with the button still disabled. Give it back to her.
+  useEffect(() => {
+    const onShow = (e: PageTransitionEvent) => {
+      if (e.persisted) setBusy(false);
+    };
+    window.addEventListener('pageshow', onShow);
+    return () => window.removeEventListener('pageshow', onShow);
+  }, []);
+
+  // Coming back from a payment that did not finish: bring the message and the pay button into view.
+  useEffect(() => {
+    if (props.payNotice) formRef.current?.scrollIntoView({ block: 'center' });
+  }, [props.payNotice]);
 
   const launchLive = left > 0;
   const mm = String(Math.floor(left / 60000)).padStart(2, '0');
@@ -68,22 +120,48 @@ export function UnlockClient(props: Props) {
   async function startCheckout() {
     setBusy(true);
     setError('');
+    // Stays true once the payment page is taking over, so the button cannot be tapped twice.
+    let leaving = false;
     try {
       const res = await fetch('/api/order', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ tier: selected, email, phone, track: onIntensive ? 'intensive' : 'standard' }) });
-      const data = (await res.json().catch(() => ({}))) as { error?: string; orderId?: string; amountRupees?: number; checkout?: Record<string, unknown> };
+      const data = (await res.json().catch(() => ({}))) as { error?: string; orderId?: string; amountRupees?: number; provider?: string; checkout?: Record<string, unknown> };
       if (!res.ok || !data.orderId) {
         setError(data.error ?? 'Something went wrong. Please try again.');
         formRef.current?.scrollIntoView({ block: 'center', behavior: 'smooth' });
         return;
       }
       fetch('/api/event', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ name: 'checkout_opened' }) }).catch(() => {});
-      if (data.checkout) await openRazorpay(data.orderId, data.checkout);
+      if (data.provider === 'cashfree' && data.checkout) leaving = await openCashfree(data.checkout);
+      else if (data.checkout) await openRazorpay(data.orderId, data.checkout);
       else setCheckout({ orderId: data.orderId, amountRupees: data.amountRupees ?? priceOf(tier) });
     } catch {
       setError('Could not reach us. Check your connection and try again.');
     } finally {
-      setBusy(false);
+      if (!leaving) setBusy(false);
     }
+  }
+
+  /**
+   * Hands the page to Cashfree's checkout. Her mobile number and email went to Cashfree with
+   * the order, so she is asked only how she wants to pay. Cashfree brings her back to
+   * /api/order/return, which checks the payment and opens her plan.
+   */
+  async function openCashfree(options: Record<string, unknown>): Promise<boolean> {
+    type CashfreeFactory = (o: { mode: string }) => { checkout: (o: { paymentSessionId: string; redirectTarget: string }) => Promise<unknown> };
+    const w = window as unknown as { Cashfree?: CashfreeFactory };
+    if (!w.Cashfree) await loadScript(CASHFREE_SDK).catch(() => undefined);
+    if (!w.Cashfree || typeof options.paymentSessionId !== 'string') {
+      setError('The payment page did not load. Check your connection and try again.');
+      return false;
+    }
+    void w
+      .Cashfree({ mode: options.mode === 'sandbox' ? 'sandbox' : 'production' })
+      .checkout({ paymentSessionId: options.paymentSessionId, redirectTarget: '_self' })
+      .catch(() => {
+        setError('The payment page did not open. Please try again.');
+        setBusy(false);
+      });
+    return true;
   }
 
   /** Loads Razorpay's checkout and opens it. Its handler runs only after a successful payment. */
@@ -335,7 +413,7 @@ export function UnlockClient(props: Props) {
         <div className="sheet-back" role="dialog" aria-modal="true" aria-label="Demo checkout">
           <div className="sheet">
             <h2 className="h2">Demo checkout</h2>
-            <div className="demo-note">This is a test payment. No money moves. Razorpay is not connected yet.</div>
+            <div className="demo-note">This is a test payment. No money moves. The payment gateway is not connected yet.</div>
             <div className="row between" style={{ fontSize: 16, fontWeight: 700 }}>
               <span>{tier.name}</span>
               <span>{rupees(checkout.amountRupees)}</span>

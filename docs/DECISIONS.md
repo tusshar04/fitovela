@@ -267,6 +267,25 @@ IDs D-004 to D-006 are used by proposals in draft [PR #2](https://github.com/tus
 - **Revisit when:** Conversion data shows whether the countdown helps; or a complaint or an ad review cites the timer or the struck-through prices.
 - **Supersedes:** the "countdown is real" behaviour from the first build (FTV-004).
 
+## D-025 — Cashfree is the payment gateway; she types her details once
+
+- **Status:** accepted; implemented, switched off until keys are supplied.
+- **Date:** 2026-11-15.
+- **Decision owner:** Tushar.
+- **Decision:** Payments go through Cashfree. The buyer gives her email and mobile number once, on Fitovela (pre-filled on the paywall if she gave them at the report step). Both are sent to Cashfree with the order, so Cashfree's page asks only how she wants to pay.
+- **Reason:** Founder instruction of 2026-11-15: "start the cashfree integration ... user does not have to enter information twice or basic information from user should suffice lowest friction possible".
+- **Choices made by the agent, not the founder:**
+  - *Full-page hand-off to Cashfree's checkout, not a pop-up.* Ad traffic opens inside the Instagram and Facebook in-app browsers, where pop-ups and UPI app links inside frames are the likelier thing to break. Not tested in those browsers.
+  - *Email stays required.* A woman who pays in her UPI app and never returns to the browser gets her plan only through the emailed link.
+  - *A plan is delivered only on Cashfree's word:* either its API says the order is PAID in INR for our amount when her browser returns, or a webhook signed with the secret key says so. Nothing in the return address is trusted.
+  - *All payment methods are left on;* which ones show, and in what order, is set in the Cashfree dashboard.
+  - API version `2026-01-01`, read from Cashfree's documentation on 2026-11-15.
+- **Evidence:** Founder message; Cashfree documentation (create order, get order, payments for an order, webhook signature, web checkout). No payment has been run against Cashfree.
+- **Implementation:** `src/server/payments.ts`, `src/app/api/order/route.ts`, `src/app/api/order/return/route.ts`, `src/app/api/webhooks/cashfree/route.ts`, `src/app/api/order/confirm/route.ts`, `src/ui/UnlockClient.tsx`, `scripts/deploy.sh` (`CASHFREE_ENABLED`). The privacy page now names Cashfree and says what is passed to it.
+- **Consequences to know:** The Razorpay code written earlier stays in the repo, unused unless its keys are set; remove it once Cashfree has taken real payments. Refunds are made by hand in the Cashfree dashboard.
+- **Revisit when:** Keys arrive (run a sandbox payment, then one real payment); payment drop-off inside in-app browsers is measured; or email turns out to cost sales.
+- **Supersedes:** "Razorpay ... added later" in D-013 and the Razorpay wiring described in D-021.
+
 ## Adding or changing a decision
 
 Assign the next stable ID and record status, date, owner, choice, reason, evidence, implementation status, and revisit conditions. Identify who accepted a decision; do not represent an agent suggestion as founder approval.

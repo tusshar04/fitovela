@@ -4,7 +4,7 @@
 #   scripts/deploy.sh            build, deploy a candidate, smoke-test it, then send it all traffic
 #   scripts/deploy.sh rollback   list recent revisions and how to send traffic back to one
 #
-# What is switched on is decided by the three flags below. Secrets live in Secret
+# What is switched on is decided by the flags below. Secrets live in Secret
 # Manager; nothing secret is in this file or printed by it.
 set -euo pipefail
 
@@ -18,6 +18,7 @@ SHARED=projects/1080479161978/secrets
 
 SMS_ENABLED=1        # login codes by SMS through 2Factor
 EMAIL_ENABLED=1      # Amazon SES, from care@fitovela.com, with Fitovela's own send-only key
+CASHFREE_ENABLED=0   # set to 1 once cashfree-app-id and cashfree-secret-key (production keys) exist in Secret Manager
 RAZORPAY_ENABLED=0   # set to 1 once razorpay-key-id, razorpay-key-secret and razorpay-webhook-secret exist in Secret Manager
 
 if [[ "${1:-}" == "rollback" ]]; then
@@ -48,6 +49,10 @@ if [[ "$SMS_ENABLED" == 1 ]]; then SECRETS+=",TWOFACTOR_API_KEY=${SHARED}/twofac
 if [[ "$EMAIL_ENABLED" == 1 ]]; then
   ENV+=",EMAIL_PROVIDER=ses,AWS_SES_REGION=ap-south-1"
   SECRETS+=",AWS_SES_ACCESS_KEY_ID=ses-access-key-id:latest,AWS_SES_SECRET_ACCESS_KEY=ses-secret-access-key:latest"
+fi
+if [[ "$CASHFREE_ENABLED" == 1 ]]; then
+  ENV+=",CASHFREE_ENV=production"
+  SECRETS+=",CASHFREE_APP_ID=cashfree-app-id:latest,CASHFREE_SECRET_KEY=cashfree-secret-key:latest"
 fi
 if [[ "$RAZORPAY_ENABLED" == 1 ]]; then
   SECRETS+=",RAZORPAY_KEY_ID=razorpay-key-id:latest,RAZORPAY_KEY_SECRET=razorpay-key-secret:latest,RAZORPAY_WEBHOOK_SECRET=razorpay-webhook-secret:latest"

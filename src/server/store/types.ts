@@ -33,14 +33,14 @@ export interface Order {
   tier: TierId;
   amountRupees: number;
   status: 'created' | 'paid';
-  provider: 'demo' | 'razorpay';
+  provider: 'demo' | 'razorpay' | 'cashfree';
   email: string;
   phone: string;
   createdAt: string;
   paidAt?: string;
   /** Unguessable token for the private plan link. Set when the order is created; the link works only once the order is paid. */
   planToken?: string;
-  /** Razorpay's order and payment ids. */
+  /** The payment provider's order and payment ids. */
   providerOrderId?: string;
   providerPaymentId?: string;
   plan?: Plan;

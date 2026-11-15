@@ -1,5 +1,5 @@
-// Turns a paid order into a delivered plan. Called from the browser confirmation
-// and from the Razorpay webhook, so it must be safe to run twice.
+// Turns a paid order into a delivered plan. Called when her browser comes back from
+// the payment page and from the provider's webhook, so it must be safe to run twice.
 
 import { buildAssessment } from '@/domain/assessment';
 import { TIERS } from '@/domain/offer';
@@ -14,6 +14,11 @@ export async function fulfilOrder(order: Order, session: Session, origin: string
   if (!order.planToken) return { ok: false, error: 'This order cannot be completed.' };
   const planUrl = `/plan/${order.planToken}`;
   if (order.status === 'paid' && order.plan) return { ok: true, planUrl };
+  // Her browser and the webhook usually arrive within a second of each other. Looking
+  // again here means the second one almost always finds the plan already delivered and
+  // does not send the email twice. (It is not a lock: a rare double email is harmless.)
+  const latest = await (await getStore()).getOrder(order.id);
+  if (latest?.status === 'paid' && latest.plan) return { ok: true, planUrl };
 
   const assessment = buildAssessment(session.answers);
   if (!assessment || !assessment.eligibility.eligible) return { ok: false, error: 'This plan cannot be created.' };

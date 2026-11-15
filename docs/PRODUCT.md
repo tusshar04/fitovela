@@ -75,7 +75,7 @@ Women at BMI 30 and above are also offered an **intensive track** of 800 to 1,00
 | Guarantee | 7-day money-back | Proposal; shown on the paywall |
 | Contents | Daily meals in her cuisine, two swaps per meal, a grocery list for each week, a daily movement plan | Built. Weekly check-ins on the intensive track only. No eating-out guide is promised |
 | Delivery | By email, plus login with mobile number and one-time code | Founder's decision ([D-013](DECISIONS.md)); email and SMS providers not connected |
-| Payment | Razorpay, later | Demo checkout only for now |
+| Payment | Cashfree hosted checkout ([D-025](DECISIONS.md)); her email and mobile number are sent with the order so she types them once | Built, switched off until keys are supplied; not yet run against Cashfree |
 
 ## Design direction (accepted, [D-008](DECISIONS.md#d-008--quiz-funnel-style-and-visual-direction))
 
@@ -103,7 +103,7 @@ The doctor answered all twelve questions on 2026-11-15. Her answers, how the app
 - Who excluded visitors ("talk to us first") are handed to.
 - Whether email and mobile stay skippable before the result.
 - Refund terms, GST treatment, support hours.
-- Providers for email and SMS codes; when Razorpay and the Meta Pixel go in.
+- Providers for email and SMS codes; when Cashfree is switched on and the Meta Pixel goes in.
 - The GCP project to deploy into.
 
 ## What we know and do not know
