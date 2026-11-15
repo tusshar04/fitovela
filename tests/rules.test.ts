@@ -127,13 +127,36 @@ describe('7C and 8B: calories and pace', () => {
     expect(heavy.paceKgPerWeek).toBeLessThanOrEqual(1);
   });
 
-  it('projects an honest date from the real deficit', () => {
+  it('builds the target from the real deficit: meals plus the movement plan', () => {
     const now = new Date('2026-11-15T00:00:00Z');
     const e = energyPlan(metrics, 'sedentary', now);
     expect(e.targetKcal).toBe(1430);
-    expect(e.paceKgPerWeek).toBeCloseTo(0.26, 2);
-    expect(e.weeksToGoal).toBe(31);
-    expect(e.goalDate).toBe('2027-06-20');
+    expect(e.mealsOnlyPaceKgPerWeek).toBeCloseTo(0.26, 2);
+    // 45-minute brisk walk six days and 20 minutes of strength three days, for a 72 kg woman.
+    expect(e.movement).toEqual({ walkMinutes: 45, walkDays: 6, strengthMinutes: 20, strengthDays: 3, kcalPerDay: 178 });
+    expect(e.paceKgPerWeek).toBeCloseTo(0.42, 2);
+    expect(e.fourWeekLossKg).toBe(1.7);
+    expect(e.fourWeekKg).toBe(70.3);
+    expect(e.fourWeekDate).toBe('2026-12-13');
+    expect(e.weeksToGoal).toBe(20);
+    expect(e.goalDate).toBe('2027-04-04');
+  });
+
+  it('never shows a target faster than the calories can deliver, or past her goal', () => {
+    for (const activity of ['sedentary', 'light', 'moderate', 'active'] as const) {
+      for (const m of [metrics, { age: 52, heightCm: 150, weightKg: 58, goalKg: 57 }, { age: 22, heightCm: 175, weightKg: 110, goalKg: 70 }]) {
+        const e = energyPlan(m, activity);
+        const deliverable = ((e.deficit + e.movement.kcalPerDay) * 7) / 7700;
+        expect(e.paceKgPerWeek).toBeLessThanOrEqual(Math.min(1, deliverable) + 0.005);
+        expect(e.paceKgPerWeek).toBeGreaterThanOrEqual(e.mealsOnlyPaceKgPerWeek);
+        expect(e.fourWeekKg).toBeGreaterThanOrEqual(m.goalKg);
+      }
+    }
+  });
+
+  it('asks already-active women for strength work only', () => {
+    expect(energyPlan(metrics, 'active').movement.walkDays).toBe(0);
+    expect(energyPlan(metrics, 'moderate').movement.walkDays).toBe(3);
   });
 
   it('holds weight steady when the goal is not lower', () => {

@@ -127,6 +127,18 @@ IDs D-004 to D-006 are used by proposals in draft [PR #2](https://github.com/tus
 - **Revisit when:** Providers are chosen for email, SMS and payments.
 - **Supersedes:** the WhatsApp delivery and check-in in earlier mockups.
 
+## D-014 — Lead with a 4-week target built from meals plus movement; no targets the plan cannot reach
+
+- **Status:** proposed by Claude; implemented; awaiting the founder's and doctor's decision.
+- **Date:** 2026-11-15.
+- **Proposer:** Claude. The founder asked for a dynamic target of about 10% of body weight in 4 weeks, after the doctor asked for an inspiring target such as 10 kg in 5 weeks and for cardio and strength guidance.
+- **Proposal:** Add a movement plan to every paid plan. Lead the result and paywall with a 4-week target and milestones at the pace her calories and movement actually deliver, capped at 1 kg a week. Do not show a target the plan cannot reach.
+- **Reason:** A near-term target and a push to move answer the doctor's concern. A figure of 10% in 4 weeks needs a daily shortfall larger than most users' total daily burn, so printing it on a personal report would be a false claim to a paying customer, with refund, complaint and ad-account consequences, and it conflicts with the doctor's answers 7 and 8.
+- **Evidence:** Arithmetic in [MEDICAL_RULES.md](MEDICAL_RULES.md). No conversion data yet for either framing.
+- **Implementation:** `src/domain/energy.ts`, `src/ui/TargetCard.tsx`, the paywall and the plan page. Unit-tested.
+- **Revisit when:** The doctor answers the two open questions (calorie floor, movement minutes), or ad tests show the target framing does not convert.
+- **Supersedes:** the single far-off goal date on the result page.
+
 ## Adding or changing a decision
 
 Assign the next stable ID and record status, date, owner, choice, reason, evidence, implementation status, and revisit conditions. Identify who accepted a decision; do not represent an agent suggestion as founder approval.

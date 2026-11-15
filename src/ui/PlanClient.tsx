@@ -1,10 +1,52 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import type { MovementPlan } from '@/domain/energy';
 import type { GroceryItem, Plan, PlanDish } from '@/domain/plan/generator';
 import { Logo, SwapIcon } from './bits';
 
 const DAY_NAMES = ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'];
+
+const STRENGTH_MOVES = ['Squats, 3 sets of 12', 'Wall or knee push-ups, 3 sets of 10', 'Glute bridges, 3 sets of 15', 'Plank, 3 holds of 20 seconds'];
+
+/** Today's movement. Walk days come first in the week; strength falls on days 1, 3 and 5; the last day is rest. DRAFT, pending the doctor's review. */
+function MovementCard({ movement, dayOfWeek }: { movement: MovementPlan; dayOfWeek: number }) {
+  const walkToday = dayOfWeek <= movement.walkDays;
+  const strengthDays = [1, 3, 5].slice(0, movement.strengthDays);
+  const strengthToday = strengthDays.includes(dayOfWeek);
+  return (
+    <div className="plum stack" style={{ margin: '14px 20px 0', gap: 8, padding: 16 }}>
+      <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.08em', color: 'var(--yellow)' }}>TODAY&apos;S MOVEMENT</div>
+      {walkToday ? <div style={{ fontSize: 16, fontWeight: 800 }}>{movement.walkMinutes}-minute brisk walk</div> : null}
+      {walkToday ? (
+        <div className="dim" style={{ fontSize: 13 }}>
+          Fast enough that you can talk but not sing. Split it into two walks if that is easier.
+        </div>
+      ) : null}
+      {strengthToday ? (
+        <>
+          <div style={{ fontSize: 16, fontWeight: 800 }}>{movement.strengthMinutes} minutes of strength</div>
+          <div className="dim stack" style={{ fontSize: 13, gap: 2 }}>
+            {STRENGTH_MOVES.map((m) => (
+              <span key={m}>{m}</span>
+            ))}
+          </div>
+        </>
+      ) : null}
+      {!walkToday && !strengthToday ? (
+        <>
+          <div style={{ fontSize: 16, fontWeight: 800 }}>Rest day</div>
+          <div className="dim" style={{ fontSize: 13 }}>
+            {movement.walkDays === 0 ? 'Keep up the activity you already do.' : 'A gentle stroll or stretching is enough today.'}
+          </div>
+        </>
+      ) : null}
+      <div className="dim" style={{ fontSize: 12 }}>
+        About {movement.kcalPerDay} kcal a day on average across the week. Stop and see a doctor if you feel chest pain, dizziness or joint pain.
+      </div>
+    </div>
+  );
+}
 
 function formatQty(g: GroceryItem): string {
   if (g.unit === 'g' && g.qty >= 1000) return `${Math.round(g.qty / 100) / 10} kg`;
@@ -137,6 +179,7 @@ export function PlanClient({ plan, token, tierName, typeName, justBought, email,
               </div>
             ))}
           </div>
+          {plan.movement ? <MovementCard movement={plan.movement} dayOfWeek={((day - 1) % 7) + 1} /> : null}
           <div className="stack" style={{ padding: '14px 20px 0', gap: 8 }}>
             {plan.notes.map((n, i) => (
               <div key={n} className={i === 0 && plan.notes.length > 1 ? 'advice' : 'soft small'} style={{ borderRadius: 14 }}>

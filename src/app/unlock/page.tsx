@@ -6,6 +6,7 @@ import { offerEndsAt, TIER_ORDER, TIERS } from '@/domain/offer';
 import { activeProvider } from '@/server/payments';
 import { currentSession, logEvent, saveSession } from '@/server/session';
 import { Logo } from '@/ui/bits';
+import { movementSentence } from '@/ui/TargetCard';
 import { UnlockClient } from '@/ui/UnlockClient';
 
 export const dynamic = 'force-dynamic';
@@ -63,7 +64,10 @@ export default async function UnlockPage() {
       goalKg={a.metrics.goalKg}
       bmi={a.bmi}
       targetKcal={a.energy.targetKcal}
-      goalDate={a.energy.goalDate}
+      fourWeekKg={a.energy.fourWeekKg}
+      fourWeekLossKg={a.energy.fourWeekLossKg}
+      fourWeekDate={a.energy.fourWeekDate}
+      movementLine={movementSentence(a.energy)}
       toLoseKg={a.energy.toLoseKg}
       planChanges={a.content.planChanges}
       medicationAdvisory={a.eligibility.medicationAdvisory}

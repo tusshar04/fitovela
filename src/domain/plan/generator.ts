@@ -2,6 +2,7 @@
 // Rules from the doctor's answer 10A: low-GI Indian meals, protein at every meal,
 // no food group banned. Calories follow energy.ts (never below BMR).
 
+import type { MovementPlan } from '../energy';
 import type { TypeId } from '../typing';
 import { MEALS } from './meals';
 import type { AvoidTag, Cuisine, Diet, Ingredient, Meal, MealSlot, MealTag } from './types';
@@ -64,6 +65,8 @@ export interface Plan {
   groceries: GroceryItem[][];
   notes: string[];
   generatedAt: string;
+  /** Walk and strength prescription. Absent on plans made before it existed. */
+  movement?: MovementPlan;
 }
 
 export interface PlanInput {
@@ -76,6 +79,7 @@ export interface PlanInput {
   avoid: AvoidTag[];
   weekOneLighterOn: 'wheat' | 'dairy' | null;
   medicationAdvisory: boolean;
+  movement?: MovementPlan;
 }
 
 interface AddOnDef extends AddOn {
@@ -265,5 +269,6 @@ export function generatePlan(input: PlanInput, library: Meal[] = MEALS): Plan {
     groceries,
     notes,
     generatedAt: new Date().toISOString(),
+    movement: input.movement,
   };
 }

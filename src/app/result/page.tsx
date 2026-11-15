@@ -8,11 +8,10 @@ import { STRENGTH_LABEL } from '@/domain/typing';
 import { AREAS, AREA_LABEL, LEVEL_LABEL } from '@/domain/types';
 import { currentSession, logEvent } from '@/server/session';
 import { Bars, Lock, Logo } from '@/ui/bits';
+import { TargetCard } from '@/ui/TargetCard';
 
 export const dynamic = 'force-dynamic';
 
-const formatDate = (iso: string) => new Date(`${iso}T00:00:00Z`).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
-const shortDate = (iso: string) => new Date(`${iso}T00:00:00Z`).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', timeZone: 'UTC' });
 
 export default async function ResultPage() {
   const session = await currentSession();
@@ -119,48 +118,7 @@ export default async function ResultPage() {
           <p className="small">For Indian adults the healthy range is 18.5 to 22.9.</p>
         </section>
 
-        {energy.goalDate && energy.weeksToGoal ? (
-          <section className="outline stack" style={{ gap: 4 }}>
-            <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--muted)' }}>With the right diet for this type, we estimate</div>
-            <div style={{ fontSize: 28, lineHeight: 1.15, fontWeight: 800, letterSpacing: '-0.02em' }}>
-              <span style={{ color: 'var(--pink)' }}>{metrics.goalKg} kg</span> by {formatDate(energy.goalDate)}
-            </div>
-            <svg viewBox="0 0 318 184" role="img" aria-label={`Estimated weight falling from ${metrics.weightKg} kg today to ${metrics.goalKg} kg by ${formatDate(energy.goalDate)}`} style={{ display: 'block', width: '100%', height: 'auto', marginTop: 10 }}>
-              <defs>
-                <linearGradient id="fvLine" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0" stopColor="#F0483E" />
-                  <stop offset="0.5" stopColor="#FFB020" />
-                  <stop offset="1" stopColor="#0A9D6B" />
-                </linearGradient>
-                <linearGradient id="fvFill" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0" stopColor="#FFB020" stopOpacity="0.22" />
-                  <stop offset="1" stopColor="#FFB020" stopOpacity="0" />
-                </linearGradient>
-              </defs>
-              <path d="M0 48H318M0 96H318M0 144H318" stroke="#E6E3EA" strokeWidth="1" strokeDasharray="4 5" />
-              <path d="M16 46C110 50 170 134 300 140V162H16Z" fill="url(#fvFill)" />
-              <path d="M16 46C110 50 170 134 300 140" fill="none" stroke="url(#fvLine)" strokeWidth="5" strokeLinecap="round" />
-              <circle cx="16" cy="46" r="7" fill="#FFFFFF" stroke="#F0483E" strokeWidth="4" />
-              <circle cx="300" cy="140" r="8" fill="#0A9D6B" stroke="#FFFFFF" strokeWidth="3" />
-              <text x="6" y="24" fontSize="14" fontWeight="800" fill="#2B1330">
-                {metrics.weightKg} kg
-              </text>
-              <rect x="246" y="98" width="68" height="28" rx="14" fill="#0A7D55" />
-              <text x="280" y="117" textAnchor="middle" fontSize="14" fontWeight="800" fill="#FFFFFF">
-                {metrics.goalKg} kg
-              </text>
-              <text x="6" y="180" fontSize="12" fontWeight="600" fill="#6B5868">
-                Today
-              </text>
-              <text x="312" y="180" textAnchor="end" fontSize="12" fontWeight="600" fill="#6B5868">
-                {shortDate(energy.goalDate)}
-              </text>
-            </svg>
-            <p className="small" style={{ marginTop: 6 }}>
-              Based on about {energy.paceKgPerWeek} kg a week, on {energy.targetKcal} kcal a day, which is never below what your body needs at rest. Individual results vary.
-            </p>
-          </section>
-        ) : null}
+        <TargetCard metrics={metrics} energy={energy} />
 
         {a.eligibility.eligible ? (
           <>
@@ -177,6 +135,7 @@ export default async function ResultPage() {
                 ['Lunch', 'Built for your type and goal'],
                 ['Dinner', 'With two swaps for each'],
                 ['Daily calories', `${energy.targetKcal} kcal, set for you`],
+                ['Movement plan', 'Your walk and strength days'],
               ].map(([k, v]) => (
                 <div key={k} className="locked-row">
                   <b>{k}</b>

@@ -16,7 +16,10 @@ interface Props {
   goalKg: number;
   bmi: number;
   targetKcal: number;
-  goalDate: string | null;
+  fourWeekKg: number;
+  fourWeekLossKg: number;
+  fourWeekDate: string;
+  movementLine: string;
   toLoseKg: number;
   planChanges: string[];
   medicationAdvisory: boolean;
@@ -26,7 +29,7 @@ interface Props {
 }
 
 const rupees = (n: number) => `₹${n.toLocaleString('en-IN')}`;
-const longDate = (iso: string) => new Date(`${iso}T00:00:00Z`).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
+const longDate = (iso: string) => new Date(`${iso}T00:00:00Z`).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', timeZone: 'UTC' });
 
 const FAQ = [
   ['Is this a medical diagnosis?', 'No. It is a nutrition plan based on a symptom assessment. Only a doctor and tests can diagnose a condition.'],
@@ -131,8 +134,8 @@ export function UnlockClient(props: Props) {
             <span style={{ fontSize: 24, lineHeight: 1.1, fontWeight: 800, color: 'var(--pink)' }}>{props.toLoseKg > 0 ? `${props.goalKg} kg` : 'Hold steady'}</span>
           </div>
           <div className="stack" style={{ gap: 2 }}>
-            <span className="small" style={{ fontWeight: 700 }}>{props.goalDate ? 'Estimated by' : 'Daily calories'}</span>
-            <span style={{ fontSize: 18, fontWeight: 800 }}>{props.goalDate ? longDate(props.goalDate) : `${props.targetKcal} kcal`}</span>
+            <span className="small" style={{ fontWeight: 700 }}>{props.fourWeekLossKg > 0 ? `4-week target, by ${longDate(props.fourWeekDate)}` : 'Daily calories'}</span>
+            <span style={{ fontSize: 18, fontWeight: 800 }}>{props.fourWeekLossKg > 0 ? `${props.fourWeekKg} kg` : `${props.targetKcal} kcal`}</span>
           </div>
         </div>
       </section>
@@ -231,7 +234,7 @@ export function UnlockClient(props: Props) {
           ))}
         </div>
         <div className="stack" style={{ gap: 12, marginTop: 4 }}>
-          {[`Every day planned: 5 meals, about ${props.targetKcal} kcal, in your own cuisine`, 'Two swaps for every single meal', 'A grocery list for each week', 'Sent to your email, with a login to come back any time', ...props.planChanges].map((line) => (
+          {[`Every day planned: 5 meals, about ${props.targetKcal} kcal, in your own cuisine`, 'Two swaps for every single meal', 'A grocery list for each week', `Your movement plan: ${props.movementLine}`, 'Sent to your email, with a login to come back any time', ...props.planChanges].map((line) => (
             <div key={line} className="line-item top" style={{ fontSize: 15 }}>
               <Tick />
               <span>{line}</span>

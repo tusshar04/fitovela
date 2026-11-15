@@ -59,7 +59,7 @@ Chosen by the doctor (her answer 1A, [D-012](DECISIONS.md)):
 
 The founder wants the questionnaire to feel like a diagnosis. The product delivers that through structure (sections per body system, signals counting up, follow-up questions that react to her answers, a named type, a report) while the sentence itself says "match".
 
-The weight estimate is honest: calories are never set below her resting need, so the date shown is often months away rather than weeks.
+The weight section leads with a 4-week target and milestones at weeks 4, 8 and 12, built from her meals plus a movement plan (brisk walk and strength sessions). The target is what those actually add up to, capped at 1 kg a week ([D-014](DECISIONS.md)). The doctor asked for a more aggressive target; two open questions to her in [MEDICAL_RULES.md](MEDICAL_RULES.md) would raise it honestly.
 
 ## Offer
 
@@ -69,7 +69,7 @@ The weight estimate is honest: calories are never set below her resting need, so
 | Tiers | 1 week INR 199, 4 weeks INR 499, 12 weeks INR 999, each shown per day | Claude's proposal |
 | Launch price and countdown | 15 minutes from her first view of the paywall; then the regular price (INR 399, 999, 1,999) applies | Built; the server charges whichever price is live |
 | Guarantee | 7-day money-back | Proposal; shown on the paywall |
-| Contents | Daily meals in her cuisine, two swaps per meal, a grocery list for each week | Built. No check-ins or eating-out guide are promised |
+| Contents | Daily meals in her cuisine, two swaps per meal, a grocery list for each week, a daily movement plan | Built. No check-ins or eating-out guide are promised |
 | Delivery | By email, plus login with mobile number and one-time code | Founder's decision ([D-013](DECISIONS.md)); email and SMS providers not connected |
 | Payment | Razorpay, later | Demo checkout only for now |
 

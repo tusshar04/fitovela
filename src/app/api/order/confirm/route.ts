@@ -41,6 +41,7 @@ export async function POST(req: Request) {
     avoid: assessment.avoid,
     weekOneLighterOn: assessment.weekOneLighterOn,
     medicationAdvisory: assessment.eligibility.medicationAdvisory,
+    movement: assessment.energy.movement,
   });
   order.status = 'paid';
   order.paidAt = new Date().toISOString();
