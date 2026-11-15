@@ -95,11 +95,16 @@ Defined in `src/domain/typing.ts`. An area needs at least 2 signs (Moderate) to 
   - Dishes with more than six ingredients list only the main ones, so the grocery list can miss small items such as a little onion, tomato or coconut.
 - Generator rules: `src/domain/plan/generator.ts`. Five meals a day; dishes only from her cuisines or pan-Indian staples; nothing she avoids; day fitted to her calorie target with protein-first extras; week one lighter on wheat or dairy if she said it bloats her.
 - Type copy (summary, "what this means", "what your plan changes"): `src/domain/typeContent.ts`.
-- "Your next 12 weeks" timeline: `src/domain/journey.ts`. What she is likely to feel and see at weeks 1, 2, 4, 8 and 12, picked from the signs she ticked. Each line needs her yes or no:
-  - Week 1: sugar cravings after meals start to fade; staying full for longer; bloating often eases; the sleepy hour after lunch gets lighter.
-  - Week 2: waistband or clothes start to sit looser; less puffiness in the face and fingers.
-  - Week 4: the daily walk often pays back in deeper sleep.
-  - Week 8: around one dress size for a loss of 4.5 kg or more; skin on the chin and jawline often starts to settle on low-GI meals; cycles can start to become more regular once 5% of body weight is off.
+- "Your next 12 weeks" timeline: `src/domain/journey.ts`. What she is likely to feel and see at weeks 1, 2, 3, 4, 8 and 12, picked from the signs she ticked.
+  - **Ruled on by the doctor (2026-11-15, relayed by Tushar):**
+    - Skin on the chin and jawline starts to respond from week 3. Shown at week 3 to women who ticked acne.
+    - Cycles can start to become more regular once 5% of body weight is off: approved. Shown only to women who ticked late or skipped periods.
+    - No dress-size claim. Instead: at about 1 kg down, women start to feel lighter and their clothes sit looser. The line appears on the first stop where her target loss reaches 1 kg.
+  - **Still drafts, each needing her yes or no:**
+    - Week 1: sugar cravings after meals start to fade; staying full for longer; bloating often eases; the sleepy hour after lunch gets lighter.
+    - Week 2: less puffiness in the face and fingers; the slump after lunch is mostly gone.
+    - Week 3: the daily walk often pays back in deeper sleep.
+    - Week 8: "this is usually when friends and family start to notice".
   - All lines use "often", "can" or "start to", and the page says they are what many women notice, not guarantees.
 - Movement plan: `src/domain/energy.ts` (`movementPlan`) and the "Today's movement" card in `src/ui/PlanClient.tsx`. The 60 minutes a day is her instruction; the split into a brisk walk plus three strength sessions, the four strength moves, and the calorie estimate (net MET 3.3 for brisk walking, 2.5 for strength) are drafts. Women with heart, joint or other conditions that limit exercise are not screened for yet.
 
