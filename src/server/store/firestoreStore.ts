@@ -41,11 +41,6 @@ export const firestoreStore: Store = {
     return snap.docs.map((d) => d.data() as Order).sort((a, b) => (b.paidAt ?? '').localeCompare(a.paidAt ?? ''));
   },
 
-  async listIntensiveOrders() {
-    const snap = await firestore().collection('orders').where('track', '==', 'intensive').where('status', '==', 'paid').get();
-    return snap.docs.map((d) => d.data() as Order).sort((a, b) => (b.paidAt ?? '').localeCompare(a.paidAt ?? ''));
-  },
-
   getOtp: (phone) => get<OtpRecord>('otps', phone),
   async saveOtp(r) {
     await firestore().collection('otps').doc(r.phone).set(r);

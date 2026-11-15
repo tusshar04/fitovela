@@ -67,8 +67,8 @@ interface PlanProps {
   justBought: boolean;
   email: string;
   emailSent: boolean;
-  intensive: { paused: boolean; lastKg: number | null } | null;
-  clinicianNote: string | null;
+  /** Set while she is on the intensive plan and check-ins are still due. */
+  intensive: { lastKg: number | null } | null;
   movedToStandard: boolean;
 }
 
@@ -114,7 +114,7 @@ function CheckinCard({ token, week, lastKg }: { token: string; week: number; las
       <div className="stack" style={{ gap: 4 }}>
         <span style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: '0.1em', color: 'var(--pink)' }}>WEEK {week} CHECK-IN</span>
         <span style={{ fontSize: 17, fontWeight: 700, letterSpacing: '-0.012em' }}>Finished week {week}? Check in to open week {week + 1}</span>
-        <span className="small">On the intensive plan we look at how you are doing before each new week.</span>
+        <span className="small">On the intensive plan each new week opens after this short check-in. Answer honestly: it is there to keep you safe.</span>
       </div>
       <div className="field">
         <label htmlFor="ci-weight">Your weight today (kg){lastKg ? `, last time ${lastKg}` : ''}</label>
@@ -142,7 +142,7 @@ function CheckinCard({ token, week, lastKg }: { token: string; week: number; las
   );
 }
 
-export function PlanClient({ plan, totalWeeks, token, tierName, typeName, justBought, email, emailSent, intensive, clinicianNote, movedToStandard }: PlanProps) {
+export function PlanClient({ plan, totalWeeks, token, tierName, typeName, justBought, email, emailSent, intensive, movedToStandard }: PlanProps) {
   const [day, setDay] = useState(1);
   const [view, setView] = useState<'day' | 'groceries'>('day');
   // Which option is showing for each meal: 0 is the planned dish, 1 and 2 are the swaps.
@@ -207,19 +207,13 @@ export function PlanClient({ plan, totalWeeks, token, tierName, typeName, justBo
       ) : null}
 
       {movedToStandard ? (
-        <div className="advice" style={{ margin: '14px 20px 0' }}>
-          Our clinician reviewed your answers and put you on the standard plan instead of the intensive one.{clinicianNote ? ` Her note: ${clinicianNote}` : ''}
-        </div>
-      ) : clinicianNote ? (
-        <div className="banner" style={{ margin: '14px 20px 0' }}>
-          <b>Note from our clinician:</b> {clinicianNote}
-        </div>
-      ) : null}
-
-      {intensive?.paused ? (
         <div className="advice stack" style={{ margin: '14px 20px 0', gap: 6 }}>
-          <b style={{ fontSize: 15 }}>Your intensive plan is paused</b>
-          <span>Your check-in told us something our clinician needs to look at first. Until you hear from us, do not cut your food further: add a full extra meal each day, drink plenty of water, and see a doctor today if you feel faint, your heart races or you have strong belly pain.</span>
+          <b style={{ fontSize: 15 }}>{plan.track === 'intensive' ? 'Your intensive plan has stopped' : 'You are now on the standard plan'}</b>
+          <span>
+            Your last check-in showed a sign that the intensive plan is too strict for you right now.{' '}
+            {plan.track === 'intensive' ? 'Do not continue it. Add a full extra meal each day and write to us for your standard plan.' : 'Your plan now has more food each day. Nothing else changes.'} If you feel faint, your heart races, you have strong
+            belly pain or you cannot keep food down, see a doctor today.
+          </span>
         </div>
       ) : null}
 
@@ -302,7 +296,7 @@ export function PlanClient({ plan, totalWeeks, token, tierName, typeName, justBo
             ))}
           </div>
           {plan.movement ? <MovementCard movement={plan.movement} dayOfWeek={((day - 1) % 7) + 1} /> : null}
-          {intensive && !intensive.paused && openWeeks < totalWeeks && week === openWeeks ? <CheckinCard token={token} week={openWeeks} lastKg={intensive.lastKg} /> : null}
+          {intensive && openWeeks < totalWeeks && week === openWeeks ? <CheckinCard token={token} week={openWeeks} lastKg={intensive.lastKg} /> : null}
           <div className="stack" style={{ padding: '14px 20px 0', gap: 8 }}>
             {plan.notes.map((n, i) => (
               <div key={n} className={i === 0 && plan.notes.length > 1 ? 'advice' : 'soft small'} style={{ borderRadius: 14 }}>

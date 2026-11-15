@@ -226,8 +226,8 @@ describe('adaptive questionnaire', () => {
 describe('launch price window', () => {
   const start = '2026-11-15T10:00:00.000Z';
   it('charges the launch price inside 15 minutes and the regular price after', () => {
-    expect(priceFor('w4', start, new Date('2026-11-15T10:14:59Z'))).toBe(499);
-    expect(priceFor('w4', start, new Date('2026-11-15T10:15:00Z'))).toBe(999);
+    expect(priceFor('w4', start, new Date('2026-11-15T10:14:59Z'))).toBe(599);
+    expect(priceFor('w4', start, new Date('2026-11-15T10:15:00Z'))).toBe(1199);
     expect(isLaunchPriceLive(undefined)).toBe(false);
   });
 });

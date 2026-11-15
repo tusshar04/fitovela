@@ -33,7 +33,7 @@ She found the first weight estimate too slow to sell. Her instructions, in the o
 | --- | --- | --- |
 | Tell buyers to burn calories with cardio or strength training | Yes | Every paid plan has a movement plan and a "Today's movement" card. |
 | 60 minutes of exercise a day | Yes | A 60-minute brisk walk every day and 20 minutes of body-weight strength three days a week. Women who already exercise 3 to 4 days get four walk days; women active most days get strength only. |
-| A lower calorie floor (she agreed to 1,200 kcal; then approved going as low as 800) | 1,200 on the standard plan; 800 only on the reviewed intensive track | Standard: 1,200 kcal a day for women at BMI 23 and above; larger women get maintenance minus 1,000 kcal if that is higher. Intensive: 800 to 1,000 kcal, see "The intensive track" below. |
+| A lower calorie floor (she agreed to 1,200 kcal; then approved going as low as 800) | 1,200 on the standard plan; 800 only on the intensive track | Standard: 1,200 kcal a day for women at BMI 23 and above; larger women get maintenance minus 1,000 kcal if that is higher. Intensive: 800 to 1,000 kcal, see "The intensive track" below. |
 | Frame it as reaching the goal in at most 3 months, without dates (founder's suggestion) | Yes | The result and paywall show a 12-week target and week 4, 8 and 12 milestones. No dates. If her goal is further than 12 weeks can reach, the 12 weeks are "stage 1". |
 | Target 2 kg a week (earlier: 10 kg in 5 weeks) | No | The upper bound in the code is 2 kg a week as she asked, but the figure shown is what her calories and movement add up to, which is lower. |
 
@@ -44,23 +44,33 @@ Pace = (maintenance calories minus plan calories, plus movement calories) x 7 / 
 ### What was not built, and why
 
 - **2 kg a week.** For the sample woman this needs a shortfall of about 2,200 kcal a day. She burns about 1,700 in a day, about 1,975 with the hour's walk. Eating nothing at all would not reach it. A figure printed on her personal report that cannot be reached is a false claim to a paying customer.
-- **800 kcal a day as an automatic plan.** That is a very-low-calorie diet. Ordinary practice uses it for people with obesity, for a limited period, with a clinician following the patient. Selling it to anyone who completes a questionnaire, with nobody seeing her, was declined and is still not built. What is built is the reviewed track below.
+- **800 kcal a day as an automatic plan.** That is a very-low-calorie diet. Ordinary practice uses it for people with obesity, for a limited period, with a clinician following the patient. Selling it to anyone who completes a questionnaire, with nobody seeing her, was declined and is still not built. What is built is the restricted track below.
 
 ## The intensive track (800 to 1,000 kcal)
 
-On 2026-11-15 Tushar relayed that the doctor approved a minimum of 800 kcal. It is built as the supervised track Claude had offered, not as a lower floor for everyone ([D-018](DECISIONS.md)). Code: `src/domain/intensive.ts`, `src/domain/energy.ts`, `src/domain/plan/lightMeals.ts`, `/review`.
+On 2026-11-15 Tushar relayed that the doctor approved a minimum of 800 kcal, that it is not for everyone, and that no person will review orders: every case is automatic ([D-018](DECISIONS.md), [D-020](DECISIONS.md)). So the rules below are the only gate. Code: `src/domain/intensive.ts`, `src/domain/energy.ts`, `src/domain/plan/lightMeals.ts`, `src/app/api/plan/checkin`.
 
 ### How it works
 
 | Step | Rule |
 | --- | --- |
-| Who is offered it | BMI 30 and above, age 18 to 60, none of the exclusions in answer 5, weight to lose. Everyone else never sees the option and the server refuses it. |
+| Who is offered it | BMI 30 and above, age 18 to 60, none of the exclusions in answer 5, weight to lose, no "another prescription medicine", and no recent change of thyroid dose. Everyone else never sees the option and the server refuses it. They can still buy the standard plan. |
 | Calories | Maintenance minus 1,000 kcal, kept between 800 and 1,000. A sedentary woman of 88 kg and 160 cm gets 860 kcal. |
 | The day | Three light plates and one snack (not five meals). The standard dishes cannot go below about 1,230 kcal a day, so 31 light plates were written for this track. |
-| Release | After payment the plan is built but closed. It opens only when a clinician approves it on `/review`. She can instead move the woman to the standard plan, and can write a note that is shown on the plan (for example a supplement). |
-| Each week | Only week 1 is open. To open the next week the woman checks in: weight today, and whether she had any of nine signs. |
-| Stop signs | Dizziness or fainting, a racing or irregular heartbeat, strong pain in the upper right of the belly, vomiting, very low mood or constant thoughts about food; or losing more than 2.5 kg in a week. Any of these pauses the plan, tells her to add a full meal a day and see a doctor if unwell, and puts her back in the clinician's list. |
+| Release | The plan opens as soon as she pays, like the standard plan. Nobody looks at her answers first. |
+| Each week | Only week 1 is open. To open the next week she checks in: weight today, and whether she had any of nine signs. |
+| Stop signs | Dizziness or fainting, a racing or irregular heartbeat, strong pain in the upper right of the belly, vomiting, very low mood or constant thoughts about food; or losing more than 2.5 kg in a week (4 kg in week 1, where the first loss is mostly water). Any of these moves her to the standard plan on the spot, for the rest of her weeks, and tells her to see a doctor if she feels unwell. She cannot go back to the intensive plan on that order. |
 | Limit | 12 weeks at most, then at least 4 weeks on the standard plan before it can be bought again. |
+| Notes on the plan | Drink 2.5 to 3 litres of water; do not cut portions further; ask a doctor or pharmacist about a daily multivitamin; stop and see a doctor on the stop signs. |
+
+### What changed when the review was removed
+
+The first build held every intensive plan until a clinician approved it. With that step gone:
+
+- Two automatic refusals replace her judgment: a prescription medicine we cannot name, and a thyroid dose that changed recently. Metformin and a steady thyroid dose are allowed, with the usual "show this plan to your doctor" advisory.
+- A stop sign no longer waits for anyone. It switches her to the standard plan by itself.
+- The site says nothing about a clinician or doctor reviewing the plan, because nobody does.
+- What automation cannot catch: a woman who answers the questionnaire or a check-in untruthfully, a condition the questionnaire does not ask about (for example heart disease, gallstones, gout), and anything a clinician would notice from the whole picture. This risk was accepted by the founder on the doctor's approval.
 
 ### What the doctor needs to rule on
 
@@ -70,18 +80,16 @@ All of these were set by an AI agent so the track could run. None has been revie
 2. **Ages 18 to 60.**
 3. **800 to 1,000 by size, or a flat 800 for everyone on the track.**
 4. **Protein.** Vegetarian days at 800 kcal come to about 45 g of protein (lowest day 41 g). Very-low-calorie formula diets are usually built to give at least 50 g. She should decide whether that gap needs a protein supplement.
-5. **Vitamins and minerals.** 800 kcal of ordinary food is unlikely to cover them. Clinical programmes use fortified formula or supplements. She should set a standard supplement note; today she can add one per customer on the review page.
+5. **Vitamins and minerals.** 800 kcal of ordinary food is unlikely to cover them. The plan only says "ask your doctor or pharmacist about a daily multivitamin". She should say whether to name a specific supplement.
 6. **An hour of exercise a day on 800 kcal.** The movement plan is the same as the standard plan, on her instruction. She may want gentler movement on this track.
-7. **The stop signs and the 2.5 kg a week limit.**
+7. **The stop signs, and the 2.5 kg (4 kg in week 1) limits.**
 8. **The 31 light plates** in `src/domain/plan/lightMeals.ts`: dishes, portions, calories and protein, added up from ingredients with general-knowledge values.
-9. **Medicines.** Women on metformin, thyroid tablets or "another prescription medicine" are not blocked; their medicines are shown to her on the review page. Type 1 diabetes and insulin are already excluded.
-10. **Who reviews, and how fast.** The paywall says "usually within 24 hours". Someone has to keep that promise.
+9. **Medicines and conditions.** Whether metformin and thyroid tablets should stay allowed, and whether the questionnaire should ask about more conditions (heart disease, gallstones, gout, blood-pressure medicine) now that nobody reviews.
 
 ### Known gaps in the build
 
 - Check-ins are not tied to the calendar: a woman can submit them one after another and open several weeks in a day.
-- The reviewer signs in with one shared code (`REVIEW_KEY`). There is no per-person login and no limit on wrong attempts.
-- The reviewer is told about new and paused plans by email to `REVIEW_EMAIL`. Email is not connected yet, so until it is she has to open `/review` herself.
+- There is no page listing who is on the intensive plan or who hit a stop sign. The check-ins are stored on each order.
 
 ### Guards added by an AI agent, for her approval
 

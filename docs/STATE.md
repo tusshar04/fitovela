@@ -42,7 +42,6 @@ First working build. The full funnel runs on localhost: landing, adaptive questi
 | Reviews, live counter | Hidden. | Real ones, to come from the doctor via Tushar. |
 | Photos | Unsplash stand-ins in `public/img/`. | Licensed or shot images. |
 | Privacy, terms, refund policy | Placeholder pages. | Written and reviewed. |
-| Intensive track review | `/review` is open in development. Reviewer emails go to the outbox. | Set `REVIEW_KEY` (the reviewer's sign-in code) and `REVIEW_EMAIL`; without `REVIEW_KEY` the page does not exist in production. Name who reviews and how fast. |
 | Medical drafts | Question list, type rules, meal library and copy written by an AI agent. | The doctor's one-time approval ([MEDICAL_RULES.md](MEDICAL_RULES.md)). |
 
 ### FTV-005 and FTV-006 — movement plan and 12-week target (Claude, 2026-11-15, merged)
@@ -57,14 +56,14 @@ The result, paywall and plan now lead with a personalised "Your next 12 weeks" t
 
 The doctor's three rulings on the timeline are applied (skin at week 3, cycles line kept, "feel lighter" at about 1 kg in place of a dress-size claim). After the founder's review the whole funnel was restyled to be sleeker and weight is now mentioned once, on the week 12 stop ([D-017](DECISIONS.md)). Self-review only; checked on screen.
 
-### FTV-010 — intensive track, 800 to 1,000 kcal (Claude, 2026-11-15, merged)
+### FTV-010 and FTV-011 — intensive track, automatic; new prices (Claude, 2026-11-15, merged)
 
-Built after the doctor approved a minimum of 800 kcal ([D-018](DECISIONS.md)). Offered on the paywall only at BMI 30 and above; the plan stays closed until a clinician approves it on `/review`; weekly check-ins open each week and a stop sign pauses the plan. Its clinical settings and its 31 light plates are drafts: ten points for the doctor are listed in [MEDICAL_RULES.md](MEDICAL_RULES.md). Self-review only; run end to end on localhost.
+Women at BMI 30 and above can choose an 800 to 1,000 kcal intensive plan on the paywall ([D-018](DECISIONS.md)). On the founder's instruction it is fully automatic ([D-020](DECISIONS.md)): it opens on payment, weekly check-ins open each week, and a stop sign moves her to the standard plan. The first build's clinician review and `/review` page are removed. Prices are now INR 399, 599 and 799 ([D-019](DECISIONS.md)). The clinical settings and 31 light plates are drafts: nine points for the doctor are in [MEDICAL_RULES.md](MEDICAL_RULES.md). Self-review only; run end to end on localhost.
 
 ### Exact next step
 
-1. Tushar reviews the new design and the intensive track on localhost (to see the track, enter a weight that gives a BMI of 30 or more; the doctor's page is `/review`).
-2. Send the doctor the drafts in [MEDICAL_RULES.md](MEDICAL_RULES.md): the three earlier drafts and the ten points on the intensive track. Decide who reviews intensive orders and the price of the track.
+1. Tushar reviews the build on localhost. To see the intensive option, enter a weight that gives a BMI of 30 or more (for example 88 kg at 160 cm). Confirm the regular prices shown struck through (INR 799, 1,199, 1,599).
+2. Send the doctor the drafts in [MEDICAL_RULES.md](MEDICAL_RULES.md): the three earlier drafts and the nine points on the intensive track.
 3. Decide the GCP project for deployment (recommended: a new project under the same account as tarot), then a deployment task: Dockerfile, Cloud Run, Firestore, secrets.
 
 ## Other open work

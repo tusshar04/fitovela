@@ -4,7 +4,6 @@ import { TIERS } from '@/domain/offer';
 import { sendEmail } from '@/server/email';
 import { activeProvider } from '@/server/payments';
 import { buildPlan } from '@/server/plans';
-import { reviewerAddress } from '@/server/reviewAuth';
 import { setLoginCookie } from '@/server/auth';
 import { currentSession, logEvent, newId } from '@/server/session';
 import { getStore } from '@/server/store';
@@ -40,32 +39,17 @@ export async function POST(req: Request) {
   order.paidAt = new Date().toISOString();
   order.planToken = newId(24);
   order.startKg = assessment.metrics.weightKg;
-  // An intensive plan stays closed until a clinician has reviewed her answers.
-  if (intensive) order.review = { status: 'pending', requestedAt: order.paidAt };
   await store.saveOrder(order);
   await logEvent('payment_confirmed', session.id, { tier: order.tier, amount: order.amountRupees, provider: order.provider, track: order.track ?? 'standard' });
 
   const origin = new URL(req.url).origin;
   const planUrl = `/plan/${order.planToken}`;
   const footer = ['', `To come back later, go to ${origin}/login and enter your mobile number ending ${order.phone.slice(-4)}.`, '', 'Fitovela offers nutrition guidance. It does not diagnose or treat any medical condition.'];
-  if (intensive) {
-    await sendEmail({
-      to: order.email,
-      subject: 'Your Fitovela intensive plan is with our clinician',
-      text: ['Thank you. Your intensive plan is built.', '', 'Before it opens, a clinician reviews your answers. This usually takes less than 24 hours. We will email you as soon as it is done.', '', `You can check here: ${origin}${planUrl}`, ...footer].join('\n'),
-    });
-    await sendEmail({
-      to: reviewerAddress(),
-      subject: 'Fitovela: an intensive plan is waiting for your review',
-      text: ['A customer has bought the intensive (800 to 1,000 kcal) plan.', '', `Review it here: ${origin}/review`].join('\n'),
-    });
-  } else {
-    await sendEmail({
-      to: order.email,
-      subject: `Your Fitovela ${tier.name} is ready`,
-      text: ['Your plan is ready.', '', `Open it here: ${origin}${planUrl}`, ...footer].join('\n'),
-    });
-  }
+  await sendEmail({
+    to: order.email,
+    subject: `Your Fitovela ${intensive ? 'intensive ' : ''}${tier.name} is ready`,
+    text: ['Your plan is ready.', '', `Open it here: ${origin}${planUrl}`, ...(intensive ? ['', 'Week 1 is open now. Each new week opens after a short check-in.'] : []), ...footer].join('\n'),
+  });
 
   await setLoginCookie(order.phone);
   return NextResponse.json({ planUrl, email: order.email });

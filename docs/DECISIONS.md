@@ -178,7 +178,7 @@ IDs D-004 to D-006 are used by proposals in draft [PR #2](https://github.com/tus
 
 ## D-018 — 800 kcal only as a clinician-reviewed intensive track
 
-- **Status:** accepted and implemented; the clinical settings are drafts awaiting the doctor.
+- **Status:** partly superseded by [D-020](#d-020--the-intensive-track-is-fully-automatic): the clinician review, the pause and `/review` are removed. The track, who is offered it, the light plates, the check-ins and the 12-week limit stand.
 - **Date:** 2026-11-15.
 - **Decision owner:** Tushar, on the doctor's approval of a minimum of 800 kcal.
 - **Decision:** Offer 800 to 1,000 kcal a day as a separate "intensive" track next to the standard plan. It is offered only at BMI 30 and above (ages 18 to 60, no exclusions), the plan stays closed until a clinician approves that woman on `/review`, each new week opens only after a weekly check-in, a stop sign pauses the plan and returns her to the clinician, and it runs 12 weeks at most with a 4-week break before a repeat. The standard plan keeps its 1,200 kcal floor.
@@ -187,6 +187,30 @@ IDs D-004 to D-006 are used by proposals in draft [PR #2](https://github.com/tus
 - **Implementation:** `src/domain/intensive.ts`, `src/domain/energy.ts` (`track`), `src/domain/plan/lightMeals.ts`, `src/server/plans.ts`, `src/app/review`, `src/app/api/review`, `src/app/api/plan/checkin`, the paywall and the plan page. 12 unit tests. Run end to end on localhost: purchase, pending screen, approval with a note, weekly check-in, stop sign and pause, reopen, move to standard, and refusal below BMI 30.
 - **Revisit when:** The doctor rules on the ten open points in MEDICAL_RULES.md; pricing for the track is decided (today it costs the same as the standard plan); or the email provider is connected.
 - **Supersedes:** the "800 kcal is not built" part of D-015.
+
+## D-019 — Prices: 399, 599 and 799
+
+- **Status:** accepted and implemented.
+- **Date:** 2026-11-15.
+- **Decision owner:** Tushar.
+- **Decision:** Launch prices are INR 399 for 1 week, 599 for 4 weeks and 799 for 12 weeks. The 12-week plan is the one everyone should buy: it stays the default and is labelled "Most popular · Best value". The intensive track costs the same as the standard plan.
+- **Reason:** Founder instruction: keep pricing reasonable and steer everyone to 12 weeks. The small step from 599 to 799 makes the 12-week plan the obvious choice (INR 10 a day against 21 and 57).
+- **Evidence:** Founder message of 2026-11-15. No conversion data.
+- **Implementation:** `src/domain/offer.ts`. The regular prices charged after the 15-minute window (INR 799, 1,199 and 1,599, twice the launch price) were chosen by Claude and are not confirmed by the founder.
+- **Revisit when:** The founder sets the regular prices, or ad tests show a different ladder converts better.
+- **Supersedes:** the tier prices proposed in PRODUCT.md (199, 499, 999).
+
+## D-020 — The intensive track is fully automatic
+
+- **Status:** accepted and implemented; the clinical settings remain drafts awaiting the doctor.
+- **Date:** 2026-11-15.
+- **Decision owner:** Tushar.
+- **Decision:** No person reviews an intensive order. The plan opens on payment. The 800 to 1,000 kcal track is still not for everyone: only BMI 30 and above, ages 18 to 60, no exclusions. Two automatic refusals are added in place of the review (an unnamed prescription medicine; a recent change of thyroid dose), and a stop sign at a weekly check-in now moves the woman to the standard plan by itself instead of waiting for a clinician. The `/review` page and its sign-in are deleted, and the site no longer says a clinician reviews anything.
+- **Reason:** Founder instruction: "it will be automatic… all cases will be automatic", and 800 kcal is "not for everyone". The doctor is not available to review each order.
+- **Evidence:** Founder message of 2026-11-15. Claude had earlier declined an automatic 800 kcal plan for every buyer; it built this because the track is limited to women with obesity, screened by the questionnaire, capped at 12 weeks and stopped automatically on warning signs, which is close to how self-directed 800 kcal programmes are sold. The remaining risk (untruthful answers, conditions the questionnaire does not ask about) is recorded in [MEDICAL_RULES.md](MEDICAL_RULES.md) and was accepted by the founder.
+- **Implementation:** `src/domain/intensive.ts`, `src/app/api/plan/checkin`, `src/app/api/order`, the paywall and the plan page. 13 unit tests. Run on localhost: intensive purchase opens at once, clean check-ins open weeks, a stop sign switches the plan to standard, an unnamed medicine is refused, `/review` returns 404.
+- **Revisit when:** The doctor rules on the nine open points, or a customer reports harm or a near miss.
+- **Supersedes:** the review, pause and `/review` parts of D-018.
 
 ## Adding or changing a decision
 

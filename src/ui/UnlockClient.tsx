@@ -151,7 +151,7 @@ export function UnlockClient(props: Props) {
             {(
               [
                 { id: 'standard', name: 'Standard', kcal: props.targetKcal, line: 'Opens as soon as you pay.' },
-                { id: 'intensive', name: 'Intensive', kcal: props.intensive.targetKcal, line: 'Stricter and faster. A clinician reviews your answers before it opens, usually within 24 hours. Weekly check-in. 12 weeks at most.' },
+                { id: 'intensive', name: 'Intensive', kcal: props.intensive.targetKcal, line: 'Stricter and faster: three light meals and a snack. A short check-in each week opens the next week. 12 weeks at most.' },
               ] as const
             ).map((t) => {
               const on = track === t.id;
@@ -165,7 +165,6 @@ export function UnlockClient(props: Props) {
                       <span style={{ fontSize: 16, fontWeight: 700, letterSpacing: '-0.01em' }}>
                         {t.name} · {t.kcal.toLocaleString('en-IN')} kcal a day
                       </span>
-                      {t.id === 'intensive' ? <span className="tag-yellow">Clinician-reviewed</span> : null}
                     </span>
                     <span style={{ fontSize: 13, lineHeight: 1.45, fontWeight: 500, color: 'var(--muted)' }}>{t.line}</span>
                   </span>
@@ -200,7 +199,7 @@ export function UnlockClient(props: Props) {
           );
           return t.popular ? (
             <div key={t.id} className="stack">
-              <div className="pop-band">MOST POPULAR</div>
+              <div className="pop-band">MOST POPULAR · BEST VALUE</div>
               {button}
             </div>
           ) : (
@@ -226,7 +225,7 @@ export function UnlockClient(props: Props) {
           Get my plan · {rupees(priceOf(tier))}
         </button>
         <div className="center" style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--muted)' }}>
-          {props.provider === null ? 'Payments are not switched on yet.' : onIntensive ? 'One-time payment. Your plan opens after the clinician review.' : 'One-time payment. No auto-renewal.'}
+          {props.provider === null ? 'Payments are not switched on yet.' : 'One-time payment. No auto-renewal.'}
         </div>
         <div className="guarantee">
           <Shield style={{ flex: 'none', color: 'var(--green)' }} />
@@ -252,7 +251,7 @@ export function UnlockClient(props: Props) {
           ))}
         </div>
         <div className="stack" style={{ gap: 12, marginTop: 4 }}>
-          {[onIntensive ? `Every day planned: 3 light meals and a snack, about ${kcal} kcal` : `Every day planned: 5 meals, about ${kcal} kcal, in your own cuisine`, ...(onIntensive ? ['A clinician reviews your answers before your plan opens', 'A short check-in each week before the next week opens'] : []), 'Two swaps for every single meal', 'A grocery list for each week', `Your movement plan: ${props.movementLine}`, 'Sent to your email, with a login to come back any time', ...props.planChanges].map((line) => (
+          {[onIntensive ? `Every day planned: 3 light meals and a snack, about ${kcal} kcal` : `Every day planned: 5 meals, about ${kcal} kcal, in your own cuisine`, ...(onIntensive ? ['A short check-in each week before the next week opens'] : []), 'Two swaps for every single meal', 'A grocery list for each week', `Your movement plan: ${props.movementLine}`, 'Sent to your email, with a login to come back any time', ...props.planChanges].map((line) => (
             <div key={line} className="line-item top" style={{ fontSize: 15 }}>
               <Tick />
               <span>{line}</span>

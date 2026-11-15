@@ -1,5 +1,5 @@
 // The intensive track: 800 to 1,000 kcal, offered only to women the rules allow,
-// built from light plates, and gated by a clinician's review and weekly check-ins.
+// built from light plates, with weekly check-ins. No person reviews an order.
 
 import { describe, expect, it } from 'vitest';
 import { buildAssessment } from '@/domain/assessment';
@@ -60,12 +60,26 @@ describe('intensive calories', () => {
 });
 
 describe('who can be offered the intensive plan', () => {
+  const ok = { metrics: big, bmi: 37.1, eligibility: eligible, toLoseKg: 25, otherMedicine: false, thyroidDoseChanged: false };
+
   it('only BMI 30 and above, ages 18 to 60, eligible, with weight to lose', () => {
-    expect(intensiveBlocks({ metrics: big, bmi: 37.1, eligibility: eligible, toLoseKg: 25 })).toEqual([]);
-    expect(intensiveBlocks({ metrics: big, bmi: 29.9, eligibility: eligible, toLoseKg: 10 })).toEqual(['bmi_below_30']);
-    expect(intensiveBlocks({ metrics: { ...big, age: 61 }, bmi: 37.1, eligibility: eligible, toLoseKg: 25 })).toEqual(['age']);
-    expect(intensiveBlocks({ metrics: big, bmi: 37.1, eligibility: { ...eligible, eligible: false, reasons: ['kidney'] }, toLoseKg: 25 })).toEqual(['not_eligible']);
-    expect(intensiveBlocks({ metrics: big, bmi: 37.1, eligibility: eligible, toLoseKg: 0 })).toEqual(['nothing_to_lose']);
+    expect(intensiveBlocks(ok)).toEqual([]);
+    expect(intensiveBlocks({ ...ok, bmi: 29.9, toLoseKg: 10 })).toEqual(['bmi_below_30']);
+    expect(intensiveBlocks({ ...ok, metrics: { ...big, age: 61 } })).toEqual(['age']);
+    expect(intensiveBlocks({ ...ok, eligibility: { ...eligible, eligible: false, reasons: ['kidney'] } })).toEqual(['not_eligible']);
+    expect(intensiveBlocks({ ...ok, toLoseKg: 0 })).toEqual(['nothing_to_lose']);
+  });
+
+  it('nobody reviews an order, so an unknown medicine or a changed thyroid dose rules it out', () => {
+    expect(intensiveBlocks({ ...ok, otherMedicine: true })).toEqual(['other_medicine']);
+    expect(intensiveBlocks({ ...ok, thyroidDoseChanged: true })).toEqual(['thyroid_dose']);
+    expect(buildAssessment(answers(big, { meds: ['other'] }))!.intensive.blocks).toEqual(['other_medicine']);
+    expect(buildAssessment(answers(big, { meds: ['metformin', 'other'] }))!.intensive.blocks).toEqual(['other_medicine']);
+    expect(buildAssessment(answers(big, { thyroid_dx: 'yes_tablets', thyroid_stable: 'no' }))!.intensive.blocks).toEqual(['thyroid_dose']);
+    // Metformin and a steady thyroid dose stay allowed, with the usual "show your doctor" advisory.
+    const onMetformin = buildAssessment(answers(big, { meds: ['metformin'], thyroid_dx: 'yes_tablets', thyroid_stable: 'yes' }))!;
+    expect(onMetformin.intensive.blocks).toEqual([]);
+    expect(onMetformin.eligibility.medicationAdvisory).toBe(true);
   });
 
   it('is wired into the assessment from her own answers', () => {
@@ -99,19 +113,21 @@ describe('weekly check-in', () => {
     expect(cleanSigns('dizzy')).toBeNull();
   });
 
-  it('pauses on a stop sign or a very fast drop, and not otherwise', () => {
+  it('flags a stop sign or a very fast drop, and not otherwise', () => {
     for (const sign of ['dizzy', 'palpitations', 'abdominal_pain', 'vomiting', 'low_mood'] as const) expect(hasStopSign([sign])).toBe(true);
     expect(hasStopSign(['hair_fall', 'constipation', 'cold', 'missed_period'])).toBe(false);
-    expect(checkinFlag(95, 93.5, ['none'])).toBe(false);
-    expect(checkinFlag(95, 92, ['none'])).toBe(true);
-    expect(checkinFlag(95, 94, ['dizzy'])).toBe(true);
+    expect(checkinFlag(95, 93.5, ['none'], 3)).toBe(false);
+    expect(checkinFlag(95, 92, ['none'], 3)).toBe(true);
+    expect(checkinFlag(95, 94, ['dizzy'], 3)).toBe(true);
+    // Week 1 allows a bigger drop, because the first loss is mostly water.
+    expect(checkinFlag(95, 92, ['none'], 1)).toBe(false);
+    expect(checkinFlag(95, 90.5, ['none'], 1)).toBe(true);
   });
 
-  it('opens one more week per clean check-in, and none for a stop sign until it is cleared', () => {
+  it('opens one more week per clean check-in, and none after a stop sign', () => {
     expect(weeksOpen([], 12)).toBe(1);
     expect(weeksOpen([ok(1), ok(2)], 12)).toBe(3);
     expect(weeksOpen([ok(1), { ...ok(2), flagged: true }], 12)).toBe(2);
-    expect(weeksOpen([ok(1), { ...ok(2), flagged: true, cleared: true }], 12)).toBe(3);
     expect(weeksOpen([ok(1), ok(2), ok(3), ok(4)], 4)).toBe(4);
   });
 });
@@ -137,6 +153,7 @@ describe('intensive meal plan', () => {
         const plan = generatePlan({ ...base, diet, targetKcal, seed: `t-${diet}-${targetKcal}` });
         expect(plan.track).toBe('intensive');
         expect(plan.notes[0]).toContain('intensive plan');
+        expect(plan.notes.join(' ')).not.toMatch(/clinician|reviewed/i);
         for (const day of plan.days) {
           expect(day.meals.map((m) => m.slot)).toEqual(['breakfast', 'lunch', 'snack_pm', 'dinner']);
           expect(day.kcal).toBeGreaterThanOrEqual(targetKcal - 60);

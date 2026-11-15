@@ -36,7 +36,7 @@ export async function POST(req: Request) {
     if (blocks.length > 0) {
       return NextResponse.json({ error: `The intensive plan is not available to you: ${INTENSIVE_BLOCK_LABEL[blocks[0]]}.` }, { status: 403 });
     }
-    const earlier = (await (await getStore()).listPaidOrdersByPhone(phone)).filter((o) => o.track === 'intensive' && o.review?.status !== 'declined' && o.paidAt);
+    const earlier = (await (await getStore()).listPaidOrdersByPhone(phone)).filter((o) => o.track === 'intensive' && !o.movedToStandard && o.paidAt);
     if (intensiveBreakDue(earlier.map((o) => ({ days: TIERS[o.tier].days, paidAt: o.paidAt! })))) {
       return NextResponse.json({ error: 'You have just finished 12 weeks on the intensive plan. Take the standard plan for at least 4 weeks before another round.' }, { status: 403 });
     }

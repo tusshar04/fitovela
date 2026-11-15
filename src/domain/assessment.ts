@@ -33,7 +33,7 @@ export interface Assessment {
   weekOneLighterOn: 'wheat' | 'dairy' | null;
   /** What she is likely to feel and see, week by week, from her own signs. */
   journey: JourneyStop[];
-  /** The 800 to 1,000 kcal track. Offered only when `blocks` is empty, and released only after a clinician's review. */
+  /** The 800 to 1,000 kcal track. Offered only when `blocks` is empty. */
   intensive: { blocks: IntensiveBlock[]; energy: EnergyPlan; journey: JourneyStop[] };
 }
 
@@ -104,7 +104,7 @@ export function buildAssessment(answers: Answers, now: Date = new Date()): Asses
     weekOneLighterOn,
     journey: buildJourney(markers, energy, metrics.weightKg),
     intensive: {
-      blocks: intensiveBlocks({ metrics, bmi: bmiValue, eligibility, toLoseKg: energy.toLoseKg }),
+      blocks: intensiveBlocks({ metrics, bmi: bmiValue, eligibility, toLoseKg: energy.toLoseKg, otherMedicine: asList(answers.meds).includes('other'), thyroidDoseChanged: answers.thyroid_stable === 'no' }),
       energy: intensiveEnergy,
       journey: buildJourney(markers, intensiveEnergy, metrics.weightKg),
     },

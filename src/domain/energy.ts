@@ -11,8 +11,8 @@
 // The number shown is always what her calories and movement add up to.
 //
 // Intensive track (doctor's approval relayed 2026-11-15: calories may go as low as 800):
-// 800 to 1,000 kcal a day. It is never applied automatically. intensive.ts decides who
-// may be offered it, and a plan on it is released only after a clinician reviews her.
+// 800 to 1,000 kcal a day. Only women that intensive.ts allows are offered it, and only
+// if they choose it. No person reviews an order (founder's decision, 2026-11-15).
 
 import type { Metrics } from './types';
 

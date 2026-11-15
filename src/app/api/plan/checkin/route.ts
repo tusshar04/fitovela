@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
+import { buildAssessment } from '@/domain/assessment';
 import { checkinFlag, cleanSigns, weeksOpen, type Checkin } from '@/domain/intensive';
 import { sendEmail } from '@/server/email';
-import { reviewerAddress } from '@/server/reviewAuth';
+import { buildPlan } from '@/server/plans';
 import { logEvent } from '@/server/session';
 import { getStore } from '@/server/store';
 
@@ -13,14 +14,15 @@ export async function POST(req: Request) {
 
   const store = await getStore();
   const order = await store.getOrderByPlanToken(token);
-  if (!order || order.status !== 'paid' || !order.plan || order.track !== 'intensive' || !order.review) {
+  if (!order || order.status !== 'paid' || !order.plan || order.track !== 'intensive') {
     return NextResponse.json({ error: 'Plan not found.' }, { status: 404 });
   }
-  if (order.review.status !== 'approved') return NextResponse.json({ error: 'Your plan is not open for a check-in right now.' }, { status: 409 });
+  if (order.plan.track !== 'intensive' || order.movedToStandard) return NextResponse.json({ error: 'Your plan no longer needs a check-in.' }, { status: 409 });
 
   const totalWeeks = Math.ceil(order.plan.days.length / 7);
   const checkins = order.checkins ?? [];
-  if (weeksOpen(checkins, totalWeeks) >= totalWeeks) return NextResponse.json({ error: 'All your weeks are already open.' }, { status: 409 });
+  const week = weeksOpen(checkins, totalWeeks);
+  if (week >= totalWeeks) return NextResponse.json({ error: 'All your weeks are already open.' }, { status: 409 });
 
   const weightKg = Math.round(Number(body?.weightKg) * 10) / 10;
   if (!(weightKg >= 30 && weightKg <= 250)) return NextResponse.json({ error: 'Enter your weight today in kilograms.', field: 'weight' }, { status: 400 });
@@ -28,18 +30,35 @@ export async function POST(req: Request) {
   if (!signs) return NextResponse.json({ error: 'Tick what you noticed this week, or "None of these".', field: 'signs' }, { status: 400 });
 
   const previousKg = checkins.length > 0 ? checkins[checkins.length - 1].weightKg : (order.startKg ?? weightKg);
-  const flagged = checkinFlag(previousKg, weightKg, signs);
-  const checkin: Checkin = { week: weeksOpen(checkins, totalWeeks), weightKg, signs, at: new Date().toISOString(), flagged };
+  const flagged = checkinFlag(previousKg, weightKg, signs, week);
+  const checkin: Checkin = { week, weightKg, signs, at: new Date().toISOString(), flagged };
   order.checkins = [...checkins, checkin];
-  if (flagged) order.review = { ...order.review, status: 'paused' };
+
+  // A stop sign ends the intensive plan on the spot: she gets the standard plan, with more food each day.
+  if (flagged) {
+    order.movedToStandard = { at: checkin.at, reason: 'checkin' };
+    const session = await store.getSession(order.sessionId);
+    const assessment = session ? buildAssessment(session.answers) : null;
+    if (assessment) order.plan = buildPlan(order, assessment, 'standard');
+  }
   await store.saveOrder(order);
-  await logEvent('checkin', order.sessionId, { week: checkin.week, flagged });
+  await logEvent('checkin', order.sessionId, { week, flagged });
 
   if (flagged) {
     await sendEmail({
-      to: reviewerAddress(),
-      subject: 'Fitovela: an intensive plan was paused by a weekly check-in',
-      text: ['A weekly check-in raised a stop sign and the plan is paused.', '', `Review it here: ${new URL(req.url).origin}/review`].join('\n'),
+      to: order.email,
+      subject: 'Your Fitovela plan has changed to the standard plan',
+      text: [
+        'Your weekly check-in showed a sign that the intensive plan is too strict for you right now.',
+        '',
+        'You are now on the standard plan, with more food each day. Nothing else changes.',
+        '',
+        'If you feel faint, your heart races, you have strong belly pain or you cannot keep food down, see a doctor today.',
+        '',
+        `Open your plan: ${new URL(req.url).origin}/plan/${token}`,
+        '',
+        'Fitovela offers nutrition guidance. It does not diagnose or treat any medical condition.',
+      ].join('\n'),
     });
   }
   return NextResponse.json({ ok: true, flagged });
