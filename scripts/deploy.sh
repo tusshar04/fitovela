@@ -13,11 +13,11 @@ REGION=asia-south1
 SERVICE=fitovela
 RUNTIME_SA="fitovela-app@${PROJECT}.iam.gserviceaccount.com"
 SITE_URL=https://fitovela.com
-# tarot's project, whose 2Factor and SES keys this service is allowed to read.
+# tarot's project, whose 2Factor key this service is allowed to read.
 SHARED=projects/1080479161978/secrets
 
 SMS_ENABLED=1        # login codes by SMS through 2Factor
-EMAIL_ENABLED=0      # set to 1 once fitovela.com is a verified sender in Amazon SES
+EMAIL_ENABLED=1      # Amazon SES, from care@fitovela.com, with Fitovela's own send-only key
 RAZORPAY_ENABLED=0   # set to 1 once razorpay-key-id, razorpay-key-secret and razorpay-webhook-secret exist in Secret Manager
 
 if [[ "${1:-}" == "rollback" ]]; then
@@ -47,7 +47,7 @@ SECRETS="AUTH_SECRET=auth-secret:latest"
 if [[ "$SMS_ENABLED" == 1 ]]; then SECRETS+=",TWOFACTOR_API_KEY=${SHARED}/twofactor-api-key:1"; fi
 if [[ "$EMAIL_ENABLED" == 1 ]]; then
   ENV+=",EMAIL_PROVIDER=ses,AWS_SES_REGION=ap-south-1"
-  SECRETS+=",AWS_SES_ACCESS_KEY_ID=${SHARED}/ses-access-key-id:1,AWS_SES_SECRET_ACCESS_KEY=${SHARED}/ses-secret-access-key:1"
+  SECRETS+=",AWS_SES_ACCESS_KEY_ID=ses-access-key-id:latest,AWS_SES_SECRET_ACCESS_KEY=ses-secret-access-key:latest"
 fi
 if [[ "$RAZORPAY_ENABLED" == 1 ]]; then
   SECRETS+=",RAZORPAY_KEY_ID=razorpay-key-id:latest,RAZORPAY_KEY_SECRET=razorpay-key-secret:latest,RAZORPAY_WEBHOOK_SECRET=razorpay-webhook-secret:latest"

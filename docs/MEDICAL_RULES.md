@@ -61,7 +61,7 @@ On 2026-11-15 Tushar relayed that the doctor approved a minimum of 800 kcal, tha
 | Each week | Only week 1 is open. To open the next week she checks in: weight today, and whether she had any of nine signs. |
 | Stop signs | Dizziness or fainting, a racing or irregular heartbeat, strong pain in the upper right of the belly, vomiting, very low mood or constant thoughts about food; or losing more than 2.5 kg in a week (4 kg in week 1, where the first loss is mostly water). Any of these moves her to the standard plan on the spot, for the rest of her weeks, and tells her to see a doctor if she feels unwell. She cannot go back to the intensive plan on that order. |
 | Limit | 12 weeks at most, then at least 4 weeks on the standard plan before it can be bought again. |
-| Notes on the plan | Drink 2.5 to 3 litres of water; do not cut portions further; ask a doctor or pharmacist about a daily multivitamin; stop and see a doctor on the stop signs. |
+| Notes on the plan | Drink 2.5 to 3 litres of water; do not cut portions further; take a daily multivitamin and mineral tablet; add a scoop of protein on days under 50 g; stop and see a doctor on the stop signs. |
 
 ### What changed when the review was removed
 
@@ -85,8 +85,8 @@ All of these were set by an AI agent so the track could run. None has been revie
 1. **The BMI 30 cut-off.** Chosen from common practice for very-low-calorie diets. The Indian obesity cut-off is 25; she may want a different line.
 2. **Ages 18 to 60.**
 3. **800 to 1,000 by size, or a flat 800 for everyone on the track.**
-4. **Protein.** Vegetarian days at 800 kcal come to about 45 g of protein (lowest day 41 g). Very-low-calorie formula diets are usually built to give at least 50 g. She should decide whether that gap needs a protein supplement.
-5. **Vitamins and minerals.** 800 kcal of ordinary food is unlikely to cover them. The plan only says "ask your doctor or pharmacist about a daily multivitamin". She should say whether to name a specific supplement.
+4. **Protein.** Vegetarian days at 800 kcal come to about 45 g of protein (lowest day 41 g). **The doctor agreed to supplements (2026-11-15, relayed by Tushar).** The plan now says to add one scoop of plain whey or plant protein on any day under 50 g. The 50 g line and the one-scoop amount are Claude's; she has not named a product or dose.
+5. **Vitamins and minerals.** Same agreement: the plan now says to take one multivitamin and mineral tablet a day. She has not named a product.
 6. **An hour of exercise a day on 800 kcal.** The movement plan is the same as the standard plan, on her instruction. She may want gentler movement on this track.
 7. **The stop signs, and the 2.5 kg (4 kg in week 1) limits.**
 8. **The 31 light plates** in `src/domain/plan/lightMeals.ts`: dishes, portions, calories and protein, added up from ingredients with general-knowledge values.

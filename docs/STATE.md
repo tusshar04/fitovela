@@ -14,16 +14,16 @@ In production, payments off. The app runs on Cloud Run in Mumbai (GCP project `f
 | --- | --- |
 | Cloud Run service `fitovela`, `asia-south1` | Live. First release `6c1d1f1`. Full assessment run against it: answers stored, report and paywall rendered. |
 | Firestore, `asia-south1` | Live, used by the service. First real use of the Firestore driver. |
-| Domain | `fitovela.com` A record at GoDaddy points to the load balancer (`8.232.233.213`); `www` follows it. The Google-managed HTTPS certificate was still being issued when this was written. Check: `gcloud compute ssl-certificates describe fitovela-cert --project fitovela-prod --global`. |
+| Domain | `fitovela.com` A record at GoDaddy points to the load balancer (`8.232.233.213`); `www` follows it. **Being moved to Cloudflare** at the founder's request (see D-021): the Worker is in `edge/`, waiting for the zone to be added to Cloudflare and the nameservers changed. When it works, delete the load balancer (`fitovela-*` forwarding rules, proxies, URL maps, certificate, backend, NEG and address in `fitovela-prod`). |
 | Login codes by SMS | Switched on, through tarot's 2Factor key. **Not yet tested with a real phone.** The SMS wording is whatever template tarot's 2Factor account uses. |
-| Email | Code is ready; **switched off**. Needs `fitovela.com` verified as a sender in tarot's Amazon SES account (AWS sign-in needed), then `EMAIL_ENABLED=1` in `scripts/deploy.sh` and read access to the two SES secrets. Until then the plan page tells the customer no email was sent. |
+| Email | **Switched on.** Amazon SES, sender `care@fitovela.com`, domain verified by DKIM on 2026-11-15, Fitovela's own send-only key. Checked against the SES mailbox simulator; no real customer email has been sent yet. |
 | Payments | Code is ready; **switched off**. Needs Razorpay keys in Secret Manager (`razorpay-key-id`, `razorpay-key-secret`, `razorpay-webhook-secret`), the webhook `https://fitovela.com/api/webhooks/razorpay` registered for `payment.captured` and `order.paid`, then `RAZORPAY_ENABLED=1`. Never run against Razorpay. |
-| Mailbox `support@fitovela.com` | Not created. One unused Titan Email account is available in GoDaddy; its setup needs a password from Tushar. The site already shows this address. |
+| Mailbox `care@fitovela.com` | Created by Tushar in GoDaddy. It is the address on the site and the sender of plan emails. |
 | Policies | Privacy, terms, refund and contact pages are live. Written by an AI agent; not reviewed by a lawyer; no registered business name or address on them yet. |
 
 **Deploy:** from a clean `main` equal to `origin/main`, run `scripts/deploy.sh`. It builds the commit, deploys a candidate, checks it and only then moves traffic. **Roll back:** `scripts/deploy.sh rollback` lists revisions and prints the command. Deploys are manual; GitHub Actions is not set up.
 
-**Open, in order:** (1) Tushar creates the mailbox; (2) AWS sign-in so the sender can be verified and email switched on; (3) Razorpay account decision and keys; (4) a real login test by SMS and a real ₹ payment test; (5) business name and address on the policy pages; (6) Meta Pixel.
+**Open, in order:** (1) Tushar signs in to Cloudflare so the domain can move there and the load balancer can be deleted; (2) a real login test by SMS; (3) payment gateway (Razorpay or Cashfree, founder to decide later) and a real ₹ payment test; (4) business name and address on the policy pages; (5) Meta Pixel.
 
 ### Still stand-ins
 

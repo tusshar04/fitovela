@@ -169,6 +169,9 @@ describe('intensive meal plan', () => {
         expect(plan.track).toBe('intensive');
         expect(plan.notes[0]).toContain('intensive plan');
         expect(plan.notes.join(' ')).not.toMatch(/clinician|reviewed/i);
+        // The doctor agreed to supplements on this track (2026-11-15).
+        expect(plan.notes.join(' ')).toMatch(/multivitamin/);
+        expect(plan.notes.join(' ')).toMatch(/50 g of protein/);
         for (const day of plan.days) {
           expect(day.meals.map((m) => m.slot)).toEqual(['breakfast', 'lunch', 'snack_pm', 'dinner']);
           expect(day.kcal).toBeGreaterThanOrEqual(targetKcal - 60);

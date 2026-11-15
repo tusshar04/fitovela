@@ -1,0 +1,16 @@
+{
+  // Deploy with: npx wrangler deploy --config edge/wrangler.jsonc
+  // Needs fitovela.com as a zone in the Cloudflare account (nameservers moved from GoDaddy).
+  "name": "fitovela-edge",
+  "main": "worker.js",
+  "compatibility_date": "2026-08-24",
+  "workers_dev": false,
+  "preview_urls": false,
+  "vars": {
+    "ORIGIN": "https://fitovela-pflkmzgscq-el.a.run.app"
+  },
+  "routes": [
+    { "pattern": "fitovela.com", "custom_domain": true },
+    { "pattern": "www.fitovela.com", "custom_domain": true }
+  ]
+}

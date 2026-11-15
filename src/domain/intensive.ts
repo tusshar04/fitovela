@@ -124,6 +124,7 @@ export function checkinFlag(previousKg: number, weightKg: number, signs: Checkin
 export const INTENSIVE_NOTES = [
   'This is an intensive plan of 800 to 1,000 kcal a day. Follow it for 12 weeks at most, then move to the standard plan.',
   'Drink 2.5 to 3 litres of water a day. Do not skip a meal or cut portions further.',
-  'Ask your doctor or pharmacist about a daily multivitamin while you are on this plan.',
+  'Take one multivitamin and mineral tablet every day for as long as you are on this plan.',
+  'On a day that shows under 50 g of protein, add one scoop of plain whey or plant protein in water or chaas.',
   'Stop the plan and see a doctor if you feel dizzy or faint, your heart races, you have strong belly pain, or you cannot keep food down.',
 ];
