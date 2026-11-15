@@ -15,7 +15,8 @@ export const viewport: Viewport = { width: 'device-width', initialScale: 1, them
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${sans.variable} ${serif.variable}`}>
-      <body>{children}</body>
+      {/* Browser extensions (Grammarly and others) add attributes to <body>; do not flag that as a mismatch. */}
+      <body suppressHydrationWarning>{children}</body>
     </html>
   );
 }
