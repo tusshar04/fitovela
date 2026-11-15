@@ -1,14 +1,12 @@
 {
-  // Deploy with: npx wrangler deploy --config edge/wrangler.jsonc
-  // Needs fitovela.com as a zone in the Cloudflare account (nameservers moved from GoDaddy).
+  // The live Worker was created in the Cloudflare dashboard. This file describes the
+  // same setup for `npx wrangler deploy --config edge/wrangler.jsonc`.
   "name": "fitovela-edge",
   "main": "worker.js",
   "compatibility_date": "2026-08-24",
-  "workers_dev": false,
   "preview_urls": false,
-  "vars": {
-    "ORIGIN": "https://fitovela-pflkmzgscq-el.a.run.app"
-  },
+  // Request logs are off on purpose: a plan link is a private credential and must not be stored in logs.
+  "observability": { "enabled": false },
   "routes": [
     { "pattern": "fitovela.com", "custom_domain": true },
     { "pattern": "www.fitovela.com", "custom_domain": true }

@@ -12,9 +12,9 @@ In production, payments off. The app runs on Cloud Run in Mumbai (GCP project `f
 
 | Piece | Status on 2026-11-15 |
 | --- | --- |
-| Cloud Run service `fitovela`, `asia-south1` | Live. First release `6c1d1f1`. Full assessment run against it: answers stored, report and paywall rendered. |
+| Cloud Run service `fitovela`, `asia-south1` | Live. Release `8df90e0`. Its own address is `https://fitovela-pflkmzgscq-el.a.run.app`; the Worker forwards to it. |
 | Firestore, `asia-south1` | Live, used by the service. First real use of the Firestore driver. |
-| Domain | `fitovela.com` A record at GoDaddy points to the load balancer (`8.232.233.213`); `www` follows it. **Being moved to Cloudflare** at the founder's request (see D-021): the Worker is in `edge/`, waiting for the zone to be added to Cloudflare and the nameservers changed. When it works, delete the load balancer (`fitovela-*` forwarding rules, proxies, URL maps, certificate, backend, NEG and address in `fitovela-prod`). |
+| Domain | **Live at https://fitovela.com.** DNS is at Cloudflare (nameservers `norm` and `teagan.ns.cloudflare.com`, the same account as tarot). The Worker `fitovela-edge` (source in `edge/`) forwards `fitovela.com` to the Cloud Run service; `www` and plain http redirect to `https://fitovela.com`. Checked through the domain: pages, a full assessment, cookies, security headers. The Google load balancer is deleted. Workers free plan: 100,000 requests a day. |
 | Login codes by SMS | Switched on, through tarot's 2Factor key. **Not yet tested with a real phone.** The SMS wording is whatever template tarot's 2Factor account uses. |
 | Email | **Switched on.** Amazon SES, sender `care@fitovela.com`, domain verified by DKIM on 2026-11-15, Fitovela's own send-only key. Checked against the SES mailbox simulator; no real customer email has been sent yet. |
 | Payments | Code is ready; **switched off**. Needs Razorpay keys in Secret Manager (`razorpay-key-id`, `razorpay-key-secret`, `razorpay-webhook-secret`), the webhook `https://fitovela.com/api/webhooks/razorpay` registered for `payment.captured` and `order.paid`, then `RAZORPAY_ENABLED=1`. Never run against Razorpay. |
@@ -23,7 +23,7 @@ In production, payments off. The app runs on Cloud Run in Mumbai (GCP project `f
 
 **Deploy:** from a clean `main` equal to `origin/main`, run `scripts/deploy.sh`. It builds the commit, deploys a candidate, checks it and only then moves traffic. **Roll back:** `scripts/deploy.sh rollback` lists revisions and prints the command. Deploys are manual; GitHub Actions is not set up.
 
-**Open, in order:** (1) Tushar signs in to Cloudflare so the domain can move there and the load balancer can be deleted; (2) a real login test by SMS; (3) payment gateway (Razorpay or Cashfree, founder to decide later) and a real ₹ payment test; (4) business name and address on the policy pages; (5) Meta Pixel.
+**Open, in order:** (1) a real login test by SMS on the live site; (2) payment gateway (Razorpay or Cashfree, founder to decide later) and a real ₹ payment test; (3) business name and address on the policy pages; (4) Meta Pixel; (5) move Cloudflare Workers to the paid plan before ad traffic passes about 2,000 visitors a day.
 
 ### Still stand-ins
 

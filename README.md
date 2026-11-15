@@ -16,7 +16,7 @@ Landing variants: `/?h=a`, `/?h=b`, `/?h=c`; add `&c=pcos|thyroid|menopause|diab
 
 ## Production
 
-Live at https://fitovela.com (Cloud Run in Mumbai, GCP project `fitovela-prod`). What is switched on is in [docs/STATE.md](docs/STATE.md).
+Live at https://fitovela.com (Cloud Run in Mumbai, GCP project `fitovela-prod`, behind a Cloudflare Worker whose source is in `edge/`). What is switched on is in [docs/STATE.md](docs/STATE.md).
 
 ```
 scripts/deploy.sh            # deploy the tip of main: build, candidate, checks, then traffic
