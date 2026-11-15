@@ -3,6 +3,7 @@ import { logEvent } from '@/server/session';
 import { asCategory, asHook, sanitizeAd } from '@/server/validate';
 import { AgeButtons } from '@/ui/AgeButtons';
 import { Lock, Logo } from '@/ui/bits';
+import { LegalLinks } from '@/ui/Legal';
 
 // Three landing hooks to test against each other: ?h=a | b | c. The ad category (?c=) tunes the headline.
 const CHECK_HEADLINE: Record<Category, string> = {
@@ -148,6 +149,7 @@ export default async function Landing({ searchParams }: { searchParams: Promise<
         <p className="center" style={{ fontSize: 11, lineHeight: 1.5, color: 'var(--faint)' }}>
           By choosing your age you agree to our <a href="/terms">Terms</a> and <a href="/privacy">Privacy Policy</a>. A symptom assessment, not a medical diagnosis.
         </p>
+        <LegalLinks />
         <p className="center" style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--muted)' }}>
           Already bought a plan? <a href="/login">Log in</a>
         </p>

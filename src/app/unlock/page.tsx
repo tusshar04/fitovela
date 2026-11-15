@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
 import { buildAssessment } from '@/domain/assessment';
+import { SUPPORT_EMAIL } from '@/domain/company';
 import { EXCLUSION_LABEL } from '@/domain/eligibility';
 import { isComplete } from '@/domain/flow';
 import { offerEndsAt, TIER_ORDER, TIERS } from '@/domain/offer';
@@ -20,7 +21,6 @@ export default async function UnlockPage() {
 
   if (!a.eligibility.eligible) {
     await logEvent('unlock_blocked', session.id);
-    const support = process.env.SUPPORT_EMAIL;
     return (
       <main className="screen">
         <header className="hdr solo">
@@ -36,7 +36,7 @@ export default async function UnlockPage() {
           <div className="soft stack" style={{ gap: 8 }}>
             <h2 style={{ fontSize: 16, fontWeight: 800 }}>What you can do now</h2>
             <p style={{ fontSize: 14.5 }}>Your free report stays yours. Show it to your own doctor or a registered dietitian.</p>
-            <p style={{ fontSize: 14.5 }}>{support ? `Write to us at ${support} and we will guide you.` : 'Our care team contact will be listed here before launch.'}</p>
+            <p style={{ fontSize: 14.5 }}>Write to us at {SUPPORT_EMAIL} and we will guide you to the right kind of help.</p>
           </div>
           <a className="btn push" href="/result">
             Back to my report

@@ -212,6 +212,19 @@ IDs D-004 to D-006 are used by proposals in draft [PR #2](https://github.com/tus
 - **Revisit when:** The doctor rules on the nine open points, or a customer reports harm or a near miss.
 - **Supersedes:** the review, pause and `/review` parts of D-018.
 
+## D-021 — Production: its own GCP project, Cloud Run in Mumbai, tarot's SMS and email accounts
+
+- **Status:** accepted; partly live (see [STATE.md](STATE.md) for what is switched on).
+- **Date:** 2026-11-15.
+- **Decision owner:** Tushar.
+- **Decision:** Fitovela runs in a new GCP project, `fitovela-prod`, on the billing account tarot uses: Cloud Run service `fitovela` and Firestore, both in `asia-south1`. Login codes go by SMS through tarot's 2Factor account and email through tarot's Amazon SES account, sent from `support@fitovela.com`. Payments go through Razorpay. The domain `fitovela.com` (registered at GoDaddy) points at a Google load balancer in front of the service, because Cloud Run cannot map a custom domain directly in Mumbai. Deploys are run by hand with `scripts/deploy.sh` from `main`.
+- **Reason:** Founder instruction to deploy, reusing what tarot already has. A separate project keeps customers' health answers, costs and access apart from tarot.
+- **Evidence:** Founder message of 2026-11-15. Tarot's setup was read from its repository (no secret values were read).
+- **Implementation:** `Dockerfile`, `scripts/deploy.sh`, `src/server/email.ts` (SES), `src/server/auth.ts` (2Factor, with a 60-second resend wait and 5 codes an hour), `src/server/payments.ts`, `src/server/fulfil.ts` and `/api/webhooks/razorpay`. The Fitovela runtime account was given read access to three of tarot's secrets (`twofactor-api-key`, `ses-access-key-id`, `ses-secret-access-key`); the values were never copied or displayed. `auth-secret` is Fitovela's own.
+- **Consequences to know:** Fitovela and tarot share the 2Factor balance and SMS template, and share SES sending limits and reputation. The load balancer costs roughly USD 18 a month before traffic.
+- **Revisit when:** Fitovela should have its own 2Factor or SES keys; deploys should run from GitHub Actions; or traffic needs more than 4 instances.
+- **Supersedes:** the "nothing is deployed" state in D-011 and D-013.
+
 ## Adding or changing a decision
 
 Assign the next stable ID and record status, date, owner, choice, reason, evidence, implementation status, and revisit conditions. Identify who accepted a decision; do not represent an agent suggestion as founder approval.

@@ -226,6 +226,16 @@ details.numbers summary::-webkit-details-marker { display: none; }
 details.numbers[open] summary svg { transform: rotate(45deg); }
 details.numbers summary svg { transition: transform 0.15s ease; }
 
+/* Policy pages */
+.legal { display: flex; flex-direction: column; gap: 10px; padding-top: 14px; font-size: 14.5px; line-height: 1.6; }
+.legal h2 { font-size: 16.5px; font-weight: 700; letter-spacing: -0.012em; padding-top: 12px; }
+.legal p, .legal li { color: #4a3a48; }
+.legal ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+.legal b { color: var(--ink); font-weight: 600; }
+.legal-nav { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 12.5px; font-weight: 600; }
+.legal-nav a { color: var(--muted); text-decoration: none; }
+.legal-nav a:hover { color: var(--pink); }
+
 /* Paywall */
 .timer { flex: none; min-height: 58px; background: var(--ink); color: #fff; padding: 8px 12px 8px 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px; position: sticky; top: 0; z-index: 5; }
 .timer .clock { font-size: 21px; line-height: 1.1; font-weight: 700; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; color: var(--yellow); }

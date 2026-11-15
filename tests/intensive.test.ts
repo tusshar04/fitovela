@@ -3,6 +3,8 @@
 
 import { describe, expect, it } from 'vitest';
 import { buildAssessment } from '@/domain/assessment';
+import { isComplete, questionSteps } from '@/domain/flow';
+import { sanitizeAnswers } from '@/server/validate';
 import { INTENSIVE_CEILING_KCAL, INTENSIVE_FLOOR_KCAL, MAX_PACE_KG_PER_WEEK, energyPlan } from '@/domain/energy';
 import { checkinFlag, cleanSigns, hasStopSign, intensiveBlocks, intensiveBreakDue, weeksOpen, type Checkin } from '@/domain/intensive';
 import { generatePlan, type PlanInput } from '@/domain/plan/generator';
@@ -60,7 +62,7 @@ describe('intensive calories', () => {
 });
 
 describe('who can be offered the intensive plan', () => {
-  const ok = { metrics: big, bmi: 37.1, eligibility: eligible, toLoseKg: 25, otherMedicine: false, thyroidDoseChanged: false };
+  const ok = { metrics: big, bmi: 37.1, eligibility: eligible, toLoseKg: 25, otherMedicine: false, thyroidDoseChanged: false, condition: false };
 
   it('only BMI 30 and above, ages 18 to 60, eligible, with weight to lose', () => {
     expect(intensiveBlocks(ok)).toEqual([]);
@@ -76,6 +78,8 @@ describe('who can be offered the intensive plan', () => {
     expect(buildAssessment(answers(big, { meds: ['other'] }))!.intensive.blocks).toEqual(['other_medicine']);
     expect(buildAssessment(answers(big, { meds: ['metformin', 'other'] }))!.intensive.blocks).toEqual(['other_medicine']);
     expect(buildAssessment(answers(big, { thyroid_dx: 'yes_tablets', thyroid_stable: 'no' }))!.intensive.blocks).toEqual(['thyroid_dose']);
+    for (const c of ['heart', 'gallstones', 'gout', 'bp_meds']) expect(buildAssessment(answers(big, { strict_check: [c] }))!.intensive.blocks).toEqual(['condition']);
+    expect(buildAssessment(answers(big, { strict_check: ['none'] }))!.intensive.blocks).toEqual([]);
     // Metformin and a steady thyroid dose stay allowed, with the usual "show your doctor" advisory.
     const onMetformin = buildAssessment(answers(big, { meds: ['metformin'], thyroid_dx: 'yes_tablets', thyroid_stable: 'yes' }))!;
     expect(onMetformin.intensive.blocks).toEqual([]);
@@ -98,6 +102,17 @@ describe('who can be offered the intensive plan', () => {
     expect(intensiveBreakDue([{ days: 28, paidAt: daysAgo(80) }, { days: 28, paidAt: daysAgo(50) }, { days: 28, paidAt: daysAgo(20) }], now)).toBe(true);
     // 12 weeks of plan and 4 weeks of break have both passed.
     expect(intensiveBreakDue([{ days: 84, paidAt: daysAgo(113) }], now)).toBe(false);
+  });
+});
+
+describe('extra safety check', () => {
+  it('is asked only at BMI 30 and above, and must be answered there', () => {
+    const ids = (a: Answers) => questionSteps(a).map((q) => q.id);
+    expect(ids(answers(big))).toContain('strict_check');
+    expect(ids(answers({ age: 29, heightCm: 162, weightKg: 72, goalKg: 64 }))).not.toContain('strict_check');
+    expect(isComplete(answers(big))).toBe(false);
+    expect(isComplete(answers(big, { strict_check: ['none'] }))).toBe(true);
+    expect(sanitizeAnswers({ strict_check: ['gout', 'bogus'] }).strict_check).toEqual(['gout']);
   });
 });
 

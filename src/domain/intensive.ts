@@ -7,8 +7,12 @@
 //
 // All of these guards were set by an AI agent from common practice for
 // very-low-calorie diets and need the doctor's ruling: BMI 30 and above, age 18
-// to 60, no unnamed prescription medicine, no recent change of thyroid dose, at
-// most 12 weeks, a break before repeating, and the stop signs.
+// to 60, no unnamed prescription medicine, no recent change of thyroid dose, none
+// of heart disease, gallstones, gout or blood-pressure medicine, at most 12
+// weeks, a break before repeating, and the stop signs.
+//
+// The doctor said on 2026-11-15 (relayed by Tushar) to go ahead with these
+// recommendations for now; she may change them later.
 
 import type { Eligibility } from './eligibility';
 import { TARGET_WEEKS } from './energy';
@@ -21,7 +25,7 @@ export const INTENSIVE_MAX_DAYS = TARGET_WEEKS * 7;
 /** Days of rest after 12 weeks of intensive before it can be bought again. */
 export const INTENSIVE_BREAK_DAYS = 28;
 
-export type IntensiveBlock = 'not_eligible' | 'bmi_below_30' | 'age' | 'nothing_to_lose' | 'other_medicine' | 'thyroid_dose';
+export type IntensiveBlock = 'not_eligible' | 'bmi_below_30' | 'age' | 'nothing_to_lose' | 'other_medicine' | 'thyroid_dose' | 'condition';
 
 export const INTENSIVE_BLOCK_LABEL: Record<IntensiveBlock, string> = {
   not_eligible: 'a self-serve plan is not right for you without speaking to us first',
@@ -30,6 +34,7 @@ export const INTENSIVE_BLOCK_LABEL: Record<IntensiveBlock, string> = {
   nothing_to_lose: 'you are already at your goal',
   other_medicine: 'you take a prescription medicine we cannot check automatically',
   thyroid_dose: 'your thyroid dose changed recently',
+  condition: 'you told us about a condition or medicine that needs a doctor to set a diet this strict',
 };
 
 export function intensiveBlocks(input: {
@@ -41,6 +46,8 @@ export function intensiveBlocks(input: {
   otherMedicine: boolean;
   /** She said her thyroid dose changed recently. */
   thyroidDoseChanged: boolean;
+  /** She ticked heart disease, gallstones, gout or blood-pressure medicine on the extra safety check. */
+  condition: boolean;
 }): IntensiveBlock[] {
   const blocks: IntensiveBlock[] = [];
   if (!input.eligibility.eligible) blocks.push('not_eligible');
@@ -49,6 +56,7 @@ export function intensiveBlocks(input: {
   if (input.toLoseKg <= 0) blocks.push('nothing_to_lose');
   if (input.otherMedicine) blocks.push('other_medicine');
   if (input.thyroidDoseChanged) blocks.push('thyroid_dose');
+  if (input.condition) blocks.push('condition');
   return blocks;
 }
 

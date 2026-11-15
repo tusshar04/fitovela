@@ -3,7 +3,7 @@
 // (her answer 12A). See docs/MEDICAL_RULES.md.
 
 import type { Answers, Area } from './types';
-import { asList } from './types';
+import { asList, isMetrics } from './types';
 
 export type SectionId = 'hormones' | 'insulin' | 'inflammation' | 'thyroid' | 'body' | 'food';
 
@@ -397,6 +397,26 @@ export const QUESTIONS: Question[] = [
       { id: 'thyroid_tablets', label: 'Thyroid tablets' },
       { id: 'pill', label: 'Birth-control pill' },
       { id: 'other', label: 'Another prescription medicine' },
+      NONE,
+    ],
+  },
+  {
+    // Shown only to women who could be offered the intensive plan (BMI 30 and above).
+    // Nobody reviews an order, so these answers decide it.
+    id: 'strict_check',
+    section: 'body',
+    kind: 'multi',
+    eyebrow: 'PART 5 · A SAFETY CHECK',
+    title: 'One last check.',
+    accent: 'Any of these?',
+    help: 'So we only show you plans that are safe for you.',
+    dependsOn: ['metrics'],
+    showIf: (a) => isMetrics(a.metrics) && a.metrics.weightKg / (a.metrics.heightCm / 100) ** 2 >= 30,
+    options: [
+      { id: 'heart', label: 'Heart disease, or chest pain when I exert myself' },
+      { id: 'gallstones', label: 'Gallstones or gallbladder trouble' },
+      { id: 'gout', label: 'Gout or high uric acid' },
+      { id: 'bp_meds', label: 'I take blood-pressure medicine' },
       NONE,
     ],
   },

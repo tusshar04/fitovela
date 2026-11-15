@@ -54,7 +54,7 @@ On 2026-11-15 Tushar relayed that the doctor approved a minimum of 800 kcal, tha
 
 | Step | Rule |
 | --- | --- |
-| Who is offered it | BMI 30 and above, age 18 to 60, none of the exclusions in answer 5, weight to lose, no "another prescription medicine", and no recent change of thyroid dose. Everyone else never sees the option and the server refuses it. They can still buy the standard plan. |
+| Who is offered it | BMI 30 and above, age 18 to 60, none of the exclusions in answer 5, weight to lose, no "another prescription medicine", no recent change of thyroid dose, and none of heart disease, gallstones, gout or blood-pressure medicine. Everyone else never sees the option and the server refuses it. They can still buy the standard plan. |
 | Calories | Maintenance minus 1,000 kcal, kept between 800 and 1,000. A sedentary woman of 88 kg and 160 cm gets 860 kcal. |
 | The day | Three light plates and one snack (not five meals). The standard dishes cannot go below about 1,230 kcal a day, so 31 light plates were written for this track. |
 | Release | The plan opens as soon as she pays, like the standard plan. Nobody looks at her answers first. |
@@ -72,6 +72,12 @@ The first build held every intensive plan until a clinician approved it. With th
 - The site says nothing about a clinician or doctor reviewing the plan, because nobody does.
 - What automation cannot catch: a woman who answers the questionnaire or a check-in untruthfully, a condition the questionnaire does not ask about (for example heart disease, gallstones, gout), and anything a clinician would notice from the whole picture. This risk was accepted by the founder on the doctor's approval.
 
+### The doctor's interim answer (2026-11-15, relayed by Tushar)
+
+She is busy and said to go ahead with Claude's recommendations for now; she will come back and may change them. Until she does, every draft in this file is in force as written. This is permission to launch, not a review: nobody medically qualified has checked the questions, scoring, dishes or the settings below.
+
+One recommendation was added on the strength of that answer: women at BMI 30 and above are asked one more safety question (heart disease or chest pain on exertion, gallstones, gout, blood-pressure medicine). Any yes rules out the intensive plan; the standard plan stays available.
+
 ### What the doctor needs to rule on
 
 All of these were set by an AI agent so the track could run. None has been reviewed.
@@ -84,7 +90,7 @@ All of these were set by an AI agent so the track could run. None has been revie
 6. **An hour of exercise a day on 800 kcal.** The movement plan is the same as the standard plan, on her instruction. She may want gentler movement on this track.
 7. **The stop signs, and the 2.5 kg (4 kg in week 1) limits.**
 8. **The 31 light plates** in `src/domain/plan/lightMeals.ts`: dishes, portions, calories and protein, added up from ingredients with general-knowledge values.
-9. **Medicines and conditions.** Whether metformin and thyroid tablets should stay allowed, and whether the questionnaire should ask about more conditions (heart disease, gallstones, gout, blood-pressure medicine) now that nobody reviews.
+9. **Medicines and conditions.** Whether metformin and thyroid tablets should stay allowed, and whether the extra safety question (heart disease, gallstones, gout, blood-pressure medicine) asks about the right things.
 
 ### Known gaps in the build
 

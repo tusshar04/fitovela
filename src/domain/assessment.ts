@@ -104,7 +104,7 @@ export function buildAssessment(answers: Answers, now: Date = new Date()): Asses
     weekOneLighterOn,
     journey: buildJourney(markers, energy, metrics.weightKg),
     intensive: {
-      blocks: intensiveBlocks({ metrics, bmi: bmiValue, eligibility, toLoseKg: energy.toLoseKg, otherMedicine: asList(answers.meds).includes('other'), thyroidDoseChanged: answers.thyroid_stable === 'no' }),
+      blocks: intensiveBlocks({ metrics, bmi: bmiValue, eligibility, toLoseKg: energy.toLoseKg, otherMedicine: asList(answers.meds).includes('other'), thyroidDoseChanged: answers.thyroid_stable === 'no', condition: asList(answers.strict_check).some((v) => v !== 'none') }),
       energy: intensiveEnergy,
       journey: buildJourney(markers, intensiveEnergy, metrics.weightKg),
     },

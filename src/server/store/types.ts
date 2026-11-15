@@ -38,8 +38,11 @@ export interface Order {
   phone: string;
   createdAt: string;
   paidAt?: string;
-  /** Unguessable token for the private plan link. */
+  /** Unguessable token for the private plan link. Set when the order is created; the link works only once the order is paid. */
   planToken?: string;
+  /** Razorpay's order and payment ids. */
+  providerOrderId?: string;
+  providerPaymentId?: string;
   plan?: Plan;
   /** Absent on orders made before tracks existed: treat as 'standard'. */
   track?: Track;
@@ -56,6 +59,8 @@ export interface OtpRecord {
   codeHash: string;
   expiresAt: string;
   attempts: number;
+  /** When codes were sent to this number in the last hour, for the resend and hourly limits. */
+  sends?: string[];
 }
 
 export interface EventRecord {

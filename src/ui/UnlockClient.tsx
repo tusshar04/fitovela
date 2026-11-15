@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
+import { SUPPORT_EMAIL } from '@/domain/company';
 import { MEDICATION_ADVISORY } from '@/domain/eligibility';
 import { JOURNEY_FOOTNOTE, type JourneyStop } from '@/domain/journey';
 import { DEFAULT_TIER, perDay, type Tier, type TierId } from '@/domain/offer';
@@ -33,7 +34,7 @@ const FAQ = [
   ['I take metformin or thyroid tablets. Can I follow it?', 'Yes. The plan is regular home food. Show it to your doctor before you start and never change a dose because of it.'],
   ['Do I need special ingredients?', 'No powders or supplements. Everything is on a normal kirana shelf.'],
   ['How do I get my plan?', 'It opens on screen as soon as you pay and a link is sent to your email. You can come back any time by logging in with your mobile number and a one-time code.'],
-  ['How do refunds work?', 'Write to us within 7 days of buying and we refund you in full.'],
+  ['How do refunds work?', `Write to ${SUPPORT_EMAIL} within 7 days of buying and we refund you in full.`],
 ];
 
 export function UnlockClient(props: Props) {
@@ -67,14 +68,15 @@ export function UnlockClient(props: Props) {
     setError('');
     try {
       const res = await fetch('/api/order', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ tier: selected, email, phone, track: onIntensive ? 'intensive' : 'standard' }) });
-      const data = (await res.json().catch(() => ({}))) as { error?: string; orderId?: string; amountRupees?: number };
+      const data = (await res.json().catch(() => ({}))) as { error?: string; orderId?: string; amountRupees?: number; checkout?: Record<string, unknown> };
       if (!res.ok || !data.orderId) {
         setError(data.error ?? 'Something went wrong. Please try again.');
         formRef.current?.scrollIntoView({ block: 'center', behavior: 'smooth' });
         return;
       }
       fetch('/api/event', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ name: 'checkout_opened' }) }).catch(() => {});
-      setCheckout({ orderId: data.orderId, amountRupees: data.amountRupees ?? priceOf(tier) });
+      if (data.checkout) await openRazorpay(data.orderId, data.checkout);
+      else setCheckout({ orderId: data.orderId, amountRupees: data.amountRupees ?? priceOf(tier) });
     } catch {
       setError('Could not reach us. Check your connection and try again.');
     } finally {
@@ -82,11 +84,42 @@ export function UnlockClient(props: Props) {
     }
   }
 
+  /** Loads Razorpay's checkout and opens it. Its handler runs only after a successful payment. */
+  async function openRazorpay(orderId: string, options: Record<string, unknown>) {
+    type RazorpayCtor = new (o: Record<string, unknown>) => { open: () => void; on: (event: string, cb: () => void) => void };
+    const w = window as unknown as { Razorpay?: RazorpayCtor };
+    if (!w.Razorpay) {
+      await new Promise<void>((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error('checkout did not load'));
+        document.head.appendChild(script);
+      }).catch(() => undefined);
+    }
+    if (!w.Razorpay) {
+      setError('The payment page did not load. Check your connection and try again.');
+      return;
+    }
+    const rzp = new w.Razorpay({
+      ...options,
+      handler: (response: Record<string, string>) => {
+        void confirm({ orderId, ...response });
+      },
+    });
+    rzp.on('payment.failed', () => setError('That payment did not go through. You have not been charged. Please try again.'));
+    rzp.open();
+  }
+
   async function confirmDemo() {
     if (!checkout) return;
+    await confirm({ orderId: checkout.orderId });
+  }
+
+  async function confirm(body: Record<string, string>) {
     setBusy(true);
     try {
-      const res = await fetch('/api/order/confirm', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ orderId: checkout.orderId }) });
+      const res = await fetch('/api/order/confirm', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
       const data = (await res.json().catch(() => ({}))) as { error?: string; planUrl?: string };
       if (!res.ok || !data.planUrl) {
         setError(data.error ?? 'Payment could not be completed.');
@@ -290,6 +323,9 @@ export function UnlockClient(props: Props) {
         </button>
         <p className="dim center" style={{ fontSize: 11.5, lineHeight: 1.5 }}>
           Fitovela offers nutrition guidance. It does not diagnose or treat any medical condition. Results vary from person to person. If you take medication, speak to your doctor first.
+        </p>
+        <p className="dim center" style={{ fontSize: 11.5 }}>
+          <a href="/terms" style={{ color: 'inherit' }}>Terms</a> · <a href="/privacy" style={{ color: 'inherit' }}>Privacy</a> · <a href="/refund" style={{ color: 'inherit' }}>Refunds</a> · <a href="/contact" style={{ color: 'inherit' }}>Contact</a>
         </p>
       </section>
 

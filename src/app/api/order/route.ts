@@ -4,7 +4,7 @@ import { isComplete } from '@/domain/flow';
 import { INTENSIVE_BLOCK_LABEL, intensiveBreakDue } from '@/domain/intensive';
 import { TIERS } from '@/domain/offer';
 import { isTierId, priceFor } from '@/domain/offer';
-import { activeProvider } from '@/server/payments';
+import { activeProvider, createRazorpayOrder } from '@/server/payments';
 import { currentSession, logEvent, newId, saveSession } from '@/server/session';
 import { getStore, type Order } from '@/server/store';
 import { cleanEmail, cleanPhone } from '@/server/validate';
@@ -43,10 +43,7 @@ export async function POST(req: Request) {
   }
 
   const provider = activeProvider();
-  if (provider !== 'demo') {
-    // Razorpay is not connected yet. Fail closed rather than hand out plans.
-    return NextResponse.json({ error: 'Payments are not switched on yet.' }, { status: 503 });
-  }
+  if (!provider) return NextResponse.json({ error: 'Payments are not switched on yet.' }, { status: 503 });
 
   session.lead = { email, phone, marketingOptIn: session.lead?.marketingOptIn ?? false, skipped: false, at: session.lead?.at ?? new Date().toISOString() };
   await saveSession(session);
@@ -62,9 +59,32 @@ export async function POST(req: Request) {
     email,
     phone,
     createdAt: new Date().toISOString(),
+    // Fixed now, so the browser confirmation and the webhook deliver the same link.
+    planToken: newId(24),
   };
+  let checkout: Record<string, unknown> | undefined;
+  if (provider === 'razorpay') {
+    try {
+      const rp = await createRazorpayOrder({ amountRupees: order.amountRupees, receipt: order.id, notes: { orderId: order.id, tier: order.tier, track } });
+      order.providerOrderId = rp.id;
+      checkout = {
+        key: process.env.RAZORPAY_KEY_ID,
+        order_id: rp.id,
+        amount: rp.amount,
+        currency: rp.currency,
+        name: 'Fitovela',
+        description: `${TIERS[order.tier].name}${track === 'intensive' ? ' (intensive)' : ''}`,
+        prefill: { email, contact: `+91${phone}` },
+        theme: { color: '#C2185B' },
+      };
+    } catch (err) {
+      console.error((err as Error).message);
+      return NextResponse.json({ error: 'We could not start the payment. Please try again in a minute.' }, { status: 502 });
+    }
+  }
+
   const store = await getStore();
   await store.saveOrder(order);
   await logEvent('order_created', session.id, { tier: order.tier, amount: order.amountRupees, track });
-  return NextResponse.json({ orderId: order.id, amountRupees: order.amountRupees, provider });
+  return NextResponse.json({ orderId: order.id, amountRupees: order.amountRupees, provider, checkout });
 }

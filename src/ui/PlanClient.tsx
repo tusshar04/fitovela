@@ -325,7 +325,7 @@ export function PlanClient({ plan, totalWeeks, token, tierName, typeName, justBo
       )}
 
       <p className="small" style={{ padding: '18px 20px 16px' }}>
-        Fitovela offers nutrition guidance. It does not diagnose or treat any medical condition. Meal content is a draft pending medical review.
+        Fitovela offers nutrition guidance. It does not diagnose or treat any medical condition. Calories and portions are approximate.
       </p>
 
       <nav className="botnav">

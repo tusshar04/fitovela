@@ -1,5 +1,5 @@
-// Login by mobile number and one-time code. The SMS provider is not connected yet:
-// in development the code is returned to the page so the flow can be tested.
+// Login by mobile number and one-time code, sent by SMS through 2Factor. With no
+// provider key (development) the code is returned to the page so the flow can be tested.
 
 import { createHash, createHmac, randomInt, timingSafeEqual } from 'node:crypto';
 import { cookies } from 'next/headers';
@@ -20,31 +20,64 @@ function secret(): string {
 const hashCode = (phone: string, code: string) => createHash('sha256').update(`${phone}:${code}:${secret()}`).digest('hex');
 
 export function smsConfigured(): boolean {
-  return Boolean(process.env.SMS_PROVIDER);
+  return Boolean(process.env.TWOFACTOR_API_KEY);
 }
 
-/** Creates a code. Returns it only so the caller can show it in development. */
-export async function requestOtp(phone: string): Promise<string> {
-  const code = String(randomInt(0, 1_000_000)).padStart(6, '0');
+const RESEND_SECONDS = 60;
+const MAX_SENDS_PER_HOUR = 5;
+
+/** Sends the code by SMS through 2Factor (the provider tarot uses). The key is part of the URL, so the URL is never logged. */
+async function sendSms(phone: string, code: string): Promise<boolean> {
+  const key = process.env.TWOFACTOR_API_KEY!;
+  const template = process.env.TWOFACTOR_TEMPLATE;
+  const url = `https://2factor.in/API/V1/${encodeURIComponent(key)}/SMS/${encodeURIComponent(`+91${phone}`)}/${code}${template ? `/${encodeURIComponent(template)}` : ''}`;
+  try {
+    const res = await fetch(url, { redirect: 'error', signal: AbortSignal.timeout(10_000) });
+    const data = (await res.json().catch(() => null)) as { Status?: string } | null;
+    if (res.ok && data?.Status === 'Success') return true;
+    console.error(`sms failed: http ${res.status}, status ${data?.Status ?? 'unknown'}`);
+  } catch (err) {
+    console.error(`sms failed: ${(err as Error).name}`);
+  }
+  return false;
+}
+
+export type OtpRequest = { ok: true; devCode?: string } | { ok: false; reason: 'wait' | 'too_many' | 'unavailable' };
+
+/** Creates a code and sends it. In development with no SMS provider the code is returned so the flow can be tested. */
+export async function requestOtp(phone: string): Promise<OtpRequest> {
   const store = await getStore();
-  await store.saveOtp({ phone, codeHash: hashCode(phone, code), expiresAt: new Date(Date.now() + OTP_MINUTES * 60_000).toISOString(), attempts: 0 });
-  if (!smsConfigured()) console.log(`[dev] login code for ${phone}: ${code}`);
-  // TODO(launch): send by SMS through the chosen provider.
-  return code;
+  const now = Date.now();
+  const prev = await store.getOtp(phone);
+  const sends = (prev?.sends ?? []).filter((t) => now - new Date(t).getTime() < 3_600_000);
+  if (sends.length > 0 && now - new Date(sends[sends.length - 1]).getTime() < RESEND_SECONDS * 1000) return { ok: false, reason: 'wait' };
+  if (sends.length >= MAX_SENDS_PER_HOUR) return { ok: false, reason: 'too_many' };
+  if (!smsConfigured() && process.env.NODE_ENV === 'production') return { ok: false, reason: 'unavailable' };
+
+  const code = String(randomInt(0, 1_000_000)).padStart(6, '0');
+  await store.saveOtp({ phone, codeHash: hashCode(phone, code), expiresAt: new Date(now + OTP_MINUTES * 60_000).toISOString(), attempts: 0, sends: [...sends, new Date(now).toISOString()] });
+  if (!smsConfigured()) {
+    console.log(`[dev] login code for ${phone}: ${code}`);
+    return { ok: true, devCode: code };
+  }
+  return (await sendSms(phone, code)) ? { ok: true } : { ok: false, reason: 'unavailable' };
 }
 
 export async function verifyOtp(phone: string, code: string): Promise<boolean> {
   const store = await getStore();
   const rec = await store.getOtp(phone);
   if (!rec) return false;
+  if (!rec.codeHash) return false;
+  // The record is kept (without a usable code) so the hourly send limit still counts.
+  const spent = { ...rec, codeHash: '', attempts: 0 };
   if (new Date(rec.expiresAt).getTime() < Date.now() || rec.attempts >= MAX_ATTEMPTS) {
-    await store.deleteOtp(phone);
+    await store.saveOtp(spent);
     return false;
   }
   const a = Buffer.from(rec.codeHash);
   const b = Buffer.from(hashCode(phone, code));
   if (a.length === b.length && timingSafeEqual(a, b)) {
-    await store.deleteOtp(phone);
+    await store.saveOtp(spent);
     return true;
   }
   await store.saveOtp({ ...rec, attempts: rec.attempts + 1 });
