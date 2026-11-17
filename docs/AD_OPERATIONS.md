@@ -68,6 +68,6 @@ Before enabling tracking, inspect the resulting dataset's permitted events. Keep
 
 ## Release and verification
 
-Payment/security changes require independent review under [AGENTS.md](../AGENTS.md). The author has run type checking, 102 tests and a production build; the final commit still needs independent review and a final affected build after any subsequent changes. No merge, production deployment or scheduler installation has happened for FTV-024.
+Payment/security changes require independent review under [AGENTS.md](../AGENTS.md). Review commit `6002a6c` is pushed on the feature branch. The author ran type checking, 102 tests and a production build on the final implementation. Independent review remains pending; repeat affected checks after review fixes. No application-code merge, production deployment or scheduler installation has happened for FTV-024. Documentation-only progress is shared on main.
 
 After review: reconcile current `origin/main`, merge/push without a PR, deploy from the clean main revision, verify private endpoints reject unauthenticated requests, backfill the verified refund, install schedules, and inspect one actual scheduled report plus an authorised test order alert. Keep all campaign/ad-set/ad statuses PAUSED throughout. Token/API reads, actual creation writes, tracking event receipt and billing must be checked separately before launch.
