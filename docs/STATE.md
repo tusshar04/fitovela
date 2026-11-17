@@ -71,6 +71,10 @@ Founder instruction: integrate Cashfree with the least typing for the buyer ([D-
 
 The founder supplied production keys and asked for Cashfree to be enabled. Keys stored in Secret Manager, flag set, deployed. Verified with the real keys: order creation and order lookup at Cashfree; the live checkout page from `fitovela.com` (the domain is accepted by Cashfree's whitelist; `127.0.0.1` is refused, as it should be). Three unpaid test orders (prefix `fv_`, synthetic customer) now sit in the Cashfree account. A completed payment is still unverified. Self-review only.
 
+### FTV-020 — five static ads, first drafts (Claude, 2026-11-17, merged)
+
+Founder instruction: five static ads on our hook, after he shared competitor ads (ToneOp, Nutritiondaily, a PDF planner, Fitelo, Disha). Sources are in `ads/static/` (one HTML file per ad, shared `ads.css`); `ads/static/render.sh` writes PNGs to `ads/static/out/` in two sizes, 1080 x 1350 for feed and 1080 x 1920 for Reels and Stories with Meta's covered zones left empty. **Drafts: not yet approved by the founder, not uploaded to Meta.** Every claim is taken from the live site (free, 2 minutes, four areas, type names, the first-4-weeks lines, plans from INR 199). Photos are the Unsplash stand-ins from `public/img/`, food only, no faces. Ad 2 is in Hinglish; the product's language is still undecided in [PRODUCT.md](PRODUCT.md). Found while writing them: the landing page (hook C) says "No salads" but the meal library has salad dishes; the ads do not repeat that line and the landing page is unchanged. Self-review only; checked on screen in both sizes.
+
 ### Exact next step
 
 The "Open, in order" list under Production above.
