@@ -64,13 +64,14 @@ const P = (e) => e.props ?? {};
 const visits = new Map();
 for (const e of events) {
   if (e.name !== 'page_view' || !e.visitId) continue;
-  const v = visits.get(e.visitId) ?? { ad: undefined, hook: undefined, ua: P(e).ua, os: P(e).os, first: e.at };
+  const v = visits.get(e.visitId) ?? { ad: undefined, hook: undefined, src: P(e).src, ua: P(e).ua, os: P(e).os, first: e.at };
   if (P(e).ad && !v.ad) v.ad = String(P(e).ad);
   if (P(e).hook && !v.hook) v.hook = P(e).hook;
   visits.set(e.visitId, v);
 }
 // landing_view is written by the server before any visit exists, so it is matched on its own ad id.
-const keep = (e) => !onlyAd || (e.name === 'landing_view' ? String(P(e).ad ?? '') === onlyAd : visits.get(who(e))?.ad === onlyAd);
+// Our own test visits are tagged utm_source=claude_check and left out unless asked for by ad id.
+const keep = (e) => (onlyAd ? (e.name === 'landing_view' ? String(P(e).ad ?? '') === onlyAd : visits.get(who(e))?.ad === onlyAd) : visits.get(who(e))?.src !== 'claude_check' && P(e).ad !== 'CLAUDE_CHECK');
 const E = events.filter(keep);
 
 const people = (pred) => new Set(E.filter(pred).map(who).filter(Boolean));
