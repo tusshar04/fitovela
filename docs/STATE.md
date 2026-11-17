@@ -79,6 +79,10 @@ Founder instruction: five static ads on our hook, after he shared competitor ads
 
 Founder instruction, after approving the static ads: a video of the real assessment, with captions in English and in Hinglish. It is 21 seconds, 1080 x 1920, 30 frames a second, no sound: three boxes are ticked on the insulin question, "Reading your answers", "Building your report", the type, the four scores, "Your first 4 weeks", the locked diet, the three prices, a closing card. Every screen is a screenshot of the real app taken by `ads/video/capture.mjs` from one synthetic visit (a made-up woman whose answers match insulin-resistant PCOS); `ads/video/video.html` lays them out and `ads/video/render.mjs` writes `ads/video/out/fitovela-quiz-en.mp4` and `-hi.mp4` through headless Chrome and ffmpeg. The MP4 files are not in Git (they are rebuilt by the script); the copies are in the primary checkout on Tushar's Mac. If the app's screens change, run the capture again. **Drafts: not uploaded to Meta.** The Hinglish wording is Claude's and has not been checked by a native speaker other than the founder. Self-review only; frames from both finished files were looked at, including the taps and the screen changes.
 
+### FTV-023 — script for a second video, "Same diet, two women" (Claude, 2026-11-17, proposed)
+
+After the quiz video the founder said "go ahead"; Claude took that as the second video it had recommended. [ads/video/story-script.md](../ads/video/story-script.md) holds a 30-second shot list, the voiceover in Hinglish and English, and prompts for an AI video tool. Two phone-only clips cut from the quiz video for shots 5 and 6 are in `ads/video/out/` on Tushar's Mac (`insert-quiz-ticks.mp4`, `insert-type-result.mp4`; not in Git). **Proposed, not approved; no footage or voice exists.** Claude cannot generate either.
+
 ### Exact next step
 
 The "Open, in order" list under Production above.
