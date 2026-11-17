@@ -269,7 +269,7 @@ IDs D-004 to D-006 are used by proposals in draft [PR #2](https://github.com/tus
 
 ## D-025 — Cashfree is the payment gateway; she types her details once
 
-- **Status:** accepted; implemented; switched on in production on 2026-11-17 at the founder's instruction ("use them and enable cashfree"). A completed payment has not been observed yet.
+- **Status:** accepted; implemented; switched on in production on 2026-11-17 at the founder's instruction ("use them and enable cashfree"). A completed INR 199 payment, matching webhook acceptance and full refund were verified on 2026-11-17; actual plan opening and email arrival remain unverified (see [AD_OPERATIONS.md](AD_OPERATIONS.md)).
 - **Date:** 2026-11-15.
 - **Decision owner:** Tushar.
 - **Decision:** Payments go through Cashfree. The buyer gives her email and mobile number once, on Fitovela (pre-filled on the paywall if she gave them at the report step). Both are sent to Cashfree with the order, so Cashfree's page asks only how she wants to pay.
