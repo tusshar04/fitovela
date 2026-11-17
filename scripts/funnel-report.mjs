@@ -95,11 +95,13 @@ const on = (name, path) => (e) => e.name === name && (path === undefined || P(e)
 
 console.log(`Fitovela behaviour report · ${ist(since)} IST to ${ist(new Date())} IST${onlyAd ? ` · ad ${onlyAd}` : ''}`);
 console.log(`${E.length} events. Percentages are of the first line in each block. People are counted once each.`);
+console.log('Each deploy starts one test assessment (utm_source=deploy-check); it has no browser visit, so it shows up only in the server counts.');
 
 head('1. Landing page');
-const crawler = E.filter((e) => e.name === 'landing_view' && ['meta_crawler', 'bot', 'none'].includes(P(e).ua)).length;
-const serverLoads = E.filter(on('landing_view')).length;
-console.log(`  Server loads: ${serverLoads}, of which ${crawler} were Meta's crawler or other robots${serverLoads && !E.some((e) => e.name === 'landing_view' && P(e).ua) ? ' (device not recorded before this release)' : ''}.`);
+const loads = E.filter(on('landing_view'));
+const known = loads.filter((e) => P(e).ua);
+const robots = known.filter((e) => ['meta_crawler', 'bot', 'none'].includes(P(e).ua)).length;
+console.log(`  Server loads: ${loads.length}. Device recorded for ${known.length} of them (it was not recorded before 18 Nov 2026, 02:20 IST): ${robots} were Meta's crawler or other robots.`);
 const land = n(on('page_view', '/'));
 line('people whose browser showed the page', land, land);
 line('  … with the page actually on screen', n((e) => on('page_view', '/')(e) && P(e).vis !== false), land);
