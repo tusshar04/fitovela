@@ -5,6 +5,15 @@ import { fetchMetaSpend, type SpendRow } from './metaInsights';
 
 const IST = 330 * 60_000;
 const HOUR = 3600_000;
+/** Scheduler preserves this timestamp across retries. Authentication is checked
+ * by the route first; reject malformed/unbounded dates instead of shifting a run. */
+export function scheduledReportTime(req: Request, now = new Date()): Date {
+  const raw = req.headers.get('x-cloudscheduler-scheduletime');
+  if (!raw) return now;
+  const ms = Date.parse(raw);
+  if (!/^\d{4}-\d{2}-\d{2}T/.test(raw) || !Number.isFinite(ms) || ms > now.getTime() + 60_000 || ms < now.getTime() - 7 * 86400_000) throw new Error('Invalid scheduler time');
+  return new Date(ms);
+}
 export function reportWindow(now: Date) {
   const endMs = Math.floor((now.getTime() + IST) / HOUR) * HOUR - IST;
   const lastHourStart = endMs - HOUR;

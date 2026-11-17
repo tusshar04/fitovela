@@ -61,12 +61,26 @@ export const fileStore: Store = {
   saveOrder: (o) => write('orders', o.id, o),
   commitPaidOrder: (order) => atomic(async () => {
     const current = await read<Order>('orders', order.id);
-    if (current?.status === 'paid' && current.plan) return { order: current, created: false };
+    if (current?.status === 'paid' && current.plan) {
+      if (!current.providerPaymentId && order.providerPaymentId) {
+        current.providerPaymentId = order.providerPaymentId;
+        await write('orders', order.id, current);
+      }
+      return { order: current, created: false };
+    }
     if (!current) throw new Error('Order missing during fulfilment');
     const deliveryId = `order-${order.id}`;
     await write('deliveries', deliveryId, { id: deliveryId, state: 'pending', attempt: '', updatedAt: order.paidAt, order: paidSummary(order) });
     await write('orders', order.id, order);
     return { order, created: true };
+  }),
+  recordPaidPaymentReference: (id, paymentId) => atomic(async () => {
+    const order = await read<Order>('orders', id);
+    if (order?.status === 'paid' && !order.providerPaymentId) {
+      order.providerPaymentId = paymentId;
+      await write('orders', id, order);
+    }
+    return order;
   }),
   async listPaidOrders(start, end) {
     return (await list<Order>('orders')).filter(o => o.status === 'paid' && o.provider !== 'demo' && o.paidAt && o.paidAt >= start && o.paidAt < end);

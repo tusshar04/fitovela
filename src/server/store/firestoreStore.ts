@@ -38,12 +38,30 @@ export const firestoreStore: Store = {
     return firestore().runTransaction(async tx => {
       const snap = await tx.get(ref);
       const current = snap.data() as Order | undefined;
-      if (current?.status === 'paid' && current.plan) return { order: current, created: false };
+      if (current?.status === 'paid' && current.plan) {
+        if (!current.providerPaymentId && order.providerPaymentId) {
+          current.providerPaymentId = order.providerPaymentId;
+          tx.update(ref, { providerPaymentId: order.providerPaymentId });
+        }
+        return { order: current, created: false };
+      }
       if (!current) throw new Error('Order missing during fulfilment');
       tx.set(ref, order);
       const id = `order-${order.id}`;
       tx.create(firestore().collection('deliveries').doc(id), { id, state: 'pending', attempt: '', updatedAt: order.paidAt, order: paidSummary(order) });
       return { order, created: true };
+    });
+  },
+  async recordPaidPaymentReference(id, paymentId) {
+    const ref = firestore().collection('orders').doc(id);
+    return firestore().runTransaction(async tx => {
+      const snap = await tx.get(ref);
+      const order = snap.exists ? snap.data() as Order : null;
+      if (order?.status === 'paid' && !order.providerPaymentId) {
+        tx.update(ref, { providerPaymentId: paymentId });
+        order.providerPaymentId = paymentId;
+      }
+      return order;
     });
   },
   async listPaidOrders(start, end) {

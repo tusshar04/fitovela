@@ -14,13 +14,13 @@ export type Fulfilment = { ok: true; planUrl: string } | { ok: false; error: str
 export async function fulfilOrder(order: Order, session: Session, origin: string, providerPaymentId?: string): Promise<Fulfilment> {
   if (!order.planToken) return { ok: false, error: 'This order cannot be completed.' };
   const planUrl = `/plan/${order.planToken}`;
-  if (order.status === 'paid' && order.plan) {
-    await notifyPaidOrder(order);
-    return { ok: true, planUrl };
-  }
-  const latest = await (await getStore()).getOrder(order.id);
+  const store = await getStore();
+  const latest = await store.getOrder(order.id);
   if (latest?.status === 'paid' && latest.plan) {
-    await notifyPaidOrder(latest);
+    // A return can confirm PAID before Cashfree's payments-list request succeeds.
+    // Preserve fulfilment, but fill the reference when its signed callback arrives.
+    const enriched = providerPaymentId ? await store.recordPaidPaymentReference(order.id, providerPaymentId) : latest;
+    await notifyPaidOrder(enriched ?? latest);
     return { ok: true, planUrl };
   }
 
@@ -35,10 +35,11 @@ export async function fulfilOrder(order: Order, session: Session, origin: string
   order.paidAt = new Date().toISOString();
   order.startKg = assessment.metrics.weightKg;
   if (providerPaymentId) order.providerPaymentId = providerPaymentId;
-  const store = await getStore();
   const saved = await store.commitPaidOrder(order);
-  await notifyPaidOrder(saved.order);
-  if (!saved.created) return { ok: true, planUrl };
+  if (!saved.created) {
+    await notifyPaidOrder(saved.order);
+    return { ok: true, planUrl };
+  }
   await logEvent('payment_confirmed', session.id, { tier: order.tier, amount: order.amountRupees, provider: order.provider, track: order.track ?? 'standard' });
 
   const tier = TIERS[order.tier];
@@ -56,5 +57,8 @@ export async function fulfilOrder(order: Order, session: Session, origin: string
       'Fitovela offers nutrition guidance. It does not diagnose or treat any medical condition.',
     ].join('\n'),
   });
+  // Operator notifications must never hold up the customer's email attempt.
+  // The transaction's outbox remains recoverable if this request stops here.
+  await notifyPaidOrder(saved.order);
   return { ok: true, planUrl };
 }

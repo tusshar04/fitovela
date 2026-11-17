@@ -5,7 +5,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { fileStore } from '@/server/store/fileStore';
 import type { Order } from '@/server/store';
 import { deliverSlack, orderAlertText } from '@/server/slack';
-import { reportWindow, totals } from '@/server/reporting';
+import { reportWindow, scheduledReportTime, totals } from '@/server/reporting';
 import { parseSpendRows, fetchMetaSpend } from '@/server/metaInsights';
 import { authorizedOps } from '@/server/opsAuth';
 import { cashfreeRefundRecord } from '@/server/refunds';
@@ -71,6 +71,15 @@ describe('payment and notification idempotency', () => {
 });
 
 describe('reporting boundaries and missing data', () => {
+  it('keeps the original scheduled window when a retry crosses midnight', () => {
+    const scheduled = '2026-11-17T17:35:00Z'; // 23:05 IST
+    const request = new Request('https://fitovela.test/api/ops/report', { headers: { 'x-cloudscheduler-scheduletime': scheduled } });
+    const delayed = new Date('2026-11-17T18:40:00Z'); // next day 00:10 IST
+    expect(reportWindow(scheduledReportTime(request, delayed)).id).toBe('report-2026-11-17-22');
+    const invalid = new Request('https://fitovela.test', { headers: { 'x-cloudscheduler-scheduletime': 'bad-date' } });
+    expect(() => scheduledReportTime(invalid, delayed)).toThrow();
+    expect(scheduledReportTime(new Request('https://fitovela.test'), delayed)).toEqual(delayed);
+  });
   it('uses completed IST hours and reports yesterday at midnight', () => {
     const w = reportWindow(new Date('2026-11-17T18:35:00Z')); // 00:05 IST Nov 18
     expect(w.date).toBe('2026-11-17'); expect(w.lastHour).toBe(23);
@@ -133,6 +142,30 @@ describe('Cashfree refund handling', () => {
     expect((await cashfreeWebhook(req(body + ' '))).status).toBe(401);
     expect((await cashfreeWebhook(req())).status).toBe(200);
     expect((await cashfreeWebhook(req())).status).toBe(200);
+    const records = (await fileStore.listRefunds('2026-11-17T00:00:00.000Z', '2026-11-18T00:00:00.000Z')).filter(r => r.orderId === o.id);
+    expect(records).toHaveLength(1);
+    cleanup.push(...records.map(r => path.join('.data', 'refunds', `${r.id}.json`)));
+  });
+  it('enriches a return-first paid order from the signed callback so its refund can reconcile', async () => {
+    process.env.CASHFREE_APP_ID = 'synthetic'; process.env.CASHFREE_SECRET_KEY = 'synthetic-secret';
+    delete process.env.SLACK_ORDER_WEBHOOK_URL;
+    const o = { ...paid(id('orders')), sessionId: id('sessions'), providerPaymentId: undefined };
+    await fileStore.saveOrder(o);
+    await fileStore.saveSession({ id: o.sessionId, createdAt: o.createdAt, updatedAt: o.createdAt, hook: 'a', category: 'pcos', ageBand: '30-39', ad: {}, answers: {} });
+    const signed = (event: unknown) => {
+      const body = JSON.stringify(event), ts = '1785401067911';
+      const sig = createHmac('sha256', 'synthetic-secret').update(ts + body).digest('base64');
+      return new Request('https://fitovela.test/api/webhooks/cashfree', { method: 'POST', body, headers: { 'x-webhook-timestamp': ts, 'x-webhook-signature': sig } });
+    };
+    const success = { type: 'PAYMENT_SUCCESS_WEBHOOK', data: { order: { order_id: `fv_${o.id}`, order_amount: 199, order_currency: 'INR' }, payment: { payment_status: 'SUCCESS', cf_payment_id: 'payment-test' } } };
+    expect((await cashfreeWebhook(signed(success))).status).toBe(200);
+    const enriched = await fileStore.getOrder(o.id);
+    expect(enriched?.providerPaymentId).toBe('payment-test');
+    expect(enriched?.paidAt).toBe(o.paidAt);
+    await fileStore.recordPaidPaymentReference(o.id, 'another-payment');
+    expect((await fileStore.getOrder(o.id))?.providerPaymentId).toBe('payment-test');
+    const refundEvent = { type: 'REFUND_STATUS_WEBHOOK', data: { refund: { ...refund, order_id: `fv_${o.id}`, cf_refund_id: o.id } } };
+    expect((await cashfreeWebhook(signed(refundEvent))).status).toBe(200);
     const records = (await fileStore.listRefunds('2026-11-17T00:00:00.000Z', '2026-11-18T00:00:00.000Z')).filter(r => r.orderId === o.id);
     expect(records).toHaveLength(1);
     cleanup.push(...records.map(r => path.join('.data', 'refunds', `${r.id}.json`)));

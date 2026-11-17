@@ -97,6 +97,8 @@ export interface Store {
   saveOrder(order: Order): Promise<void>;
   /** Atomically preserves the first paid snapshot when browser and webhook race. */
   commitPaidOrder(order: Order): Promise<{ order: Order; created: boolean }>;
+  /** Enriches a paid snapshot from a verified provider callback; never replaces an existing reference. */
+  recordPaidPaymentReference(id: string, paymentId: string): Promise<Order | null>;
   listPaidOrders(start: string, end: string): Promise<PaidOrderSummary[]>;
   getOrderByPlanToken(token: string): Promise<Order | null>;
   listPaidOrdersByPhone(phone: string): Promise<Order[]>;
