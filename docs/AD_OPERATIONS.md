@@ -1,6 +1,6 @@
 # Fitovela ad reporting and launch checks
 
-Owner: Codex, FTV-024. Status: implementation on `feat/ftv-024-launch-tracking`, **not deployed**. Current account IDs and Meta setup status live in [STATE.md](STATE.md). No advertising delivery changes are made by this code.
+Owner: Codex, FTV-025. Status: independently reviewed implementation on `feat/ftv-024-launch-tracking`, **not deployed**. Current account IDs and Meta setup status live in [STATE.md](STATE.md). No advertising delivery changes are made by this code.
 
 ## Launch order agreed by the founder
 
@@ -21,9 +21,9 @@ All resources below are in GCP project `fitovela-prod`; always pass an explicit 
 | `slack-order-webhook-url` | Founder-supplied Fitovela order channel | Stored; a labelled setup test returned HTTP 200 / `ok` |
 | `slack-report-webhook-url` | Founder-supplied Fitovela report channel | Stored; a labelled setup test returned HTTP 200 / `ok` |
 | `ops-report-secret` | Bearer authentication for internal reporting routes | Generated, stored; no schedule installed yet |
-| `meta-marketing-api-token` | Fitovela ad management/reporting | Not generated or verified yet |
+| `meta-marketing-api-token` | Fitovela ad management/reporting | Stored; 60-day SYSTEM_USER token, correct app/scopes/account/Insights verified |
 
-The existing `fitovela-app` service identity can read the first three secrets. No secret values belong in files, arguments, logs, screenshots or documentation. The runtime environment maps them through `scripts/deploy.sh`. Meta reporting stays disabled in that script until its own token is verified.
+The existing `fitovela-app` service identity can read all four secrets. No secret values belong in files, arguments, logs, screenshots or documentation. The runtime environment maps them through `scripts/deploy.sh`. Meta reporting is enabled in that script after verifying Fitovela’s own token and exact account identity.
 
 ## Paid-order alerts
 
@@ -38,7 +38,7 @@ The existing `fitovela-app` service identity can read the first three secrets. N
 
 Proposed schedules, installed only after deployment: `fitovela-hourly-report` at `5 * * * *` in `Asia/Kolkata`; `fitovela-order-alert-recovery` every five minutes. `scripts/configure-reporting.py` defaults to inspection; `--apply` installs only these two named jobs. Requests use the reporting secret. The routes reject missing/wrong secrets with 401.
 
-Each report shows the IST day through the latest completed hour plus that hour separately. At 00:05 it reports the previous completed day. Revenue follows the backend's `paidAt` confirmation timestamp; refunds follow Cashfree's processed timestamp. Meta data can settle later.
+Authenticated Scheduler calls use the original `X-CloudScheduler-ScheduleTime` across retries, including after midnight. Each report shows the IST day through the latest completed hour plus that hour separately. At 00:05 it reports the previous completed day. Revenue follows the backend's `paidAt` confirmation timestamp; refunds follow Cashfree's processed timestamp. Meta data can settle later.
 
 - Paid revenue and order counts come from confirmed backend orders, excluding demo orders. The production query selects financial summary fields and excludes meal plans/contact details.
 - Successful merchant refunds are stored once by Cashfree refund ID. They must match the order, original paid payment, INR and a valid amount. Refunds for extra/failed payment attempts do not reduce paid-order revenue. Existing refunds require one initial backfill before launch.
@@ -62,12 +62,12 @@ Primary documentation checked on 17 November 2026:
 
 ## Tracking boundary
 
-No Pixel or CAPI code is installed yet. Meta's actual dataset creation UI offers `Health & wellness condition` for a business associated with medical conditions, and warns that this category may limit or block data sharing. The staged dataset uses that category, with portfolio-wide automatic Meta-managed CAPI unchecked. Creating it accepts Business Tools Terms and is awaiting the founder's final confirmation.
+No Pixel or CAPI code is installed yet. Meta's actual dataset creation UI offers `Health & wellness condition` for a business associated with medical conditions, and warns that this category may limit or block data sharing. The founder approved creation and Business Tools Terms. Dataset `1488170726709981` is now created with that category and connected to Fitovela’s India ad account; portfolio-wide automatic Meta-managed CAPI was unchecked. Events Manager shows “Events blocked”, Core setup on, and automatic advanced matching off. There are no received events or domain-specific category rows yet, so no claim is made that Purchase or other lower-funnel events can be used.
 
 Before enabling tracking, inspect the resulting dataset's permitted events. Keep assessment answers, condition results, body measurements, medicines, diet track, contact fields and private result/plan URLs out of advertising payloads. Do not rename restricted events or miscategorise the business to bypass Meta restrictions. Browser SDK automatic collection and page URL/referrer leakage require an explicit privacy review before it can run anywhere in the assessment funnel.
 
 ## Release and verification
 
-Payment/security changes require independent review under [AGENTS.md](../AGENTS.md). Review commit `6002a6c` is pushed on the feature branch. The author ran type checking, 102 tests and a production build on the final implementation. Independent review remains pending; repeat affected checks after review fixes. No application-code merge, production deployment or scheduler installation has happened for FTV-024. Documentation-only progress is shared on main.
+Payment/security changes require independent review under [AGENTS.md](../AGENTS.md). Reviewer `/root/review_launch_reporting` approved commit `03aa9ee50d394d84815b4fb845fb6734d784f5af`, independently rerunning typecheck, all 105 tests, whitespace and shell/Python syntax checks. Author also passed production build. Review fixes enrich late payment references without replacement, attempt email before Slack, and preserve scheduler retry windows. Current origin/main’s media changes were merged without application conflicts. Follow-up `8c0c9ba` enables the Meta reporting flag after token/account/Insights verification; independent follow-up review passed on that exact commit. No production deploy or scheduler installation yet.
 
-After review: reconcile current `origin/main`, merge/push without a PR, deploy from the clean main revision, verify private endpoints reject unauthenticated requests, backfill the verified refund, install schedules, and inspect one actual scheduled report plus an authorised test order alert. Keep all campaign/ad-set/ad statuses PAUSED throughout. Token/API reads, actual creation writes, tracking event receipt and billing must be checked separately before launch.
+Release steps: reconcile current `origin/main`, merge/push without a PR, deploy from clean main, verify private endpoints reject unauthenticated requests, backfill the verified refund, install schedules, and inspect an actual scheduled report plus an authorised test order alert. A forced Scheduler run can carry a future scheduled timestamp, which the guard rejects; use the authenticated endpoint without that header for a manual test, then observe the real :05 run. Keep all campaign/ad-set/ad statuses PAUSED. Actual creation writes, tracking event receipt and billing require separate launch checks.
