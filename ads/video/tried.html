@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>Video: tried everything, weight still stuck</title>
+<link rel="stylesheet" href="kit.css">
+<style>
+  .tries { margin-top: 30px; display: flex; flex-direction: column; gap: 26px; }
+  .try { display: flex; align-items: center; gap: 24px; }
+  .try .t { position: relative; font-size: 112px; line-height: 1.02; font-weight: 800; letter-spacing: -0.04em; }
+  .try .t b { position: absolute; left: -8px; right: -8px; top: 54%; height: 10px; border-radius: 10px; background: #f59abb; transform-origin: left center; }
+  .try .x { flex: none; width: 66px; height: 66px; border-radius: 50%; background: rgba(245, 154, 187, 0.18); color: #f59abb; display: flex; align-items: center; justify-content: center; font-size: 38px; font-weight: 800; }
+  .stuck { margin-top: 44px; font-size: 116px; line-height: 1.02; font-weight: 800; letter-spacing: -0.04em; color: var(--yellow); }
+  .will { font-size: 168px; }
+  .panel-h { font-size: 76px; line-height: 1.1; font-weight: 800; letter-spacing: -0.03em; text-wrap: balance; }
+  .cells { margin-top: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .cell { display: flex; justify-content: space-between; align-items: center; background: var(--plum-2); border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 32px; padding: 50px 34px; font-size: 46px; font-weight: 700; }
+  .cell b { color: var(--yellow); font-size: 56px; line-height: 1; }
+  .which { margin-top: 44px; font-family: 'Instrument', Georgia, serif; font-style: italic; font-size: 120px; line-height: 1.05; color: var(--yellow); }
+</style>
+<body>
+  <div class="stage">
+    <span class="glow" style="width:760px;height:760px;left:-300px;bottom:-260px;background:#c2185b;opacity:.4"></span>
+
+    <div class="scene" data-in="-1" data-out="5.7">
+      <div class="kick" data-en="SOUND FAMILIAR?" data-hi="AAPKE SAATH BHI?"></div>
+      <div class="tries">
+        <div class="try" data-in="-1"><span class="t" data-dim="0.9"><span data-en="Ate less." data-hi="Kam khaya."></span><b data-wipe="0.8"></b></span><span class="x" data-in="0.95" data-s="0.4" data-dy="0" data-dur="0.3">✕</span></div>
+        <div class="try" data-in="1.25"><span class="t" data-dim="2.15"><span data-en="Walked more." data-hi="Zyada chali."></span><b data-wipe="2.05"></b></span><span class="x" data-in="2.2" data-s="0.4" data-dy="0" data-dur="0.3">✕</span></div>
+        <div class="try" data-in="2.5"><span class="t" data-dim="3.4"><span data-en="Gave up rice." data-hi="Chawal chhoda."></span><b data-wipe="3.3"></b></span><span class="x" data-in="3.45" data-s="0.4" data-dy="0" data-dur="0.3">✕</span></div>
+      </div>
+      <div class="stuck" data-in="3.9" data-s="0.92" data-en="Weight? Still stuck." data-hi="Weight? Wahi ka wahi."></div>
+    </div>
+
+    <div class="scene mid" data-in="5.7" data-out="8.4">
+      <div class="acc will" data-en="It was never your willpower." data-hi="Kami aapki willpower mein nahi thi."></div>
+    </div>
+
+    <div class="scene" data-in="8.4" data-out="12.2">
+      <div class="panel-h" data-en="4 hidden causes can hold your weight." data-hi="4 hidden causes weight ko rok sakte hain."></div>
+      <div class="cells">
+        <div class="cell" data-in="8.8" data-s="0.9"><span>PCOS / PCOD</span><b>?</b></div>
+        <div class="cell" data-in="9.1" data-s="0.9"><span>Insulin</span><b>?</b></div>
+        <div class="cell" data-in="9.4" data-s="0.9"><span>Inflammation</span><b>?</b></div>
+        <div class="cell" data-in="9.7" data-s="0.9"><span>Thyroid</span><b>?</b></div>
+      </div>
+      <div class="which" data-in="10.3" data-en="Which one is yours?" data-hi="Aapka kaunsa hai?"></div>
+    </div>
+
+    <div class="end" data-in="12.2" data-dy="0" style="background:none">
+      <div class="logo" data-in="12.4">
+        <svg viewBox="0 0 32 32"><rect width="32" height="32" rx="10" fill="#C2185B"/><path d="M9 23.5c0-8.5 5.5-13.5 14.5-14.5 0 9.5-5.5 14.5-14.5 14.5z" fill="#fff"/><path d="M9.5 23c3-4.2 6.2-7.2 10.5-9.5" fill="none" stroke="#C2185B" stroke-width="1.8" stroke-linecap="round"/><circle cx="23.5" cy="23" r="2.6" fill="#FFD23F"/></svg>
+        <span>fitovela</span>
+      </div>
+      <div class="m" data-in="12.6" data-en="Find out why." data-hi="Wajah jaanein."></div>
+      <div class="a" data-in="12.8" data-en="Free. 2 minutes." data-hi="Free. 2 minute."></div>
+      <div class="pill" data-in="13.1" data-s="0.9" data-en="Take the free check" data-hi="Free check shuru karein"></div>
+      <div class="fine" data-in="13.3" data-dy="0">No blood test · A symptom assessment, not a medical diagnosis.</div>
+    </div>
+  </div>
+  <script>window.DURATION = 15.5;</script>
+  <script src="kit.js"></script>
+</body>
+</html>

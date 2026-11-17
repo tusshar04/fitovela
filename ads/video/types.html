@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>Video: PCOS has types</title>
+<link rel="stylesheet" href="kit.css">
+<style>
+  .ask { font-size: 62px; line-height: 1.12; font-weight: 800; letter-spacing: -0.03em; text-align: center; text-wrap: balance; }
+  .cards { margin-top: 40px; display: flex; flex-direction: column; gap: 22px; }
+  .card { display: flex; align-items: center; gap: 30px; background: #fff; border: 2px solid var(--line); border-radius: 44px; padding: 20px 30px 20px 20px; box-shadow: 0 30px 50px -34px rgba(43, 19, 48, 0.55); }
+  .card img { flex: none; width: 186px; height: 186px; border-radius: 32px; object-fit: cover; }
+  .card .n { font-size: 54px; line-height: 1.08; font-weight: 800; letter-spacing: -0.03em; }
+  .card .n i { font-family: 'Instrument', serif; font-weight: 400; color: var(--pink); font-size: 1.16em; letter-spacing: 0; }
+  .card .s { margin-top: 8px; font-size: 35px; line-height: 1.25; font-weight: 500; color: var(--muted); }
+  .card .q { margin-left: auto; flex: none; width: 78px; height: 78px; border-radius: 50%; background: var(--tint); color: var(--pink); display: flex; align-items: center; justify-content: center; font-size: 44px; font-weight: 800; }
+  .each { margin-top: 40px; text-align: center; font-family: 'Instrument', Georgia, serif; font-style: italic; font-size: 88px; line-height: 1.05; color: var(--pink); }
+</style>
+<body>
+  <div class="stage light">
+    <span class="glow" style="width:700px;height:700px;right:-280px;bottom:-240px;background:#f8c7da;opacity:.6"></span>
+
+    <div class="scene mid" data-in="-1" data-out="3.5">
+      <div class="h" data-en="PCOS is not one problem." data-hi="PCOS ek hi problem nahi hai."></div>
+      <div class="acc" style="margin-top:14px" data-in="1.2" data-en="It has types." data-hi="Iske alag types hain."></div>
+    </div>
+
+    <div class="scene" data-in="3.5" data-out="11.6" data-dy="0">
+      <div class="ask" data-en="Which one do your symptoms match?" data-hi="Aapke symptoms kis type se match karte hain?"></div>
+      <div class="cards">
+        <div class="card" data-in="3.9" data-dx="90" data-dy="0">
+          <img src="../../public/img/dosa.jpg" alt="">
+          <div><div class="n">Insulin-resistant <i>type</i></div><div class="s" data-en="Cravings · belly weight · sleepy after lunch" data-hi="Meethe ki craving · pet par weight · lunch ke baad neend"></div></div>
+          <span class="q">?</span>
+        </div>
+        <div class="card" data-in="5.5" data-dx="90" data-dy="0">
+          <img src="../../public/img/palak.jpg" alt="">
+          <div><div class="n">Inflammatory <i>type</i></div><div class="s" data-en="Bloating · puffy face · skin flare-ups" data-hi="Bloating · subah sooja chehra · skin flare-ups"></div></div>
+          <span class="q">?</span>
+        </div>
+        <div class="card" data-in="7.1" data-dx="90" data-dy="0">
+          <img src="../../public/img/thali.jpg" alt="">
+          <div><div class="n">Adrenal <i>type</i></div><div class="s" data-en="High stress · poor sleep · tired but wired" data-hi="Zyada stress · kam neend · thakaan, par neend nahi"></div></div>
+          <span class="q">?</span>
+        </div>
+      </div>
+      <div class="each" data-in="8.9" data-en="Each type needs a different diet." data-hi="Har type ki diet alag hoti hai."></div>
+    </div>
+
+    <div class="end" data-in="11.25" data-dy="0">
+      <div class="logo" data-in="11.9">
+        <svg viewBox="0 0 32 32"><rect width="32" height="32" rx="10" fill="#C2185B"/><path d="M9 23.5c0-8.5 5.5-13.5 14.5-14.5 0 9.5-5.5 14.5-14.5 14.5z" fill="#fff"/><path d="M9.5 23c3-4.2 6.2-7.2 10.5-9.5" fill="none" stroke="#C2185B" stroke-width="1.8" stroke-linecap="round"/><circle cx="23.5" cy="23" r="2.6" fill="#FFD23F"/></svg>
+        <span>fitovela</span>
+      </div>
+      <div class="m" data-in="12.1" data-en="Find your type." data-hi="Apna type jaanein."></div>
+      <div class="a" data-in="12.3" data-en="Free. 2 minutes." data-hi="Free. 2 minute."></div>
+      <div class="pill" data-in="12.6" data-s="0.9" data-en="Take the free check" data-hi="Free check shuru karein"></div>
+      <div class="fine" data-in="12.8" data-dy="0">A symptom assessment, not a medical diagnosis.</div>
+    </div>
+  </div>
+  <script>
+    window.DURATION = 15;
+    // The three question marks take turns to pulse while she decides.
+    const marks = [...document.querySelectorAll('.card .q')];
+    window.extra = (t) => {
+      marks.forEach((el, i) => {
+        const start = 9.0 + i * 0.45;
+        const p = Math.max(0, 1 - Math.abs(t - start - 0.2) / 0.2);
+        el.style.transform = `scale(${1 + 0.25 * p})`;
+      });
+    };
+  </script>
+  <script src="kit.js"></script>
+</body>
+</html>
