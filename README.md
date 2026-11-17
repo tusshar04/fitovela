@@ -25,6 +25,17 @@ scripts/deploy.sh rollback   # list revisions and how to go back to one
 
 Secrets are in Secret Manager; none are in this repository. Local development needs none: without keys it uses a demo checkout, writes emails to `.data/outbox/` and shows login codes on screen.
 
+## Video music versions
+
+The approved pairings are Iktara for the English Types video and Love You Zindagi for the English Tried video. Rebuild from the existing silent renders and the founder's local recordings:
+
+```sh
+python3 ads/video/mix-music.py --video-dir /Users/tushar/fitovela/ads/video/out \
+  --music-dir '/Users/tushar/Desktop/new songs' --output-dir /path/to/new-output-folder
+```
+
+Requires Python 3.11+ and ffmpeg/ffprobe. The recipe pins source hashes because different recordings or video renders need fresh timing. It refuses to overwrite outputs, copies the original video stream, and writes separate MP4s plus `music-mix-manifest.json`. Recordings and exports stay outside Git; this command does not upload or publish ads.
+
 ## Start here
 
 | Document | Owns |
