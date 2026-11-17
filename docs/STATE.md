@@ -77,6 +77,13 @@ The "Open, in order" list under Production above.
 
 ## Other open work
 
+- **FTV-021 (Codex, Meta setup, 2026-11-17):** in progress; founder requested Fitovela's own business assets under Priya's personal Facebook login, separate from tarot. Handoff branch `docs/ftv-021-meta-setup`, worktree `/Users/tushar/fitovela-worktrees/ftv-021-meta-setup`; documentation self-review only (no application changes or deployment).
+  - **Verified in Meta UI:** created business portfolio **Fitovela**, ID `1110506178493480`, and attached existing Facebook Page **Fitovela**, ID `1440995739098638`. People settings show Priya Chaudhary as the sole person, with full control. Existing Astro Vela assets were not changed.
+  - **Verified on the Instagram profile:** [@fit.o.vela](https://www.instagram.com/fit.o.vela/) is a Business account, category **Health & wellness website**, contact `care@fitovela.com`. Uploaded the website's pink leaf logo and saved the bio. `fitovela.com` is currently plain text in the bio; a clickable website link remains pending. The founder completed email verification.
+  - **Prepared, not completed:** linking Instagram to the Fitovela Page/Business Suite is paused at the final **Log in as fit.o.vela** screen, which accepts Meta Terms of Service. Optional Instagram message access in Business Suite was turned off in the pending flow. Keep the OAuth tab and its Business Suite opener alive until linking completes.
+  - **Prepared, not created:** ad account **Fitovela | India**, currency **INR**, timezone **Asia/Kolkata**, usage **My business**. Final creation requires agreement to Meta Commercial Terms and Advertising Policies; Meta says the account cannot be removed from the portfolio afterward. The final review is open in Chrome's Tushar profile (`tussharchaudhary04@gmail.com`), logged in to Facebook as Priya.
+  - **Exact next step:** obtain action-time approval for these two displayed consent actions, finish them, and independently verify the saved Instagram connection and new ad account. Then check business-email verification, billing and account eligibility, and prepare the dedicated developer app/API access and dataset. Pixel/CAPI and Slack order/hourly reports are not integrated in Fitovela. No campaigns were created or launched, no payment method was added, and no ad spend was authorized. The setup is **not yet ready for an ad launch**.
+
 - **FTV-002 (Codex):** draft [PR #2](https://github.com/tusshar04/fitovela/pull/2), not merged. Its food-first, no-condition-result proposal conflicts with accepted D-007. Tushar to decide whether it is closed or reworked.
 
 ## Completed
