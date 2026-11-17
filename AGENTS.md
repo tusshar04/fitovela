@@ -58,6 +58,10 @@ The initial repository has no CI, branch protection, or deployment automation. T
 
 Repository work does not expand authority over live advertising accounts or the GST portal. Follow the user's standing rules if such a task is explicitly requested.
 
+## Ad creative archive
+
+Whenever an agent adds new Fitovela ads, save an exact copy of every final image/video used in `/Users/tushar/Desktop/fitovela ads/YYYY-MM-DD/`, using the date in Asia/Kolkata. Include all placement variants and the approved version with its audio. Preserve existing files; do not overwrite a different version. Verify copied files against their sources with SHA-256 hashes. Keep a manifest alongside the media with filenames, hashes, exact ad copy/destination, and campaign/ad IDs when available; distinguish prepared creatives from ads actually added to Meta. Never include credentials or tokens. The archive is part of completing any new-ad task.
+
 ## Learn, correct, and hand off
 
 - Record research with its question, source/date, conclusion, confidence or limitations, and conditions that would require rechecking. Reuse it unless circumstances or evidence change.

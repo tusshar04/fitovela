@@ -137,6 +137,33 @@
           "placement_usage": "Stories and Reels"
         }
       }
+    },
+    {
+      "name": "Types | Iktara | Video v2",
+      "status": "PAUSED",
+      "destination": "https://fitovela.com/?h=b&c=pcos",
+      "media": {
+        "video": {
+          "path": "/Users/tushar/fitovela/ads/video/out/fitovela-types-en-iktara-v2.mp4",
+          "sha256": "d9f5e29cad58be9ae3d42ea7eb0519c30ef0cdf50596d05aac53b0e6796f023d",
+          "placement_usage": "Feeds, Stories and Reels",
+          "approval": "Founder approved final v2 media on 2026-11-17"
+        }
+      }
+    },
+    {
+      "name": "Tried | Love You Zindagi | Video v2",
+      "status": "PAUSED",
+      "destination": "https://fitovela.com/?h=a&c=pcos",
+      "media": {
+        "video": {
+          "path": "/Users/tushar/fitovela/ads/video/out/fitovela-tried-en-love-you-zindagi-v2.mp4",
+          "sha256": "cd337b773639e6c8630dd9514c97eb604800173ec7296739ba8ec17faeb4c422",
+          "placement_usage": "Feeds, Stories and Reels",
+          "approval": "Founder approved final v2 media on 2026-11-17"
+        }
+      }
     }
-  ]
+  ],
+  "desktop_archive": "/Users/tushar/Desktop/fitovela ads/2026-11-17"
 }
