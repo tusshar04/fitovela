@@ -1,5 +1,5 @@
 {
-  "state": "APPROVED_LAUNCH_INCOMPLETE_PUBLICATION_BLOCKED",
+  "state": "PUBLISHED_ACTIVE_PREPARING_DELIVERY",
   "account_id": "1457307065897121",
   "business_id": "1110506178493480",
   "facebook_page_id": "1440995739098638",
@@ -8,8 +8,9 @@
     "name": "Fitovela | Static launch | India | Traffic",
     "objective": "OUTCOME_TRAFFIC",
     "buying_type": "AUCTION",
-    "status": "PAUSED",
-    "special_ad_categories": []
+    "status": "ACTIVE",
+    "special_ad_categories": [],
+    "effective_status": "ACTIVE"
   },
   "ad_set": {
     "name": "Women 25-54 | India | Broad",
@@ -17,7 +18,7 @@
     "optimization_goal": "LINK_CLICKS",
     "billing_event": "IMPRESSIONS",
     "bid_strategy": "LOWEST_COST_WITHOUT_CAP",
-    "status": "PAUSED",
+    "status": "ACTIVE",
     "country": "IN",
     "gender": "women",
     "age_min": 18,
@@ -37,7 +38,8 @@
       "mobile",
       "desktop"
     ],
-    "end_date": null
+    "end_date": null,
+    "effective_status": "ACTIVE"
   },
   "tracking": {
     "pixel_events_enabled": false,
@@ -50,12 +52,14 @@
     "description": "Personalised Indian meal plans from ₹199",
     "cta": "LEARN_MORE",
     "automatic_creative_enhancements": false,
-    "existing_post": false
+    "existing_post": false,
+    "static_automatic_music": true,
+    "video_audio": "Approved v2 soundtrack; Meta enhancements off"
   },
   "ads": [
     {
       "name": "Types",
-      "status": "PAUSED",
+      "status": "ACTIVE",
       "destination": "https://fitovela.com/?h=b&c=pcos",
       "media": {
         "feed": {
@@ -69,12 +73,23 @@
           "placement_usage": "Stories and Reels"
         }
       },
-      "meta_draft_id": "120248243643100009",
-      "publication_state": "UNPUBLISHED_IMPORT_DRAFT_BLOCKED"
+      "publication_state": "PUBLISHED",
+      "meta_ad_id": "120248243898810009",
+      "meta_name": "Types | Static",
+      "meta_creative_id": "2036133120411350",
+      "effective_object_story_id": "1440995739098638_122104483077546746",
+      "effective_status": "ACTIVE",
+      "automatic_music": true,
+      "meta_media": {
+        "image_hashes": [
+          "365f97c6b7a9403080bf0eb4df58b212",
+          "377ac495d2ef9d099563d613b18ca8a2"
+        ]
+      }
     },
     {
       "name": "Eating less",
-      "status": "PAUSED",
+      "status": "ACTIVE",
       "destination": "https://fitovela.com/?h=a&c=pcos",
       "media": {
         "feed": {
@@ -88,12 +103,23 @@
           "placement_usage": "Stories and Reels"
         }
       },
-      "meta_draft_id": "120248243643080009",
-      "publication_state": "UNPUBLISHED_IMPORT_DRAFT_BLOCKED"
+      "publication_state": "PUBLISHED",
+      "meta_ad_id": "120248243940900009",
+      "meta_name": "Eating less | Static",
+      "meta_creative_id": "1689375012827766",
+      "effective_object_story_id": "1440995739098638_122104483083546746",
+      "effective_status": "ACTIVE",
+      "automatic_music": true,
+      "meta_media": {
+        "image_hashes": [
+          "ae4c36ba6d43c12c5df944b5a80f9fb2",
+          "fbc5572e1b71c29b54a6a745fae5a568"
+        ]
+      }
     },
     {
       "name": "Symptom checklist",
-      "status": "PAUSED",
+      "status": "ACTIVE",
       "destination": "https://fitovela.com/?h=b&c=pcos",
       "media": {
         "feed": {
@@ -107,12 +133,23 @@
           "placement_usage": "Stories and Reels"
         }
       },
-      "meta_draft_id": "120248243643040009",
-      "publication_state": "UNPUBLISHED_IMPORT_DRAFT_BLOCKED"
+      "publication_state": "PUBLISHED",
+      "meta_ad_id": "120248243940910009",
+      "meta_name": "Symptom checklist | Static",
+      "meta_creative_id": "1466989855575846",
+      "effective_object_story_id": "1440995739098638_122104483065546746",
+      "effective_status": "ACTIVE",
+      "automatic_music": true,
+      "meta_media": {
+        "image_hashes": [
+          "3f0ccea7c9a22953b4ad6364612679a2",
+          "6b1f6f5b503d31b57d914339a0f99d0c"
+        ]
+      }
     },
     {
       "name": "Ghar ka khana",
-      "status": "PAUSED",
+      "status": "ACTIVE",
       "destination": "https://fitovela.com/?h=c&c=pcos",
       "media": {
         "feed": {
@@ -126,12 +163,23 @@
           "placement_usage": "Stories and Reels"
         }
       },
-      "meta_draft_id": "120248243643050009",
-      "publication_state": "UNPUBLISHED_IMPORT_DRAFT_BLOCKED"
+      "publication_state": "PUBLISHED",
+      "meta_ad_id": "120248243940920009",
+      "meta_name": "Ghar ka khana | Static",
+      "meta_creative_id": "1112523581657953",
+      "effective_object_story_id": "1440995739098638_122104483119546746",
+      "effective_status": "ACTIVE",
+      "automatic_music": true,
+      "meta_media": {
+        "image_hashes": [
+          "df7ffa25688004c3ab260e56e7573825",
+          "6f6e03b6e24e418bc1a0a2746f1ac13c"
+        ]
+      }
     },
     {
       "name": "First four weeks",
-      "status": "PAUSED",
+      "status": "ACTIVE",
       "destination": "https://fitovela.com/?h=b&c=pcos",
       "media": {
         "feed": {
@@ -145,12 +193,23 @@
           "placement_usage": "Stories and Reels"
         }
       },
-      "meta_draft_id": "120248243643060009",
-      "publication_state": "UNPUBLISHED_IMPORT_DRAFT_BLOCKED"
+      "publication_state": "PUBLISHED",
+      "meta_ad_id": "120248243940930009",
+      "meta_name": "First four weeks | Static",
+      "meta_creative_id": "1481331480621683",
+      "effective_object_story_id": "1440995739098638_122104483053546746",
+      "effective_status": "ACTIVE",
+      "automatic_music": true,
+      "meta_media": {
+        "image_hashes": [
+          "a81174d05c5bd9872130c6bf01c81c58",
+          "92f89ccf8799584c2f9a969ce7921102"
+        ]
+      }
     },
     {
       "name": "Types | Iktara | Video v2",
-      "status": "PAUSED",
+      "status": "ACTIVE",
       "destination": "https://fitovela.com/?h=b&c=pcos",
       "media": {
         "video": {
@@ -160,12 +219,20 @@
           "approval": "Founder approved final v2 media on 2026-11-17"
         }
       },
-      "meta_draft_id": "120248243643070009",
-      "publication_state": "UNPUBLISHED_IMPORT_DRAFT_BLOCKED"
+      "publication_state": "PUBLISHED",
+      "meta_ad_id": "120248243986770009",
+      "meta_name": "Types | Iktara | Video v2",
+      "meta_creative_id": "1097375976687026",
+      "effective_object_story_id": "1440995739098638_122104483557546746",
+      "effective_status": "ACTIVE",
+      "automatic_music": false,
+      "meta_media": {
+        "video_id": "1663133625351140"
+      }
     },
     {
       "name": "Tried | Love You Zindagi | Video v2",
-      "status": "PAUSED",
+      "status": "ACTIVE",
       "destination": "https://fitovela.com/?h=a&c=pcos",
       "media": {
         "video": {
@@ -175,31 +242,36 @@
           "approval": "Founder approved final v2 media on 2026-11-17"
         }
       },
-      "meta_draft_id": "120248243643090009",
-      "publication_state": "UNPUBLISHED_IMPORT_DRAFT_BLOCKED"
+      "publication_state": "PUBLISHED",
+      "meta_ad_id": "120248243986780009",
+      "meta_name": "Tried | Love You Zindagi | Video v2",
+      "meta_creative_id": "1655728982572417",
+      "effective_object_story_id": "1440995739098638_122104483635546746",
+      "effective_status": "ACTIVE",
+      "automatic_music": false,
+      "meta_media": {
+        "video_id": "1792182532909539"
+      }
     }
   ],
-  "desktop_archive": "/Users/tushar/Desktop/fitovela ads/2026-11-17",
+  "desktop_archive": "/Users/tushar/Desktop/fitovela ads/2026-11-18",
   "approved_delivery_status": "ACTIVE",
   "meta_ids": {
     "campaign_id": "120248243480500009",
     "adset_id": "120248243481420009"
   },
-  "activation_note": "Founder approved launch, then women 18–60. Activation approval persists. No ads published or activated; resolve publication restrictions and billing, finish creative checks, double-review and verify before delivery.",
+  "activation_note": "Founder-approved launch completed through native Ads Manager publication and API status activation. Campaign, ad set and all seven ads are ON. All seven effective statuses are ACTIVE in two API reads; native Ads Manager shows Preparing while delivery starts. First impressions/spend are not yet confirmed. Actual audience is women18–60; historical ad-set name retained.",
   "instagram_ads_actor_id": "30336590792597009",
   "browser_handoff": {
-    "pending_objects": 10,
-    "manual_types_draft_id": "120248243663380009",
-    "manual_types_draft_status": "PAUSED; saved with approved copy, both placement images and Instagram identity; same 3738001 validation remains",
-    "published_ad_count": 0,
-    "blockers": [
-      "API creative creation: 100/1885183, app Development mode; user deferred app publishing work",
-      "Native editor: 3738001, imported-ad eligibility restriction; also displayed on the manually created Types draft under this campaign; cause not resolved",
-      "Review and publish opens Add payment information; phone verification previously requested, completion unconfirmed"
-    ],
-    "draft_setup_remaining": "Six imported drafts still need native Instagram actor assignment; four static Story/Reel image overrides remain. No final publication review passed.",
-    "cleanup_approval": "Asked to discard only seven imported ad drafts; pending. No parent draft reversion or manual draft discard authorised.",
-    "last_published_check_utc": "2026-11-17T18:22:26.014428+00:00",
-    "spend_inr_at_check": 0
-  }
+    "pending_objects": 0,
+    "published_ad_count": 7,
+    "last_published_check_utc": "2026-11-17T19:17:31.561410+00:00",
+    "billing": "Payment method saved, confirmed in account overview",
+    "phone_verification": "Account overview offered association of an existing verified profile number; not changed. It did not prevent publication, activation or all seven ads reaching ACTIVE. Separate confirmation remains pending if later required.",
+    "api": "Creative creation rejected in Development mode; native publication succeeded. All nine status-only API activation requests succeeded. App mode and permissions unchanged.",
+    "review": "Two independent native exports identical across 7 rows and 584 fields; two published API reads matched copy, media, identity, destination, audience and budget; five static Add music and two video enhancements-off verified twice before and after publication. No pending drafts.",
+    "next": "Observe first impressions/spend; all seven passed review, native delivery shows Preparing. Do not change approved configuration."
+  },
+  "last_verified_utc": "2026-11-17T19:17:31.561410+00:00",
+  "native_delivery_status": "Preparing"
 }
