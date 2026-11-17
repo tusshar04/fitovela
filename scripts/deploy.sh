@@ -18,7 +18,7 @@ SHARED=projects/1080479161978/secrets
 
 SMS_ENABLED=1        # login codes by SMS through 2Factor
 EMAIL_ENABLED=1      # Amazon SES, from care@fitovela.com, with Fitovela's own send-only key
-CASHFREE_ENABLED=0   # set to 1 once cashfree-app-id and cashfree-secret-key (production keys) exist in Secret Manager
+CASHFREE_ENABLED=1   # real payments through Cashfree; production keys are in Secret Manager as cashfree-app-id and cashfree-secret-key
 RAZORPAY_ENABLED=0   # set to 1 once razorpay-key-id, razorpay-key-secret and razorpay-webhook-secret exist in Secret Manager
 
 if [[ "${1:-}" == "rollback" ]]; then
