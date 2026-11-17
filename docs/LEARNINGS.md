@@ -12,6 +12,15 @@ This file owns reusable discoveries backed by evidence. It is not a session diar
 - **Limit:** File-based instructions guide behavior; they do not themselves enforce Git permissions, run reviews, or synchronize separate checkouts. The actual Claude session has not yet been checked for loading this repository's import.
 - **Recheck when:** A client fails to load project instructions or a client/configuration change affects instruction discovery. Confirm the loaded files in the actual session.
 
+## L-002 — Meta media upload does not prove ad-publication access
+
+- **Verified:** 2026-11-17, Fitovela ad account `1457307065897121`, Graph API v25.0 and Tushar's authorised Chrome Person 1 session.
+- **Finding:** The system-user token successfully created a paused campaign/ad set and uploaded all 12 media files. The first creative-creation request then failed with `100 / 1885183`, explicitly citing the app's Development mode. Do not describe media upload or reporting access as proof that creative creation works.
+- **Browser evidence:** Bulk import accepted seven drafts, but the editor returned `3738001`: imported ads cannot be published until several weeks of compliant advertising history. A fresh ad made with the native Create flow under the same campaign also displayed that message after saving; the cause of that inheritance is unconfirmed. Review and publish opened payment setup because no payment method was present. Neither browser publication nor activation succeeded.
+- **Format correction:** Export the current native configuration before preparing an import. This account exports the objective as `Traffic` plus `New Objective: Yes`; `Outcome Traffic` is rejected. Selecting `fit.o.vela` in native UI exports Instagram actor `30336590792597009`, whereas the connected Instagram Graph identity is `17841411335046415`. They are different identifier forms, not different Instagram accounts.
+- **Evidence:** Local journals, the native draft export, saved error AX and payment screenshot in `/Users/tushar/.codex/artifacts/fitovela/ads-2026-11-17/`; current task and draft IDs are in `STATE.md` and `ads/static/campaign-draft.json`.
+- **Prevention / limits:** Check each capability separately, retain rejected-write receipts, and never blindly retry a rejected publication, change permissions/app mode, or claim drafts are live. Recheck after billing, draft cleanup or Meta eligibility changes; no verified correction for the publication restriction is recorded yet.
+
 ## Recording a new learning
 
 Use the next stable ID. Include:

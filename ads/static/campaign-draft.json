@@ -1,5 +1,5 @@
 {
-  "state": "PROPOSED_NOT_APPROVED_NOT_CREATED",
+  "state": "APPROVED_LAUNCH_INCOMPLETE_PUBLICATION_BLOCKED",
   "account_id": "1457307065897121",
   "business_id": "1110506178493480",
   "facebook_page_id": "1440995739098638",
@@ -20,8 +20,8 @@
     "status": "PAUSED",
     "country": "IN",
     "gender": "women",
-    "age_min": 25,
-    "age_max": 54,
+    "age_min": 18,
+    "age_max": 60,
     "languages": null,
     "detailed_targeting": [],
     "custom_audiences": [],
@@ -68,7 +68,9 @@
           "sha256": "6028befc11aff5e5ecb16c8076ea6dcc86e60f912f7d3f2924b7ea1d55456a8f",
           "placement_usage": "Stories and Reels"
         }
-      }
+      },
+      "meta_draft_id": "120248243643100009",
+      "publication_state": "UNPUBLISHED_IMPORT_DRAFT_BLOCKED"
     },
     {
       "name": "Eating less",
@@ -85,7 +87,9 @@
           "sha256": "61fcd2905972bfc89d1f9bb0b843777bc87cd3efa0d3035e5f80722d5cc8f933",
           "placement_usage": "Stories and Reels"
         }
-      }
+      },
+      "meta_draft_id": "120248243643080009",
+      "publication_state": "UNPUBLISHED_IMPORT_DRAFT_BLOCKED"
     },
     {
       "name": "Symptom checklist",
@@ -102,7 +106,9 @@
           "sha256": "ba99aab8e3c2d35870e5beb917059c66500da6e255f73173d0c25adf5914a53e",
           "placement_usage": "Stories and Reels"
         }
-      }
+      },
+      "meta_draft_id": "120248243643040009",
+      "publication_state": "UNPUBLISHED_IMPORT_DRAFT_BLOCKED"
     },
     {
       "name": "Ghar ka khana",
@@ -119,7 +125,9 @@
           "sha256": "fd09a1e700fe76dd0d26b558861838ccec661719b7bf6efd7201c5032d857512",
           "placement_usage": "Stories and Reels"
         }
-      }
+      },
+      "meta_draft_id": "120248243643050009",
+      "publication_state": "UNPUBLISHED_IMPORT_DRAFT_BLOCKED"
     },
     {
       "name": "First four weeks",
@@ -136,7 +144,9 @@
           "sha256": "032beb1adcca2b8179ccf3f0e2ceb7cf260d1285258afd99f27eedf22128722e",
           "placement_usage": "Stories and Reels"
         }
-      }
+      },
+      "meta_draft_id": "120248243643060009",
+      "publication_state": "UNPUBLISHED_IMPORT_DRAFT_BLOCKED"
     },
     {
       "name": "Types | Iktara | Video v2",
@@ -149,7 +159,9 @@
           "placement_usage": "Feeds, Stories and Reels",
           "approval": "Founder approved final v2 media on 2026-11-17"
         }
-      }
+      },
+      "meta_draft_id": "120248243643070009",
+      "publication_state": "UNPUBLISHED_IMPORT_DRAFT_BLOCKED"
     },
     {
       "name": "Tried | Love You Zindagi | Video v2",
@@ -162,8 +174,32 @@
           "placement_usage": "Feeds, Stories and Reels",
           "approval": "Founder approved final v2 media on 2026-11-17"
         }
-      }
+      },
+      "meta_draft_id": "120248243643090009",
+      "publication_state": "UNPUBLISHED_IMPORT_DRAFT_BLOCKED"
     }
   ],
-  "desktop_archive": "/Users/tushar/Desktop/fitovela ads/2026-11-17"
+  "desktop_archive": "/Users/tushar/Desktop/fitovela ads/2026-11-17",
+  "approved_delivery_status": "ACTIVE",
+  "meta_ids": {
+    "campaign_id": "120248243480500009",
+    "adset_id": "120248243481420009"
+  },
+  "activation_note": "Founder approved launch, then women 18–60. Activation approval persists. No ads published or activated; resolve publication restrictions and billing, finish creative checks, double-review and verify before delivery.",
+  "instagram_ads_actor_id": "30336590792597009",
+  "browser_handoff": {
+    "pending_objects": 10,
+    "manual_types_draft_id": "120248243663380009",
+    "manual_types_draft_status": "PAUSED; saved with approved copy, both placement images and Instagram identity; same 3738001 validation remains",
+    "published_ad_count": 0,
+    "blockers": [
+      "API creative creation: 100/1885183, app Development mode; user deferred app publishing work",
+      "Native editor: 3738001, imported-ad eligibility restriction; also displayed on the manually created Types draft under this campaign; cause not resolved",
+      "Review and publish opens Add payment information; phone verification previously requested, completion unconfirmed"
+    ],
+    "draft_setup_remaining": "Six imported drafts still need native Instagram actor assignment; four static Story/Reel image overrides remain. No final publication review passed.",
+    "cleanup_approval": "Asked to discard only seven imported ad drafts; pending. No parent draft reversion or manual draft discard authorised.",
+    "last_published_check_utc": "2026-11-17T18:22:26.014428+00:00",
+    "spend_inr_at_check": 0
+  }
 }
