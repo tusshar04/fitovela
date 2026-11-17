@@ -1,3 +1,4 @@
+import { PurchasePixel } from '@/ui/AdMeasurement';
 import { notFound } from 'next/navigation';
 import { weeksOpen } from '@/domain/intensive';
 import { TIERS } from '@/domain/offer';
@@ -35,6 +36,8 @@ export default async function PlanPage({ params, searchParams }: { params: Promi
   const plan = open < totalWeeks ? { ...order.plan, days: order.plan.days.slice(0, open * 7), groceries: order.plan.groceries.slice(0, open) } : order.plan;
 
   return (
+    <>
+    {query.new === '1' && <PurchasePixel orderId={order.id} />}
     <PlanClient
       plan={plan}
       totalWeeks={totalWeeks}
@@ -47,5 +50,6 @@ export default async function PlanPage({ params, searchParams }: { params: Promi
       intensive={onIntensive && !moved ? { lastKg: order.checkins?.at(-1)?.weightKg ?? order.startKg ?? null } : null}
       movedToStandard={moved}
     />
+    </>
   );
 }

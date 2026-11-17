@@ -37,8 +37,12 @@ export default function PrivacyPage() {
       </ul>
       <p>We will also disclose information if the law requires us to.</p>
 
+      <h2>Optional ad measurement</h2>
+      <p>Only if you choose “Allow”, we share a visit to our public landing page and a confirmed purchase with Meta (Facebook and Instagram). This includes the purchase amount and currency, a random event identifier, advertising click and browser identifiers, and browser information. Meta also receives your IP address when your browser loads its measurement image. This helps us measure ads and find people likely to buy a plan.</p>
+      <p>We do not send your answers, symptoms, condition results, body measurements, food preferences, report, plan contents, email address, phone number or private plan link to Meta. Our detailed site-usage log stays with us. You can decline or turn off future sharing below; that does not undo events already sent. Meta processes the shared data under its <a href="https://www.facebook.com/privacy/policy/" rel="noreferrer">Privacy Policy</a>.</p>
+
       <h2>Cookies</h2>
-      <p>We set two cookies that the site needs to work: one keeps your assessment together while you answer it, and one keeps you logged in after you enter your one-time code. We do not set advertising cookies. Your browser also keeps a random number for the length of your visit, so that we can count one visit as one visit. It is not a cookie, it holds nothing about you, and it is gone when you close the tab.</p>
+      <p>We set two cookies that the site needs to work: one keeps your assessment together while you answer it, and one keeps you logged in after you enter your one-time code. If you allow ad measurement, we also set advertising identifiers and a cookie remembering that choice for up to 90 days. You can change the choice using the button at the end of this page; refusing does not affect your assessment or purchase. Your browser also keeps a random number for the length of your visit, so that we can count one visit as one visit. It is not a cookie, it holds nothing about you, and it is gone when you close the tab.</p>
 
       <h2>How long we keep it</h2>
       <p>We keep your answers, report and plan so that you can come back to them. Ask us to delete them and we will, within 30 days. We keep order and payment records for as long as tax law requires, even after a deletion request.</p>

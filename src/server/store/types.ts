@@ -1,3 +1,4 @@
+import type { AdAttribution, AdConsent, MetaDelivery } from '@/domain/meta';
 import type { Answers, AgeBand, Category, Hook } from '@/domain/types';
 import type { Track } from '@/domain/energy';
 import type { Checkin } from '@/domain/intensive';
@@ -28,6 +29,8 @@ export interface Session {
 }
 
 export interface Order {
+  /** Explicit advertising consent and generic checkout attribution only. */
+  adAttribution?: AdAttribution;
   id: string;
   sessionId: string;
   tier: TierId;
@@ -94,6 +97,13 @@ export interface RefundRecord {
 
 /** One interface, two drivers: files on localhost, Firestore in production. */
 export interface Store {
+  getAdConsent(id: string): Promise<AdConsent | null>;
+  saveAdConsent(consent: AdConsent): Promise<void>;
+  refreshAdClick(id: string, fbclid: string | undefined, now: number): Promise<AdConsent | null>;
+  claimMetaDelivery(id: string, now: string): Promise<MetaDelivery | null>;
+  finishMetaDelivery(id: string, attempt: number, state: MetaDelivery['state'], now: string): Promise<void>;
+  claimBrowserPurchase(id: string, consentId: string, now: string): Promise<MetaDelivery | null>;
+  listPendingMetaDeliveries(): Promise<MetaDelivery[]>;
   getSession(id: string): Promise<Session | null>;
   saveSession(session: Session): Promise<void>;
 

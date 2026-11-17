@@ -3,6 +3,9 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
+import { canClaimMeta, refreshedAdClick } from '@/domain/meta';
+import type { AdConsent, MetaDelivery } from '@/domain/meta';
+import { purchaseDelivery } from '../metaEvents';
 import { paidSummary } from './paidSummary';
 import type { DeliveryRecord, EventRecord, Order, OtpRecord, RefundRecord, Session, Store } from './types';
 
@@ -54,6 +57,33 @@ async function list<T>(collection: string): Promise<T[]> {
 }
 
 export const fileStore: Store = {
+  getAdConsent: id => read<AdConsent>('adConsents', id),
+  saveAdConsent: c => atomic(() => write('adConsents', c.id, c)),
+  refreshAdClick: (id, fbclid, now) => atomic(async () => {
+    const c = refreshedAdClick(await read<AdConsent>('adConsents', id), fbclid, now);
+    if (c) await write('adConsents', id, c);
+    return c;
+  }),
+  claimMetaDelivery: (id, now) => atomic(async () => {
+    const d = await read<MetaDelivery>('metaDeliveries', id);
+    if (!d || !canClaimMeta(d, Date.parse(now))) return null;
+    const claimed: MetaDelivery = { ...d, state: 'sending', attempts: d.attempts + 1, updatedAt: now };
+    await write('metaDeliveries', id, claimed);
+    return claimed;
+  }),
+  finishMetaDelivery: (id, attempt, state, now) => atomic(async () => {
+    const d = await read<MetaDelivery>('metaDeliveries', id);
+    if (d?.attempts === attempt) await write('metaDeliveries', id, { ...d, state, updatedAt: now });
+  }),
+  claimBrowserPurchase: (id, consentId, now) => atomic(async () => {
+    const d = await read<MetaDelivery>('metaDeliveries', id);
+    if (!d || d.consentId !== consentId || d.browserSentAt || d.state === 'stopped' || Date.parse(now) - d.event.event_time * 1000 > 86400000) return null;
+    await write('metaDeliveries', id, { ...d, browserSentAt: now });
+    return d;
+  }),
+  async listPendingMetaDeliveries() {
+    return (await list<MetaDelivery>('metaDeliveries')).filter(d => canClaimMeta(d, Date.now())).slice(0, 10);
+  },
   getSession: (id) => read<Session>('sessions', id),
   saveSession: (s) => write('sessions', s.id, s),
 
@@ -71,6 +101,8 @@ export const fileStore: Store = {
     if (!current) throw new Error('Order missing during fulfilment');
     const deliveryId = `order-${order.id}`;
     await write('deliveries', deliveryId, { id: deliveryId, state: 'pending', attempt: '', updatedAt: order.paidAt, order: paidSummary(order) });
+    const meta = purchaseDelivery(order);
+    if (meta) await write('metaDeliveries', meta.id, meta);
     await write('orders', order.id, order);
     return { order, created: true };
   }),

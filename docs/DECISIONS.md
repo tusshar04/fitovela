@@ -308,3 +308,12 @@ For a changed decision, preserve the old record, mark it superseded, and link to
 - **Evidence:** Founder message. On 2026-11-18 production had 61 landing loads from the Facebook and Instagram apps and no way to tell a preloaded page from a person who read it.
 - **Implementation:** `src/server/events.ts`, `src/app/api/event/route.ts`, `src/ui/track.ts`, `src/ui/Tracker.tsx`, `scripts/funnel-report.mjs`, `tests/events.test.ts`; `data-sec` and `data-ev` marks on the landing, report and prices pages.
 
+
+
+## D-027 — separate commerce measurement from assessment information
+
+- **Date:** 2026-11-18
+- **Status:** accepted; implementation in FTV-030, release status in STATE.md.
+- **Owner instruction:** install Pixel and CAPI and activate the existing Purchase campaign. Fitovela is a diet/nutrition company; do not send report information to Meta. This supersedes the inferred FTV-028 internal approval hold, not any actual Meta platform restriction.
+- **Decision:** optional advertising measurement with generic public landing and verified paid Cashfree Purchase events, explicit field allowlists, browser/server deduplication and retryable transactional delivery. An image Pixel avoids third-party JavaScript accessing assessment/report pages. No assessment, health, contact, meal-preference or private-link data is sent. Detailed first-party behaviour tracking from D-026 remains internal.
+- **Launch scope:** status-only activation of the existing seven approved ads, Purchase ad set and Sales campaign at INR 1,000/day, women 18–60 in India, existing Facebook/Instagram placements and exact creatives. Old Traffic and failed duplicate static ads stay paused. No claim that receipt alone establishes conversion processing or profitable delivery.

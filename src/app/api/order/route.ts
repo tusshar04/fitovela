@@ -1,3 +1,4 @@
+import { checkoutAttribution } from '@/server/adConsent';
 import { NextResponse } from 'next/server';
 import { buildAssessment } from '@/domain/assessment';
 import { isComplete } from '@/domain/flow';
@@ -51,6 +52,7 @@ export async function POST(req: Request) {
 
   const order: Order = {
     id: newId(12),
+    adAttribution: await checkoutAttribution(req),
     sessionId: session.id,
     tier: body.tier,
     track,

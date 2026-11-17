@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
+import { AdMeasurement } from '@/ui/AdMeasurement';
 import { Tracker } from '@/ui/Tracker';
 import './globals.css';
 
@@ -28,6 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body suppressHydrationWarning>
         {children}
         <Tracker />
+        <AdMeasurement />
       </body>
     </html>
   );

@@ -3,6 +3,9 @@
 // NOTE: not yet exercised against a real Firestore database; test before launch.
 
 import { Firestore } from '@google-cloud/firestore';
+import { canClaimMeta, refreshedAdClick } from '@/domain/meta';
+import type { AdConsent, MetaDelivery } from '@/domain/meta';
+import { purchaseDelivery } from '../metaEvents';
 import { paidSummary } from './paidSummary';
 import type { DeliveryRecord, EventRecord, Order, PaidOrderSummary, OtpRecord, RefundRecord, Session, Store } from './types';
 
@@ -24,6 +27,50 @@ async function get<T>(collection: string, id: string): Promise<T | null> {
 }
 
 export const firestoreStore: Store = {
+  getAdConsent: id => get<AdConsent>('adConsents', id),
+  async saveAdConsent(c) { await firestore().collection('adConsents').doc(c.id).set(c); },
+  async refreshAdClick(id, fbclid, now) {
+    const ref = firestore().collection('adConsents').doc(id);
+    return firestore().runTransaction(async tx => {
+      const snap = await tx.get(ref);
+      const c = refreshedAdClick(snap.exists ? snap.data() as AdConsent : null, fbclid, now);
+      if (c) tx.set(ref, c);
+      return c;
+    });
+  },
+  async claimMetaDelivery(id, now) {
+    const ref = firestore().collection('metaDeliveries').doc(id);
+    return firestore().runTransaction(async tx => {
+      const snap = await tx.get(ref);
+      const d = snap.data() as MetaDelivery | undefined;
+      if (!d || !canClaimMeta(d, Date.parse(now))) return null;
+      const claimed: MetaDelivery = { ...d, state: 'sending', attempts: d.attempts + 1, updatedAt: now };
+      tx.set(ref, claimed);
+      return claimed;
+    });
+  },
+  async finishMetaDelivery(id, attempt, state, now) {
+    const ref = firestore().collection('metaDeliveries').doc(id);
+    await firestore().runTransaction(async tx => {
+      const snap = await tx.get(ref);
+      if (snap.data()?.attempts === attempt) tx.update(ref, { state, updatedAt: now });
+    });
+  },
+  async claimBrowserPurchase(id, consentId, now) {
+    const ref = firestore().collection('metaDeliveries').doc(id);
+    return firestore().runTransaction(async tx => {
+      const snap = await tx.get(ref);
+      const d = snap.data() as MetaDelivery | undefined;
+      if (!d || d.consentId !== consentId || d.browserSentAt || d.state === 'stopped' || Date.parse(now) - d.event.event_time * 1000 > 86400000) return null;
+      tx.update(ref, { browserSentAt: now });
+      return d;
+    });
+  },
+  async listPendingMetaDeliveries() {
+    // Only the last day can be retried; old/exhausted rows cannot starve new purchases.
+    const snap = await firestore().collection('metaDeliveries').where('event.event_time', '>=', Math.floor(Date.now() / 1000) - 86400).get();
+    return snap.docs.map(d => d.data() as MetaDelivery).filter(d => canClaimMeta(d, Date.now())).slice(0, 10);
+  },
   getSession: (id) => get<Session>('sessions', id),
   async saveSession(s) {
     await firestore().collection('sessions').doc(s.id).set(s);
@@ -47,6 +94,8 @@ export const firestoreStore: Store = {
       }
       if (!current) throw new Error('Order missing during fulfilment');
       tx.set(ref, order);
+      const meta = purchaseDelivery(order);
+      if (meta) tx.create(firestore().collection('metaDeliveries').doc(meta.id), meta);
       const id = `order-${order.id}`;
       tx.create(firestore().collection('deliveries').doc(id), { id, state: 'pending', attempt: '', updatedAt: order.paidAt, order: paidSummary(order) });
       return { order, created: true };

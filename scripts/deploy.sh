@@ -21,6 +21,7 @@ EMAIL_ENABLED=1      # Amazon SES, from care@fitovela.com, with Fitovela's own s
 CASHFREE_ENABLED=1   # real payments through Cashfree; production keys are in Secret Manager as cashfree-app-id and cashfree-secret-key
 RAZORPAY_ENABLED=0   # set to 1 once razorpay-key-id, razorpay-key-secret and razorpay-webhook-secret exist in Secret Manager
 OPS_ENABLED=1       # Slack order alerts and authenticated reporting endpoints
+META_EVENTS_ENABLED=1 # Generic consented Pixel + paid Cashfree Purchase CAPI; no health/report fields
 META_REPORTING_ENABLED=1 # Fitovela system-user token and account/Insights reads verified 2026-11-17
 
 if [[ "${1:-}" == "rollback" ]]; then
@@ -65,6 +66,10 @@ if [[ "$OPS_ENABLED" == 1 ]]; then
 fi
 if [[ "$META_REPORTING_ENABLED" == 1 ]]; then
   SECRETS+=",META_MARKETING_ACCESS_TOKEN=meta-marketing-api-token:latest"
+fi
+
+if [[ "$META_EVENTS_ENABLED" == 1 ]]; then
+  ENV+=",META_EVENTS_ENABLED=1,META_PIXEL_ID=1488170726709981"
 fi
 
 FIRST=0

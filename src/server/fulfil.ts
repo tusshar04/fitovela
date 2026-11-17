@@ -7,6 +7,7 @@ import { sendEmail } from './email';
 import { buildPlan } from './plans';
 import { logEvent } from './session';
 import { getStore, type Order, type Session } from './store';
+import { notifyMetaPurchase } from './metaEvents';
 import { notifyPaidOrder } from './slack';
 
 export type Fulfilment = { ok: true; planUrl: string } | { ok: false; error: string };
@@ -21,6 +22,7 @@ export async function fulfilOrder(order: Order, session: Session, origin: string
     // Preserve fulfilment, but fill the reference when its signed callback arrives.
     const enriched = providerPaymentId ? await store.recordPaidPaymentReference(order.id, providerPaymentId) : latest;
     await notifyPaidOrder(enriched ?? latest);
+    await notifyMetaPurchase(enriched ?? latest);
     return { ok: true, planUrl };
   }
 
@@ -38,6 +40,7 @@ export async function fulfilOrder(order: Order, session: Session, origin: string
   const saved = await store.commitPaidOrder(order);
   if (!saved.created) {
     await notifyPaidOrder(saved.order);
+    await notifyMetaPurchase(saved.order);
     return { ok: true, planUrl };
   }
   await logEvent('payment_confirmed', session.id, { tier: order.tier, amount: order.amountRupees, provider: order.provider, track: order.track ?? 'standard' });
@@ -60,5 +63,6 @@ export async function fulfilOrder(order: Order, session: Session, origin: string
   // Operator notifications must never hold up the customer's email attempt.
   // The transaction's outbox remains recoverable if this request stops here.
   await notifyPaidOrder(saved.order);
+  await notifyMetaPurchase(saved.order);
   return { ok: true, planUrl };
 }
