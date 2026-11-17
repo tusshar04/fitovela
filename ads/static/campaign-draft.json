@@ -1,0 +1,142 @@
+{
+  "state": "PROPOSED_NOT_APPROVED_NOT_CREATED",
+  "account_id": "1457307065897121",
+  "business_id": "1110506178493480",
+  "facebook_page_id": "1440995739098638",
+  "instagram_account_id": "17841411335046415",
+  "campaign": {
+    "name": "Fitovela | Static launch | India | Traffic",
+    "objective": "OUTCOME_TRAFFIC",
+    "buying_type": "AUCTION",
+    "status": "PAUSED",
+    "special_ad_categories": []
+  },
+  "ad_set": {
+    "name": "Women 25-54 | India | Broad",
+    "daily_budget_inr": 1000,
+    "optimization_goal": "LINK_CLICKS",
+    "billing_event": "IMPRESSIONS",
+    "bid_strategy": "LOWEST_COST_WITHOUT_CAP",
+    "status": "PAUSED",
+    "country": "IN",
+    "gender": "women",
+    "age_min": 25,
+    "age_max": 54,
+    "languages": null,
+    "detailed_targeting": [],
+    "custom_audiences": [],
+    "placements": [
+      "Facebook Feed",
+      "Facebook Stories",
+      "Facebook Reels",
+      "Instagram Feed",
+      "Instagram Stories",
+      "Instagram Reels"
+    ],
+    "devices": [
+      "mobile",
+      "desktop"
+    ],
+    "end_date": null
+  },
+  "tracking": {
+    "pixel_events_enabled": false,
+    "reason": "Health-category dataset restrictions require resolution before website event collection or purchase optimisation.",
+    "url_tags": "utm_source={{site_source_name}}&utm_medium=paid_social&utm_campaign={{campaign.id}}&utm_content={{ad.id}}&utm_term={{adset.id}}"
+  },
+  "creative": {
+    "primary_text": "Take the free 2-minute symptom assessment. Explore your report and food preferences, then choose a personalised Indian meal plan. Plans from ₹199.",
+    "headline": "Free 2-minute symptom assessment",
+    "description": "Personalised Indian meal plans from ₹199",
+    "cta": "LEARN_MORE",
+    "automatic_creative_enhancements": false,
+    "existing_post": false
+  },
+  "ads": [
+    {
+      "name": "Types",
+      "status": "PAUSED",
+      "destination": "https://fitovela.com/?h=b&c=pcos",
+      "media": {
+        "feed": {
+          "path": "/Users/tushar/fitovela/ads/static/out/ad1-types-feed.png",
+          "sha256": "13678ed62b2bb291af4cfdaf460047846353f6e96db921bf5ffe97e634c19cc6",
+          "placement_usage": "Feeds"
+        },
+        "reel": {
+          "path": "/Users/tushar/fitovela/ads/static/out/ad1-types-reel.png",
+          "sha256": "6028befc11aff5e5ecb16c8076ea6dcc86e60f912f7d3f2924b7ea1d55456a8f",
+          "placement_usage": "Stories and Reels"
+        }
+      }
+    },
+    {
+      "name": "Eating less",
+      "status": "PAUSED",
+      "destination": "https://fitovela.com/?h=a&c=pcos",
+      "media": {
+        "feed": {
+          "path": "/Users/tushar/fitovela/ads/static/out/ad2-eating-less-feed.png",
+          "sha256": "2f2e6b7b908bc97785181cbca907a644740fa8d7b5181e6472977756f8cd9302",
+          "placement_usage": "Feeds"
+        },
+        "reel": {
+          "path": "/Users/tushar/fitovela/ads/static/out/ad2-eating-less-reel.png",
+          "sha256": "61fcd2905972bfc89d1f9bb0b843777bc87cd3efa0d3035e5f80722d5cc8f933",
+          "placement_usage": "Stories and Reels"
+        }
+      }
+    },
+    {
+      "name": "Symptom checklist",
+      "status": "PAUSED",
+      "destination": "https://fitovela.com/?h=b&c=pcos",
+      "media": {
+        "feed": {
+          "path": "/Users/tushar/fitovela/ads/static/out/ad3-tick-feed.png",
+          "sha256": "4b11ac7ee701965b016c50ca3a33e3804edd2fc9cd0918dbb9b0b4ce64cc50d4",
+          "placement_usage": "Feeds"
+        },
+        "reel": {
+          "path": "/Users/tushar/fitovela/ads/static/out/ad3-tick-reel.png",
+          "sha256": "ba99aab8e3c2d35870e5beb917059c66500da6e255f73173d0c25adf5914a53e",
+          "placement_usage": "Stories and Reels"
+        }
+      }
+    },
+    {
+      "name": "Ghar ka khana",
+      "status": "PAUSED",
+      "destination": "https://fitovela.com/?h=c&c=pcos",
+      "media": {
+        "feed": {
+          "path": "/Users/tushar/fitovela/ads/static/out/ad4-ghar-ka-khana-feed.png",
+          "sha256": "26326d90e0a0cf034a3ce0ae72ae9e680211cdfe87153ee5a6df4c72a3a24429",
+          "placement_usage": "Feeds"
+        },
+        "reel": {
+          "path": "/Users/tushar/fitovela/ads/static/out/ad4-ghar-ka-khana-reel.png",
+          "sha256": "fd09a1e700fe76dd0d26b558861838ccec661719b7bf6efd7201c5032d857512",
+          "placement_usage": "Stories and Reels"
+        }
+      }
+    },
+    {
+      "name": "First four weeks",
+      "status": "PAUSED",
+      "destination": "https://fitovela.com/?h=b&c=pcos",
+      "media": {
+        "feed": {
+          "path": "/Users/tushar/fitovela/ads/static/out/ad5-first-4-weeks-feed.png",
+          "sha256": "aa0ef0abdc22590f977b289875579c4cc6832b02b8c0b443f65cae95836e7861",
+          "placement_usage": "Feeds"
+        },
+        "reel": {
+          "path": "/Users/tushar/fitovela/ads/static/out/ad5-first-4-weeks-reel.png",
+          "sha256": "032beb1adcca2b8179ccf3f0e2ceb7cf260d1285258afd99f27eedf22128722e",
+          "placement_usage": "Stories and Reels"
+        }
+      }
+    }
+  ]
+}
