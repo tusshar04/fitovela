@@ -21,7 +21,7 @@ EMAIL_ENABLED=1      # Amazon SES, from care@fitovela.com, with Fitovela's own s
 CASHFREE_ENABLED=1   # real payments through Cashfree; production keys are in Secret Manager as cashfree-app-id and cashfree-secret-key
 RAZORPAY_ENABLED=0   # set to 1 once razorpay-key-id, razorpay-key-secret and razorpay-webhook-secret exist in Secret Manager
 OPS_ENABLED=1       # Slack order alerts and authenticated reporting endpoints
-META_REPORTING_ENABLED=0 # turn on after Fitovela's own Marketing API token is verified
+META_REPORTING_ENABLED=1 # Fitovela system-user token and account/Insights reads verified 2026-11-17
 
 if [[ "${1:-}" == "rollback" ]]; then
   gcloud run revisions list --project "$PROJECT" --region "$REGION" --service "$SERVICE" --limit 8 \
