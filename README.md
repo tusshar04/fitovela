@@ -37,6 +37,7 @@ Secrets are in Secret Manager; none are in this repository. Local development ne
 | [Learnings](docs/LEARNINGS.md) | Verified discoveries and prevention of recurring mistakes. |
 | [Medical rules](docs/MEDICAL_RULES.md) | The doctor's answers, how the app applies them, and drafts awaiting her approval. |
 | [Ads](ads/) | `ads/static/`: ad artboards as HTML, and `render.sh` to turn them into PNGs. `ads/video/`: the quiz video, built from screenshots of the app by `capture.mjs` and `render.mjs`. Status is in State. |
+| [Ad operations](docs/AD_OPERATIONS.md) | Cashfree verification, Slack order alerts, hourly ad reporting, and tracking/release checks. |
 
 Read the shared instructions and current state before starting work. Each topic has one authoritative home; other documents should link to it.
 
