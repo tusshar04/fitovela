@@ -63,11 +63,29 @@ export interface OtpRecord {
   sends?: string[];
 }
 
+export type PaidOrderSummary = Pick<Order, 'id' | 'sessionId' | 'tier' | 'amountRupees' | 'status' | 'provider' | 'paidAt' | 'createdAt'>;
+
 export interface EventRecord {
   name: string;
   sessionId?: string;
   at: string;
   props?: Record<string, string | number | boolean>;
+}
+
+/** Operational records never contain assessment answers or private plan links. */
+export interface DeliveryRecord {
+  id: string;
+  state: 'pending' | 'sending' | 'sent' | 'failed' | 'uncertain';
+  attempt: string;
+  updatedAt: string;
+  order?: PaidOrderSummary;
+}
+
+export interface RefundRecord {
+  id: string;
+  orderId: string;
+  amountRupees: number;
+  processedAt: string;
 }
 
 /** One interface, two drivers: files on localhost, Firestore in production. */
@@ -77,6 +95,9 @@ export interface Store {
 
   getOrder(id: string): Promise<Order | null>;
   saveOrder(order: Order): Promise<void>;
+  /** Atomically preserves the first paid snapshot when browser and webhook race. */
+  commitPaidOrder(order: Order): Promise<{ order: Order; created: boolean }>;
+  listPaidOrders(start: string, end: string): Promise<PaidOrderSummary[]>;
   getOrderByPlanToken(token: string): Promise<Order | null>;
   listPaidOrdersByPhone(phone: string): Promise<Order[]>;
 
@@ -85,4 +106,10 @@ export interface Store {
   deleteOtp(phone: string): Promise<void>;
 
   addEvent(event: EventRecord): Promise<void>;
+  claimDelivery(id: string, attempt: string, now: string): Promise<boolean>;
+  finishDelivery(id: string, attempt: string, state: DeliveryRecord['state'], now: string): Promise<void>;
+  listUncertainDeliveries(): Promise<DeliveryRecord[]>;
+  listPendingOrderAlerts(): Promise<PaidOrderSummary[]>;
+  saveRefund(refund: RefundRecord): Promise<void>;
+  listRefunds(start: string, end: string): Promise<RefundRecord[]>;
 }

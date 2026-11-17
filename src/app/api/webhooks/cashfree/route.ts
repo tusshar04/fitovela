@@ -3,12 +3,14 @@ import { fulfilOrder } from '@/server/fulfil';
 import { siteOrigin } from '@/server/origin';
 import { cashfreeConfigured, fromCashfreeOrderId, verifyCashfreeWebhook } from '@/server/payments';
 import { getStore } from '@/server/store';
+import { cashfreeRefundRecord } from '@/server/refunds';
 
 interface CashfreeEvent {
   type?: string;
   data?: {
     order?: { order_id?: string; order_amount?: number; order_currency?: string };
     payment?: { cf_payment_id?: string | number; payment_status?: string };
+    refund?: Record<string, unknown>;
   };
 }
 
@@ -23,11 +25,27 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Bad signature.' }, { status: 401 });
   }
 
+
   let event: CashfreeEvent;
   try {
     event = JSON.parse(raw);
   } catch {
     return NextResponse.json({ error: 'Bad body.' }, { status: 400 });
+  }
+  if (event.type === 'REFUND_STATUS_WEBHOOK' && event.data?.refund) {
+    const refund = event.data.refund;
+    const id = fromCashfreeOrderId(refund.order_id);
+    const store = await getStore();
+    const order = id ? await store.getOrder(id) : null;
+    if (!order) return NextResponse.json({ ok: true, ignored: true });
+    try {
+      const record = cashfreeRefundRecord(refund, order);
+      if (record) await store.saveRefund(record);
+      return NextResponse.json({ ok: true });
+    } catch {
+      // Retry if the paid snapshot has not arrived yet. Never log raw payloads.
+      return NextResponse.json({ error: 'Refund could not be reconciled.' }, { status: 409 });
+    }
   }
   // Failed and dropped payments need no action here: an unpaid order simply stays unpaid.
   const payment = event.data?.payment;

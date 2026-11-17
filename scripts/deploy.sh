@@ -20,6 +20,8 @@ SMS_ENABLED=1        # login codes by SMS through 2Factor
 EMAIL_ENABLED=1      # Amazon SES, from care@fitovela.com, with Fitovela's own send-only key
 CASHFREE_ENABLED=1   # real payments through Cashfree; production keys are in Secret Manager as cashfree-app-id and cashfree-secret-key
 RAZORPAY_ENABLED=0   # set to 1 once razorpay-key-id, razorpay-key-secret and razorpay-webhook-secret exist in Secret Manager
+OPS_ENABLED=1       # Slack order alerts and authenticated reporting endpoints
+META_REPORTING_ENABLED=0 # turn on after Fitovela's own Marketing API token is verified
 
 if [[ "${1:-}" == "rollback" ]]; then
   gcloud run revisions list --project "$PROJECT" --region "$REGION" --service "$SERVICE" --limit 8 \
@@ -57,6 +59,13 @@ fi
 if [[ "$RAZORPAY_ENABLED" == 1 ]]; then
   SECRETS+=",RAZORPAY_KEY_ID=razorpay-key-id:latest,RAZORPAY_KEY_SECRET=razorpay-key-secret:latest,RAZORPAY_WEBHOOK_SECRET=razorpay-webhook-secret:latest"
 fi
+if [[ "$OPS_ENABLED" == 1 ]]; then
+  ENV+=",ORDER_ALERTS_START_AT=2026-11-17T15:00:00.000Z"
+  SECRETS+=",SLACK_ORDER_WEBHOOK_URL=slack-order-webhook-url:latest,SLACK_REPORT_WEBHOOK_URL=slack-report-webhook-url:latest,OPS_REPORT_SECRET=ops-report-secret:latest"
+fi
+if [[ "$META_REPORTING_ENABLED" == 1 ]]; then
+  SECRETS+=",META_MARKETING_ACCESS_TOKEN=meta-marketing-api-token:latest"
+fi
 
 FIRST=0
 gcloud run services describe "$SERVICE" --project "$PROJECT" --region "$REGION" --format='value(metadata.name)' >/dev/null 2>&1 || FIRST=1
@@ -66,7 +75,7 @@ if [[ "$FIRST" == 1 ]]; then TRAFFIC=(); fi
 echo "Deploying"
 gcloud run deploy "$SERVICE" --project "$PROJECT" --region "$REGION" --platform managed --quiet \
   --image "$IMAGE" --service-account "$RUNTIME_SA" --allow-unauthenticated \
-  --port 8080 --cpu 1 --memory 512Mi --concurrency 80 --timeout 30 --min-instances 0 --max-instances 4 \
+  --port 8080 --cpu 1 --memory 512Mi --concurrency 80 --timeout 120 --min-instances 0 --max-instances 4 \
   --set-env-vars "$ENV" --set-secrets "$SECRETS" --update-labels "git-sha=${SHA:0:12}" ${TRAFFIC[@]+"${TRAFFIC[@]}"}
 
 if [[ "$FIRST" == 1 ]]; then

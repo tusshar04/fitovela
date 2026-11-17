@@ -37,6 +37,7 @@ Secrets are in Secret Manager; none are in this repository. Local development ne
 | [Learnings](docs/LEARNINGS.md) | Verified discoveries and prevention of recurring mistakes. |
 | [Medical rules](docs/MEDICAL_RULES.md) | The doctor's answers, how the app applies them, and drafts awaiting her approval. |
 | [Static ads](ads/static/) | Ad artboards as HTML, and `render.sh` to turn them into PNGs for Meta. Status is in State. |
+| [Ad operations](docs/AD_OPERATIONS.md) | Cashfree verification, Slack order alerts, hourly ad reporting, and tracking/release checks. |
 
 Read the shared instructions and current state before starting work. Each topic has one authoritative home; other documents should link to it.
 

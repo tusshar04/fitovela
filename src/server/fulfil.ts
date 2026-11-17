@@ -7,18 +7,22 @@ import { sendEmail } from './email';
 import { buildPlan } from './plans';
 import { logEvent } from './session';
 import { getStore, type Order, type Session } from './store';
+import { notifyPaidOrder } from './slack';
 
 export type Fulfilment = { ok: true; planUrl: string } | { ok: false; error: string };
 
 export async function fulfilOrder(order: Order, session: Session, origin: string, providerPaymentId?: string): Promise<Fulfilment> {
   if (!order.planToken) return { ok: false, error: 'This order cannot be completed.' };
   const planUrl = `/plan/${order.planToken}`;
-  if (order.status === 'paid' && order.plan) return { ok: true, planUrl };
-  // Her browser and the webhook usually arrive within a second of each other. Looking
-  // again here means the second one almost always finds the plan already delivered and
-  // does not send the email twice. (It is not a lock: a rare double email is harmless.)
+  if (order.status === 'paid' && order.plan) {
+    await notifyPaidOrder(order);
+    return { ok: true, planUrl };
+  }
   const latest = await (await getStore()).getOrder(order.id);
-  if (latest?.status === 'paid' && latest.plan) return { ok: true, planUrl };
+  if (latest?.status === 'paid' && latest.plan) {
+    await notifyPaidOrder(latest);
+    return { ok: true, planUrl };
+  }
 
   const assessment = buildAssessment(session.answers);
   if (!assessment || !assessment.eligibility.eligible) return { ok: false, error: 'This plan cannot be created.' };
@@ -32,7 +36,9 @@ export async function fulfilOrder(order: Order, session: Session, origin: string
   order.startKg = assessment.metrics.weightKg;
   if (providerPaymentId) order.providerPaymentId = providerPaymentId;
   const store = await getStore();
-  await store.saveOrder(order);
+  const saved = await store.commitPaidOrder(order);
+  await notifyPaidOrder(saved.order);
+  if (!saved.created) return { ok: true, planUrl };
   await logEvent('payment_confirmed', session.id, { tier: order.tier, amount: order.amountRupees, provider: order.provider, track: order.track ?? 'standard' });
 
   const tier = TIERS[order.tier];
