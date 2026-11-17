@@ -1,5 +1,5 @@
 {
-  "state": "PUBLISHED_PAUSED_PURCHASE_TRACKING_BLOCKED",
+  "state": "ACTIVE_PURCHASE_PIXEL_CAPI_DEPLOYED",
   "account_id": "1457307065897121",
   "business_id": "1110506178493480",
   "facebook_page_id": "1440995739098638",
@@ -8,9 +8,9 @@
     "name": "Fitovela | Purchase | India | Sales",
     "objective": "OUTCOME_SALES",
     "buying_type": "AUCTION",
-    "status": "PAUSED",
+    "status": "ACTIVE",
     "special_ad_categories": [],
-    "effective_status": "PAUSED"
+    "effective_status": "ACTIVE"
   },
   "ad_set": {
     "name": "Women 18-60 | India | Broad | Purchase",
@@ -18,7 +18,7 @@
     "optimization_goal": "OFFSITE_CONVERSIONS",
     "billing_event": "IMPRESSIONS",
     "bid_strategy": "LOWEST_COST_WITHOUT_CAP",
-    "status": "PAUSED",
+    "status": "ACTIVE",
     "country": "IN",
     "gender": "women",
     "age_min": 18,
@@ -39,7 +39,7 @@
       "desktop"
     ],
     "end_date": null,
-    "effective_status": "PAUSED",
+    "effective_status": "ACTIVE",
     "conversion_location": "WEBSITE",
     "conversion_event": "PURCHASE",
     "dataset_id": "1488170726709981",
@@ -51,11 +51,12 @@
     ]
   },
   "tracking": {
-    "pixel_events_enabled": false,
-    "reason": "No approved live sharing path for the current health-assessment-derived Purchase. Independent privacy review requires authoritative product-specific Meta clarification and appropriate disclosures. Empty blocked-event list and selected Purchase event do not establish eligibility.",
+    "pixel_events_enabled": true,
+    "reason": "FTV-030 commerce-only opt-in Pixel and verified Cashfree Purchase CAPI deployed. No assessment/report/contact/private URL fields. Real paid-event receipt, processing and attribution await the first genuine consenting purchase.",
     "url_tags": "utm_source={{site_source_name}}&utm_medium=paid_social&utm_campaign={{campaign.id}}&utm_content={{ad.id}}&utm_term={{adset.id}}",
     "conversion_event_selected": "PURCHASE",
-    "purchase_event_received_verified": false
+    "purchase_event_received_verified": false,
+    "capi_events_enabled": true
   },
   "creative": {
     "primary_text": "Take the free 2-minute symptom assessment. Explore your report and food preferences, then choose a personalised Indian meal plan. Plans from ₹199.",
@@ -70,7 +71,7 @@
   "ads": [
     {
       "name": "Types",
-      "status": "PAUSED",
+      "status": "ACTIVE",
       "destination": "https://fitovela.com/?h=b&c=pcos",
       "media": {
         "feed": {
@@ -89,7 +90,7 @@
       "meta_name": "Types | Static – Copy",
       "meta_creative_id": "1510356074480506",
       "effective_object_story_id": "1440995739098638_122104542747546746",
-      "effective_status": "PENDING_REVIEW",
+      "effective_status": "ACTIVE",
       "automatic_music": true,
       "meta_media": {
         "image_hashes": [
@@ -100,7 +101,7 @@
     },
     {
       "name": "Eating less",
-      "status": "PAUSED",
+      "status": "ACTIVE",
       "destination": "https://fitovela.com/?h=a&c=pcos",
       "media": {
         "feed": {
@@ -119,7 +120,7 @@
       "meta_name": "Eating less | Static – Copy",
       "meta_creative_id": "4462686577330646",
       "effective_object_story_id": "1440995739098638_122104542723546746",
-      "effective_status": "PENDING_REVIEW",
+      "effective_status": "ACTIVE",
       "automatic_music": true,
       "meta_media": {
         "image_hashes": [
@@ -130,7 +131,7 @@
     },
     {
       "name": "Symptom checklist",
-      "status": "PAUSED",
+      "status": "ACTIVE",
       "destination": "https://fitovela.com/?h=b&c=pcos",
       "media": {
         "feed": {
@@ -149,7 +150,7 @@
       "meta_name": "Symptom checklist | Static – Copy",
       "meta_creative_id": "2027130604601055",
       "effective_object_story_id": "1440995739098638_122104542759546746",
-      "effective_status": "PENDING_REVIEW",
+      "effective_status": "ACTIVE",
       "automatic_music": true,
       "meta_media": {
         "image_hashes": [
@@ -160,7 +161,7 @@
     },
     {
       "name": "Ghar ka khana",
-      "status": "PAUSED",
+      "status": "ACTIVE",
       "destination": "https://fitovela.com/?h=c&c=pcos",
       "media": {
         "feed": {
@@ -179,7 +180,7 @@
       "meta_name": "Ghar ka khana | Static – Copy",
       "meta_creative_id": "1461096316165259",
       "effective_object_story_id": "1440995739098638_122104542753546746",
-      "effective_status": "PENDING_REVIEW",
+      "effective_status": "ACTIVE",
       "automatic_music": true,
       "meta_media": {
         "image_hashes": [
@@ -190,7 +191,7 @@
     },
     {
       "name": "First four weeks",
-      "status": "PAUSED",
+      "status": "ACTIVE",
       "destination": "https://fitovela.com/?h=b&c=pcos",
       "media": {
         "feed": {
@@ -209,7 +210,7 @@
       "meta_name": "First four weeks | Static – Copy",
       "meta_creative_id": "1144842288511361",
       "effective_object_story_id": "1440995739098638_122104542717546746",
-      "effective_status": "PENDING_REVIEW",
+      "effective_status": "ACTIVE",
       "automatic_music": true,
       "meta_media": {
         "image_hashes": [
@@ -220,7 +221,7 @@
     },
     {
       "name": "Types | Iktara | Video v2",
-      "status": "PAUSED",
+      "status": "ACTIVE",
       "destination": "https://fitovela.com/?h=b&c=pcos",
       "media": {
         "video": {
@@ -235,7 +236,7 @@
       "meta_name": "Types | Iktara | Video v2",
       "meta_creative_id": "1097375976687026",
       "effective_object_story_id": "1440995739098638_122104483557546746",
-      "effective_status": "PAUSED",
+      "effective_status": "ACTIVE",
       "automatic_music": false,
       "meta_media": {
         "video_id": "1663133625351140"
@@ -243,7 +244,7 @@
     },
     {
       "name": "Tried | Love You Zindagi | Video v2",
-      "status": "PAUSED",
+      "status": "ACTIVE",
       "destination": "https://fitovela.com/?h=a&c=pcos",
       "media": {
         "video": {
@@ -258,7 +259,7 @@
       "meta_name": "Tried | Love You Zindagi | Video v2",
       "meta_creative_id": "1655728982572417",
       "effective_object_story_id": "1440995739098638_122104483635546746",
-      "effective_status": "PAUSED",
+      "effective_status": "ACTIVE",
       "automatic_music": false,
       "meta_media": {
         "video_id": "1792182532909539"
@@ -271,21 +272,21 @@
     "campaign_id": "120248244657940009",
     "adset_id": "120248244664190009"
   },
-  "activation_note": "Founder authorised end-to-end Purchase launch. Corrected Sales/Website/Purchase campaign published PAUSED; no spend enabled without permitted purchase feedback. Old Traffic paused after reported INR13.19. Current tracking review is blocking; see docs/AD_OPERATIONS.md.",
+  "activation_note": "Founder explicitly authorised installation and activation. Nine status-only API writes succeeded. Two readbacks confirm campaign, ad set and all seven approved ads configured/effective ACTIVE with every other captured field unchanged. Old Traffic and failed static duplicates stay PAUSED.",
   "instagram_ads_actor_id": "30336590792597009",
   "browser_handoff": {
     "pending_objects": 0,
     "published_ad_count": 7,
-    "last_published_check_utc": "2026-11-17T20:42:47.474241+00:00",
+    "last_published_check_utc": "2026-11-17T21:41:46.849323+00:00",
     "billing": "Payment method saved, confirmed in account overview",
     "phone_verification": "Historical Traffic account overview offered linking an existing verified profile number; no association was made. That campaign reached ACTIVE before FTV-028 paused it. No phone prompt currently blocks the Purchase setup.",
     "api": "Sales campaign/adset creation and two existing video creative ads succeeded. Five existing-static API ads failed asynchronously with1885183; fresh native copies published.",
     "review": "Two fresh native exports identical across5x584fields; exact original static media/copy/URLs/placements preserved. All seven API readbacks twice; native music-only enhancement checks. Native copies use new post/creative IDs; two videos reuse exact originals.",
-    "next": "Resolve product-specific Meta permission for current assessment-linked Purchase and privacy disclosure before implementing tracking or enabling spend.",
+    "next": "Monitor first genuine consenting Cashfree Purchase delivery, processing, browser/server deduplication and ad attribution; existing hourly spend/profit and paid-order alerts continue.",
     "excluded_paused_ad_count": 5
   },
-  "last_verified_utc": "2026-11-17T20:42:47.474241+00:00",
-  "native_delivery_status": "Off; five native statics awaiting Meta review; two videos PAUSED without issues",
+  "last_verified_utc": "2026-11-17T21:41:46.849323+00:00",
+  "native_delivery_status": "Active; Purchase ad set and all seven canonical ads. No pending drafts.",
   "superseded_traffic": {
     "reason": "Agent incorrectly substituted Traffic/Link clicks for purchase-driven goal; founder corrected it. Do not reactivate.",
     "campaign_id": "120248243480500009",
