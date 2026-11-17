@@ -34,7 +34,7 @@ python3 ads/video/mix-music.py --video-dir /Users/tushar/fitovela/ads/video/out 
   --music-dir '/Users/tushar/Desktop/new songs' --output-dir /path/to/new-output-folder
 ```
 
-Requires Python 3.11+ and ffmpeg/ffprobe. The recipe pins source hashes because different recordings or video renders need fresh timing. It refuses to overwrite outputs, copies the original video stream, and writes separate MP4s plus `music-mix-manifest.json`. Recordings and exports stay outside Git; this command does not upload or publish ads.
+Requires Python 3.11+ and ffmpeg/ffprobe. The recipe pins source hashes because different recordings or video renders need fresh timing. It refuses to overwrite outputs, copies the original video stream, and writes separate `-v2.mp4` files plus `music-mix-manifest-v2.json`. Revision 2 lowers Iktara to −21 LUFS and uses pitch-preserving tempo adjustment to align the three card reveals. Love You Zindagi keeps its opening/chorus timing at −18 LUFS and continues through the final frame. Both retain full music at the end, with only a 5 ms de-click. Recordings and exports stay outside Git; this command does not upload or publish ads.
 
 ## Start here
 

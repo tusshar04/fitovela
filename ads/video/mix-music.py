@@ -22,18 +22,19 @@ CUTS = [
         'video_sha256': '9439cdaf9958cb32468a720020d61e6da380bf2421c7a55d2f8113f2342c2929',
         'music': 'Iktara Lyric Video - Wake Up Sid Ranbir Kapoor, Konkona Sen Sharma Kavita Seth Amit Trivedi.mp3',
         'music_sha256': '90f5264fcd8ef9a94c99caa6ba52feb8c8f9d5ab2c1cdab93598e0ac564014bf',
-        'output': 'fitovela-types-en-iktara.mp4',
+        'output': 'fitovela-types-en-iktara-v2.mp4',
         'duration': 15.0,
-        'source_start': 69.5318,
-        'source_end': 84.5318,
-        'tail': False,
+        'source_start': 69.6332,
+        'tempo': 0.935,
+        'loudness_lufs': -21,
+        'fade_in': 0.06,
         'sync': [
-            {'video_s': 0.0, 'cue': 'First chorus / percussion onset'},
-            {'video_s': 4.1215, 'cue': 'Percussion during first card reveal'},
-            {'video_s': 5.625, 'cue': 'Percussion during second card reveal'},
-            {'video_s': 7.1343, 'cue': 'Percussion during third card reveal'},
-            {'video_s': 11.2559, 'cue': 'Beat aligns with purple outro entering at 11.25s'},
-            {'video_s': 13.1309, 'cue': 'Beat as CTA finishes appearing'},
+            {'video_s': 0.0, 'cue': 'Chorus excerpt, slightly slower with original pitch'},
+            {'video_s': 3.9209, 'cue': 'Percussion near first card entering at 3.9s'},
+            {'video_s': 5.4979, 'cue': 'Percussion near second card entering at 5.5s'},
+            {'video_s': 7.0935, 'cue': 'Percussion near third card entering at 7.1s'},
+            {'video_s': 11.5387, 'cue': 'Beat during purple outro reveal'},
+            {'video_s': 12.5384, 'cue': 'Percussion near CTA entering at 12.6s'},
         ],
     },
     {
@@ -41,18 +42,19 @@ CUTS = [
         'video_sha256': 'cceb60b20b0613f9ea73f8abd6c2c10d6ce1f6411ed110c4cf02b01ee139f91b',
         'music': 'Love You Zindagi Full Video - Dear Zindagi Alia Bhatt Shah Rukh Khan Jasleen Royal Amit T.mp3',
         'music_sha256': 'f5ae91db970e813530d0355d678cf76ea62e8666c4d3c6ebe0befd9a62967c6e',
-        'output': 'fitovela-tried-en-love-you-zindagi.mp4',
+        'output': 'fitovela-tried-en-love-you-zindagi-v2.mp4',
         'duration': 15.5,
         'source_start': 53.6906,
-        'source_end': 67.58,
-        'tail': True,
+        'tempo': 1.0,
+        'loudness_lufs': -18,
+        'fade_in': 0.35,
         'sync': [
             {'video_s': 0.0, 'cue': 'Farewell phrase under crossed-out attempts'},
             {'video_s': 5.6694, 'cue': 'ASR-estimated title refrain begins'},
             {'video_s': 5.7, 'cue': 'Chorus percussion onset at reassurance scene'},
             {'video_s': 8.3412, 'cue': 'Beat near hidden-causes scene at 8.4s'},
             {'video_s': 13.0549, 'cue': 'Beat near CTA appearing at 13.1s'},
-            {'video_s': 13.8894, 'cue': 'End after second complete refrain, before third; fading tail follows'},
+            {'video_s': 15.5, 'cue': 'Continuous chorus through final frame; no fading tail'},
         ],
     },
 ]
@@ -73,25 +75,14 @@ def probe(path):
 
 def audio_graph(cut):
     duration = cut['duration']
-    length = cut['source_end'] - cut['source_start']
-    graph = (
-        f"[1:a]atrim=start={cut['source_start']}:end={cut['source_end']},"
-        f"asetpts=PTS-STARTPTS,aresample=48000,afade=t=in:st=0:d={0.35 if cut['tail'] else 0.06}"
-    )
-    if not cut['tail']:
-        return graph + f',afade=t=out:st={duration - 0.55}:d=0.55[bed]'
-    # Preserve the whole second refrain. Only its last 650ms feeds a quiet
-    # decaying tail; no third lyric is started or chopped at the end of the ad.
-    send_start = length - 0.65
-    return graph + (
-        '[base];[base]asplit=2[dry][send];'
-        f'[dry]afade=t=out:st={length - 0.3}:d=0.3[d];'
-        f'[send]atrim=start={send_start},asetpts=PTS-STARTPTS,'
-        'afade=t=in:st=0:d=0.12,'
-        'aecho=0.8:0.8:120|240|400|700|1050|1500:0.6|0.42|0.3|0.21|0.14|0.08,'
-        f'adelay={round(send_start * 1000)}:all=1[w];'
-        '[d][w]amix=inputs=2:weights=1 0.7:normalize=0:duration=longest,'
-        f'apad,atrim=duration={duration},afade=t=out:st={duration - 0.75}:d=0.75[bed]'
+    # Give atempo spare samples, then trim to the exact video duration. Only
+    # the final 5ms is de-clicked: music stays at full level through the ending.
+    source_end = cut['source_start'] + duration * cut['tempo'] + 0.5
+    return (
+        f"[1:a]atrim=start={cut['source_start']}:end={source_end},"
+        f"asetpts=PTS-STARTPTS,aresample=48000,atempo={cut['tempo']},"
+        f"atrim=duration={duration},afade=t=in:st=0:d={cut['fade_in']},"
+        f'afade=t=out:st={duration - 0.005}:d=0.005[bed]'
     )
 
 
@@ -114,12 +105,13 @@ def main():
                 raise SystemExit(f'Source changed; recheck timing before mixing: {path}')
         graph = audio_graph(cut)
         inputs = ['ffmpeg', '-hide_banner', '-nostdin', '-i', str(video), '-i', str(music)]
-        # Two-pass loudness normalization keeps both music beds at the same
-        # perceived level with true-peak headroom, without changing song pitch.
-        measurement = run(inputs + ['-filter_complex', graph + ';[bed]loudnorm=I=-18:TP=-1.5:LRA=11:print_format=json[measured]', '-map', '[measured]', '-f', 'null', '-'])
+        # Iktara is 3 LU quieter on the founder's revision; Zindagi keeps its
+        # original target. Tempo changes preserve pitch.
+        target = cut['loudness_lufs']
+        measurement = run(inputs + ['-filter_complex', graph + f';[bed]loudnorm=I={target}:TP=-1.5:LRA=11:print_format=json[measured]', '-map', '[measured]', '-f', 'null', '-'])
         measured = json.loads(re.findall(r'\{[^{}]+\}', measurement.stderr)[-1])
         normalize = (
-            'loudnorm=I=-18:TP=-1.5:LRA=11:'
+            f'loudnorm=I={target}:TP=-1.5:LRA=11:'
             f"measured_I={measured['input_i']}:measured_TP={measured['input_tp']}:"
             f"measured_LRA={measured['input_lra']}:measured_thresh={measured['input_thresh']}:"
             f"offset={measured['target_offset']}:linear=true:print_format=summary"
@@ -134,7 +126,7 @@ def main():
         assert a['codec_name'] == 'aac' and a['channels'] == 2
         report.append({**cut, 'output_sha256': digest(dest), 'audio_measurement': measured, 'validation': {'video': '1080x1920, 30fps, stream copied', 'audio': 'AAC stereo 48kHz', 'duration_s': float(meta['format']['duration'])}, 'normalization_log': result.stderr.split('Output Integrated:')[-1].strip()})
         print(dest, flush=True)
-    (out / 'music-mix-manifest.json').write_text(json.dumps(report, indent=2) + '\n')
+    (out / 'music-mix-manifest-v2.json').write_text(json.dumps(report, indent=2) + '\n')
 
 
 if __name__ == '__main__':
