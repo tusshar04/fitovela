@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>Fitovela quiz video</title>
+<!--
+  A 9:16 video ad (1080 x 1920) built from real screenshots of the app (see capture.mjs).
+  Nothing here plays by itself: window.seek(seconds) draws the frame for that moment, and
+  render.mjs calls it once per frame and sends the pictures to ffmpeg.
+  ?lang=en or ?lang=hi picks the captions.
+-->
+<style>
+  @font-face { font-family: 'Jakarta'; src: url('../../src/fonts/plus-jakarta-sans-latin-wght-normal.woff2') format('woff2'); font-weight: 200 800; }
+  @font-face { font-family: 'Instrument'; src: url('../../src/fonts/instrument-serif-latin-400-normal.woff2') format('woff2'); font-weight: 400; font-style: normal; }
+  @font-face { font-family: 'Instrument'; src: url('../../src/fonts/instrument-serif-latin-400-italic.woff2') format('woff2'); font-weight: 400; font-style: italic; }
+  :root { color-scheme: only light; --ink: #2b1330; --pink: #c2185b; --yellow: #ffd23f; --on-plum: #d9c9db; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--ink); }
+  body { font-family: 'Jakarta', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+
+  .stage { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: radial-gradient(120% 60% at 50% 0%, #54305c 0%, var(--ink) 64%); color: #fff; }
+  .glow { position: absolute; border-radius: 50%; filter: blur(90px); }
+
+  /* Captions sit just under the zone Meta covers at the top. */
+  .cap { position: absolute; left: 0; right: 0; top: 262px; height: 190px; text-align: center; white-space: nowrap; }
+  .cap .m { font-size: 58px; line-height: 1.15; font-weight: 800; letter-spacing: -0.03em; }
+  .cap .a { margin-top: 2px; font-family: 'Instrument', Georgia, serif; font-style: italic; font-size: 86px; line-height: 1.05; color: var(--yellow); letter-spacing: -0.01em; }
+
+  .phone { position: absolute; left: 148px; top: 468px; width: 784px; height: 1428px; border-radius: 74px; background: #160a19; box-shadow: 0 60px 120px -30px rgba(0, 0, 0, 0.75), 0 0 0 2px rgba(255, 255, 255, 0.08); }
+  .screen { position: absolute; left: 12px; top: 12px; width: 760px; height: 1404px; border-radius: 62px; overflow: hidden; background: #fff; }
+  .layer { position: absolute; inset: 0; background: #fff; overflow: hidden; }
+  .layer img { position: absolute; left: 0; top: 0; width: 760px; display: block; will-change: transform; }
+
+  .tap { position: absolute; left: 0; top: 0; width: 96px; height: 96px; margin: -48px 0 0 -48px; border-radius: 50%; background: rgba(43, 19, 48, 0.3); border: 4px solid rgba(255, 255, 255, 0.85); box-shadow: 0 6px 18px rgba(43, 19, 48, 0.35); }
+  .ring { position: absolute; left: 0; top: 0; width: 96px; height: 96px; margin: -48px 0 0 -48px; border-radius: 50%; border: 5px solid var(--pink); }
+
+  .end { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 262px 64px 620px; }
+  .end .logo { display: flex; align-items: center; gap: 30px; }
+  .end .logo svg { width: 132px; height: 132px; }
+  .end .logo span { font-family: 'Instrument', Georgia, serif; font-size: 136px; line-height: 1; letter-spacing: -0.01em; }
+  .end .m { margin-top: 70px; font-size: 92px; line-height: 1.05; font-weight: 800; letter-spacing: -0.035em; }
+  .end .a { margin-top: 6px; font-family: 'Instrument', Georgia, serif; font-style: italic; font-size: 124px; line-height: 1.05; color: var(--yellow); }
+  .end .pill { margin-top: 56px; background: var(--pink); border-radius: 999px; padding: 30px 64px; font-size: 46px; font-weight: 800; letter-spacing: -0.015em; box-shadow: 0 26px 46px -18px rgba(194, 24, 91, 0.8); }
+  .end .fine { margin-top: 34px; font-size: 24px; font-weight: 500; color: #a892ab; }
+</style>
+<body>
+  <div class="stage">
+    <span class="glow" style="width:760px;height:760px;left:-300px;bottom:-260px;background:#c2185b;opacity:.4"></span>
+    <span class="glow" style="width:520px;height:520px;right:-220px;top:520px;background:#c2185b;opacity:.22"></span>
+
+    <div class="cap" id="cap"><div class="m"></div><div class="a"></div></div>
+
+    <div class="phone" id="phone">
+      <div class="screen">
+        <div class="layer" id="l-q">
+          <img src="shots/q0.png" alt=""><img src="shots/q1.png" alt=""><img src="shots/q2.png" alt=""><img src="shots/q3.png" alt="">
+        </div>
+        <div class="layer" id="l-scan"><img src="shots/scan.png" alt=""></div>
+        <div class="layer" id="l-build"></div>
+        <div class="layer" id="l-result"><img src="shots/result.png" alt=""></div>
+        <div class="layer" id="l-unlock"><img src="shots/unlock.png" alt=""></div>
+      </div>
+    </div>
+
+    <div class="ring" id="ring"></div>
+    <div class="tap" id="tap"></div>
+
+    <div class="end" id="end">
+      <div class="logo">
+        <svg viewBox="0 0 32 32"><rect width="32" height="32" rx="10" fill="#C2185B"/><path d="M9 23.5c0-8.5 5.5-13.5 14.5-14.5 0 9.5-5.5 14.5-14.5 14.5z" fill="#fff"/><path d="M9.5 23c3-4.2 6.2-7.2 10.5-9.5" fill="none" stroke="#C2185B" stroke-width="1.8" stroke-linecap="round"/><circle cx="23.5" cy="23" r="2.6" fill="#FFD23F"/></svg>
+        <span>fitovela</span>
+      </div>
+      <div class="m" id="end-m"></div>
+      <div class="a" id="end-a"></div>
+      <div class="pill" id="end-pill"></div>
+      <div class="fine" id="end-fine"></div>
+    </div>
+  </div>
+
+  <script src="shots/build.js"></script>
+  <script>
+    const LANG = new URLSearchParams(location.search).get('lang') === 'hi' ? 'hi' : 'en';
+    const K = 760 / 390; // screenshot pixels on the stage per CSS pixel in the app
+
+    // ---- The running order, in seconds -------------------------------------
+    const T = {
+      scan: 3.2,     // "Reading your answers"
+      build: 5.1,    // "Building your report"
+      result: 7.4,   // her type
+      scores: 9.6,   // a score for each area
+      weeks: 11.0,   // "Your first 4 weeks"
+      diet: 14.9,    // the locked diet
+      plans: 16.6,   // the three prices
+      end: 18.6,     // closing card
+    };
+    window.DURATION = 21.2;
+    const TAPS = [0.75, 1.3, 1.85]; // when each box is ticked
+    const TAP_AT = [{ x: 318, y: 262 }, { x: 318, y: 329 }, { x: 318, y: 396 }]; // where, in app CSS pixels
+
+    // ---- Captions ------------------------------------------------------------
+    const CAPTIONS = {
+      en: [
+        [0, 'Weight not moving?', 'Tick what sounds like you.'],
+        [T.scan, 'It reads your answers', 'and picks your next questions.'],
+        [T.build, '2 minutes. No blood test.', 'Checked across 4 systems.'],
+        [T.result, 'Your symptoms get a name.', 'Your type.'],
+        [T.scores, 'PCOS, insulin, inflammation, thyroid.', 'A score for each.'],
+        [T.weeks, 'What many women notice', 'in the first 4 weeks.'],
+        [T.diet, 'Then your diet plan,', 'made for your type.'],
+        [T.plans, 'Ghar ka khana. One-time price.', 'From ₹199.'],
+      ],
+      hi: [
+        [0, 'Weight kam nahi ho raha?', 'Jo sach hai, tick karein.'],
+        [T.scan, 'Yeh aapke jawab padhta hai', 'aur agle sawaal chunta hai.'],
+        [T.build, '2 minute. Koi blood test nahi.', '4 systems par check.'],
+        [T.result, 'Aapke symptoms ka ek naam hai.', 'Aapka type.'],
+        [T.scores, 'PCOS, insulin, inflammation, thyroid.', 'Har ek ka score.'],
+        [T.weeks, 'Pehle 4 hafton mein', 'kya badal sakta hai.'],
+        [T.diet, 'Phir aapka diet plan,', 'aapke type ke liye.'],
+        [T.plans, 'Ghar ka khana. Ek baar ka payment.', 'Sirf ₹199 se.'],
+      ],
+    }[LANG];
+    const END = {
+      en: { m: 'Find your type.', a: 'Free. 2 minutes.', pill: 'Take the free check', fine: 'A symptom assessment, not a medical diagnosis.' },
+      hi: { m: 'Apna type jaanein.', a: 'Free. 2 minute.', pill: 'Free check shuru karein', fine: 'A symptom assessment, not a medical diagnosis.' },
+    }[LANG];
+
+    // ---- Small helpers -------------------------------------------------------
+    const $ = (id) => document.getElementById(id);
+    const clamp = (v) => Math.max(0, Math.min(1, v));
+    const prog = (t, a, b) => clamp((t - a) / (b - a));
+    const ease = (p) => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2);
+    const lerp = (a, b, p) => a + (b - a) * p;
+    /** Value at time t along [[time, value], ...], easing between neighbours. */
+    function along(keys, t) {
+      if (t <= keys[0][0]) return keys[0][1];
+      for (let i = 1; i < keys.length; i += 1) {
+        if (t <= keys[i][0]) return lerp(keys[i - 1][1], keys[i][1], ease(prog(t, keys[i - 1][0], keys[i][0])));
+      }
+      return keys[keys.length - 1][1];
+    }
+
+    // ---- Set-up ---------------------------------------------------------------
+    const buildLayer = $('l-build');
+    const buildImgs = [];
+    for (let i = 0; i < window.BUILD_FRAMES; i += 1) {
+      const img = new Image();
+      img.src = `shots/build${String(i).padStart(2, '0')}.jpg`;
+      img.alt = '';
+      buildLayer.appendChild(img);
+      buildImgs.push(img);
+    }
+    const qImgs = [...$('l-q').querySelectorAll('img')];
+    const resultImg = $('l-result').querySelector('img');
+    const unlockImg = $('l-unlock').querySelector('img');
+    $('end-m').textContent = END.m;
+    $('end-a').textContent = END.a;
+    $('end-pill').textContent = END.pill;
+    $('end-fine').textContent = END.fine;
+
+    const capM = $('cap').querySelector('.m');
+    const capA = $('cap').querySelector('.a');
+    // Shrink any caption line that is wider than the safe width.
+    function fitted(el, text, base) {
+      el.style.fontSize = `${base}px`;
+      el.textContent = text;
+      const w = el.scrollWidth > 0 ? el.getBoundingClientRect().width : 0;
+      const probe = document.createElement('span');
+      probe.style.cssText = `position:absolute;visibility:hidden;white-space:nowrap;font:${getComputedStyle(el).font};letter-spacing:${getComputedStyle(el).letterSpacing}`;
+      probe.textContent = text;
+      document.body.appendChild(probe);
+      const width = probe.getBoundingClientRect().width;
+      probe.remove();
+      return width > 960 ? Math.floor((base * 960) / width) : base;
+    }
+    let capSizes = [];
+
+    window.ready = (async () => {
+      await document.fonts.ready;
+      await Promise.all([...document.images].map((img) => img.decode().catch(() => {})));
+      capSizes = CAPTIONS.map(([, m, a]) => [fitted(capM, m, 58), fitted(capA, a, 86)]);
+      await window.seek(0);
+      return true;
+    })();
+
+    // The screens slide in from the right, one after another.
+    const LAYERS = [
+      ['l-q', 0],
+      ['l-scan', T.scan],
+      ['l-build', T.build],
+      ['l-result', T.result],
+      ['l-unlock', T.plans],
+    ];
+    const SLIDE = 0.42;
+
+    // How far the report and the paywall are scrolled, in app CSS pixels.
+    const RESULT_SCROLL = [
+      [T.result, 14],
+      [T.scores - 0.1, 26],
+      [T.scores + 0.6, 384],
+      [T.weeks - 0.1, 392],
+      [T.weeks + 0.7, 996],
+      [T.diet - 0.1, 1170],
+      [T.diet + 0.7, 1832],
+      [T.plans, 1840],
+    ];
+    const UNLOCK_SCROLL = [
+      [T.plans, 1092],
+      [T.end, 1112],
+    ];
+
+    // ---- Draw one moment ------------------------------------------------------
+    window.seek = (t) => {
+      // Screens
+      LAYERS.forEach(([id, enter], i) => {
+        const el = $(id);
+        const inP = i === 0 ? 1 : ease(prog(t, enter, enter + SLIDE));
+        const next = LAYERS[i + 1];
+        const outP = next ? ease(prog(t, next[1], next[1] + SLIDE)) : 0;
+        el.style.visibility = inP === 0 || outP === 1 ? 'hidden' : 'visible';
+        el.style.transform = `translateX(${(1 - inP) * 100 - outP * 28}%)`;
+        el.style.opacity = String(1 - outP * 0.5);
+      });
+
+      // The question: one more tick after each tap
+      const ticks = TAPS.filter((x) => t >= x).length;
+      qImgs.forEach((img, i) => { img.style.opacity = i === ticks ? '1' : '0'; });
+
+      // "Building your report": play the captured frames
+      const frame = Math.round(prog(t, T.build + 0.35, T.result - 0.35) * (buildImgs.length - 1));
+      buildImgs.forEach((img, i) => { img.style.opacity = i === frame ? '1' : '0'; });
+
+      // Scrolling
+      resultImg.style.transform = `translateY(${-along(RESULT_SCROLL, t) * K}px)`;
+      unlockImg.style.transform = `translateY(${-along(UNLOCK_SCROLL, t) * K}px)`;
+
+      // The finger
+      const tap = $('tap');
+      const ring = $('ring');
+      const first = TAPS[0];
+      const last = TAPS[TAPS.length - 1];
+      const keysX = [[first - 0.55, 250], ...TAPS.flatMap((x, i) => [[x - 0.08, TAP_AT[i].x], [x + 0.12, TAP_AT[i].x]]), [last + 0.7, 330]];
+      const keysY = [[first - 0.55, 470], ...TAPS.flatMap((x, i) => [[x - 0.08, TAP_AT[i].y], [x + 0.12, TAP_AT[i].y]]), [last + 0.7, 520]];
+      const px = 160 + along(keysX, t) * K;
+      const py = 480 + along(keysY, t) * K;
+      const shown = Math.min(prog(t, first - 0.55, first - 0.3), 1 - prog(t, last + 0.35, last + 0.7));
+      const press = Math.max(...TAPS.map((x) => 1 - Math.min(1, Math.abs(t - x) / 0.12)));
+      tap.style.opacity = String(shown);
+      tap.style.transform = `translate(${px}px, ${py}px) scale(${1 - 0.22 * press})`;
+      const since = TAPS.map((x) => t - x).filter((d) => d >= 0 && d < 0.45).pop();
+      if (since === undefined) ring.style.opacity = '0';
+      else {
+        const p = since / 0.45;
+        const hit = TAP_AT[TAPS.findIndex((x) => Math.abs(t - x - since) < 1e-6)];
+        ring.style.opacity = String(1 - p);
+        ring.style.transform = `translate(${160 + hit.x * K}px, ${480 + hit.y * K}px) scale(${1 + p * 1.1})`;
+      }
+
+      // Captions
+      let idx = 0;
+      CAPTIONS.forEach(([from], i) => { if (t >= from) idx = i; });
+      const [from, m, a] = CAPTIONS[idx];
+      const until = CAPTIONS[idx + 1] ? CAPTIONS[idx + 1][0] : T.end;
+      const inP = idx === 0 ? 1 : ease(prog(t, from, from + 0.3));
+      const outP = prog(t, until - 0.16, until);
+      capM.textContent = m;
+      capA.textContent = a;
+      if (capSizes[idx]) {
+        capM.style.fontSize = `${capSizes[idx][0]}px`;
+        capA.style.fontSize = `${capSizes[idx][1]}px`;
+      }
+      $('cap').style.opacity = String(Math.min(inP, 1 - outP));
+      $('cap').style.transform = `translateY(${(1 - inP) * 22}px)`;
+
+      // Closing card
+      const endP = ease(prog(t, T.end, T.end + 0.5));
+      $('phone').style.transform = `translateY(${endP * 260}px) scale(${1 - endP * 0.06})`;
+      $('phone').style.opacity = String(1 - endP);
+      const cardP = ease(prog(t, T.end + 0.25, T.end + 0.8));
+      $('end').style.opacity = String(cardP);
+      $('end').style.transform = `translateY(${(1 - cardP) * 40}px)`;
+
+      // Two animation frames, so the picture is painted before it is photographed.
+      return new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve(true))));
+    };
+  </script>
+</body>
+</html>
