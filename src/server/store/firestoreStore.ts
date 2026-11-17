@@ -95,7 +95,7 @@ export const firestoreStore: Store = {
     return snap.docs.map(d => d.data() as DeliveryRecord);
   },
   async listPendingOrderAlerts() {
-    const snap = await firestore().collection('deliveries').where('state', 'in', ['pending', 'failed']).limit(25).get();
+    const snap = await firestore().collection('deliveries').where('state', 'in', ['pending', 'failed']).limit(10).get();
     return snap.docs.map(d => (d.data() as DeliveryRecord).order).filter((o): o is PaidOrderSummary => Boolean(o));
   },
   async saveRefund(refund) {

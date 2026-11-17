@@ -29,6 +29,7 @@ export async function POST(req: Request) {
   let event: CashfreeEvent;
   try {
     event = JSON.parse(raw);
+    if (!event || typeof event !== 'object' || Array.isArray(event)) throw new Error('Invalid event');
   } catch {
     return NextResponse.json({ error: 'Bad body.' }, { status: 400 });
   }

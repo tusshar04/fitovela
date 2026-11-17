@@ -106,7 +106,7 @@ export const fileStore: Store = {
     return (await list<DeliveryRecord>('deliveries')).filter(d => d.state === 'sending' || d.state === 'uncertain');
   },
   async listPendingOrderAlerts() {
-    return (await list<DeliveryRecord>('deliveries')).filter(d => d.order && ['pending', 'failed'].includes(d.state)).slice(0, 25).map(d => d.order!);
+    return (await list<DeliveryRecord>('deliveries')).filter(d => d.order && ['pending', 'failed'].includes(d.state)).slice(0, 10).map(d => d.order!);
   },
   saveRefund: (refund) => atomic(async () => {
     if (!(await read<RefundRecord>('refunds', refund.id))) await write('refunds', refund.id, refund);

@@ -18,7 +18,7 @@ export function parseSpendRows(input: unknown, date: string): SpendRow[] {
     const range = typeof r[HOUR_FIELD] === 'string' ? r[HOUR_FIELD] as string : '';
     const hour = Number(range.slice(0, 2));
     const spend = Number(r.spend);
-    if (r.date_start !== date || r.date_stop !== date || !/^\d{2}:00:00 - \d{2}:59:59$/.test(range) || hour > 23 || !Number.isFinite(spend) || spend < 0 || r.spend == null || !/^\d+$/.test(String(r.ad_id))) throw new Error('Invalid Meta spend row');
+    if (r.date_start !== date || r.date_stop !== date || !/^\d{2}:00:00 - \d{2}:59:59$/.test(range) || range.slice(0, 2) !== range.slice(11, 13) || hour > 23 || !Number.isFinite(spend) || spend < 0 || r.spend == null || r.spend === '' || !/^\d+$/.test(String(r.ad_id))) throw new Error('Invalid Meta spend row');
     return { adId: String(r.ad_id), adName: String(r.ad_name ?? r.ad_id), campaignId: String(r.campaign_id), hour, spend };
   });
 }
