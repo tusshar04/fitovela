@@ -35,7 +35,7 @@ export function JourneyTimeline({ stops }: { stops: JourneyStop[] }) {
     <div>
       <Stops stops={first} />
       {later.length > 0 ? (
-        <details className="more-weeks">
+        <details className="more-weeks" data-ev="more_weeks">
           <summary>
             <span>Show weeks {later.map((s) => s.week).join(' and ')}</span>
             <Plus />
@@ -49,7 +49,7 @@ export function JourneyTimeline({ stops }: { stops: JourneyStop[] }) {
 
 export function JourneyCard({ stops }: { stops: JourneyStop[] }) {
   return (
-    <section className="sec">
+    <section data-sec="first_weeks" className="sec">
       <h2 className="h2">
         Your first <span className="accent">{FIRST_MONTH_WEEKS} weeks</span>
       </h2>

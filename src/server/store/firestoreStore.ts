@@ -89,6 +89,12 @@ export const firestoreStore: Store = {
   async addEvent(event: EventRecord) {
     await firestore().collection('events').add(event);
   },
+  async addEvents(events: EventRecord[]) {
+    if (events.length === 0) return;
+    const batch = firestore().batch();
+    for (const e of events) batch.create(firestore().collection('events').doc(), e);
+    await batch.commit();
+  },
   async claimDelivery(id, attempt, now) {
     const ref = firestore().collection('deliveries').doc(id);
     return firestore().runTransaction(async tx => {

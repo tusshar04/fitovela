@@ -34,6 +34,16 @@ The existing `fitovela-app` service identity can read all four secrets. No secre
 - Recovery runs in bounded batches from the pending queue, not by scanning all customers. The launch cutoff prevents old orders being announced as new. Demo orders are never sent.
 - The existing email sender still has its prior delivery/retry behavior. This task does not claim that a Slack alert proves an email arrived.
 
+## Behaviour events and the drop-off report
+
+Separate from the hourly Slack report and from Meta. Since FTV-029 ([D-026](DECISIONS.md)) every page writes behaviour events to the `events` collection: `page_view`, `engaged` (3, 10, 20, 30, 60, 120, 300 seconds on screen), `first_touch`, `scroll` (25/50/75/90/100%), `section_view`, `tap`, `tap_dead` (a tap on something that is not a button), `rage_tap`, `field_focus`, `field_blur`, `toggle`, `page_exit`, `perf`, `js_error`, and the named moments `age_tap`, `session_error`, `question_view`, `question_back`, `save_error`, `form_error`, `lead_submit`, `lead_skip_tap`, `tier_select`, `checkout_tap`, `checkout_error`, `offer_expired`. Browser events carry `source: 'browser'` and a `visitId`; server events (`landing_view`, `age_selected`, `question_answered`, `result_view`, `unlock_view`, `order_created`, `payment_confirmed` and the rest) are unchanged.
+
+`landing_view` is counted on the server and so includes Meta's crawler (`ua: meta_crawler`) and pages the Facebook app loads before a tap. The count of people is the browser's `page_view`.
+
+Read it with `node scripts/funnel-report.mjs` (today in IST; `--hours 6`, `--since <time>`, `--ad <ad id>`). It needs `gcloud auth login` as someone who can read Firestore in `fitovela-prod`, prints totals only, and changes nothing. No event holds an answer, a typed value, a contact detail or a plan link, and none of it is sent to Meta. On the assessment, plan and account pages a tap is stored without its position or the element's state, because either would give away the answer; off the landing page a tap that misses every button is stored by its tag alone, because some blocks appear only for certain answers; `checkout_error` stores a short code, not the message.
+
+Known limit: the per-visitor and per-address brakes on `/api/event` (400 and 4,000 events a minute) rely on Cloudflare's visitor address. Someone calling the Cloud Run address directly can get round them; the body is still capped at 16 KB and 40 events, and only the listed names are stored.
+
 ## Hourly report
 
 Installed schedules: `fitovela-hourly-report` at `5 * * * *` in `Asia/Kolkata`; `fitovela-order-alert-recovery` every five minutes. `scripts/configure-reporting.py` defaults to inspection; `--apply` installs only these two named jobs. Requests use the reporting secret. The routes reject missing/wrong secrets with 401.

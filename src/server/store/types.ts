@@ -68,8 +68,12 @@ export type PaidOrderSummary = Pick<Order, 'id' | 'sessionId' | 'tier' | 'amount
 export interface EventRecord {
   name: string;
   sessionId?: string;
+  /** A random number the browser keeps for one visit. It links what she did before she tapped her age to the session that follows. */
+  visitId?: string;
   at: string;
   props?: Record<string, string | number | boolean>;
+  /** 'browser' for behaviour events sent by the page; absent for events the server wrote itself. */
+  source?: 'browser';
 }
 
 /** Operational records never contain assessment answers or private plan links. */
@@ -108,6 +112,8 @@ export interface Store {
   deleteOtp(phone: string): Promise<void>;
 
   addEvent(event: EventRecord): Promise<void>;
+  /** Stores a batch of browser events in one write. */
+  addEvents(events: EventRecord[]): Promise<void>;
   claimDelivery(id: string, attempt: string, now: string): Promise<boolean>;
   finishDelivery(id: string, attempt: string, state: DeliveryRecord['state'], now: string): Promise<void>;
   listUncertainDeliveries(): Promise<DeliveryRecord[]>;

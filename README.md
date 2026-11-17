@@ -21,6 +21,7 @@ Live at https://fitovela.com (Cloud Run in Mumbai, GCP project `fitovela-prod`, 
 ```
 scripts/deploy.sh            # deploy the tip of main: build, candidate, checks, then traffic
 scripts/deploy.sh rollback   # list revisions and how to go back to one
+node scripts/funnel-report.mjs   # where visitors drop, tap and stall today (read-only; --hours N, --ad ID)
 ```
 
 Secrets are in Secret Manager; none are in this repository. Local development needs none: without keys it uses a demo checkout, writes emails to `.data/outbox/` and shows login codes on screen.

@@ -291,3 +291,20 @@ IDs D-004 to D-006 are used by proposals in draft [PR #2](https://github.com/tus
 Assign the next stable ID and record status, date, owner, choice, reason, evidence, implementation status, and revisit conditions. Identify who accepted a decision; do not represent an agent suggestion as founder approval.
 
 For a changed decision, preserve the old record, mark it superseded, and link to the replacement. Record rejected alternatives only when the reason will prevent repeated debate. Evidence can be a dated founder instruction, PR/commit, primary source, experiment, or reproducible check.
+
+## D-026 — Record visitor behaviour in our own event log, never her answers
+
+- **Status:** accepted; implemented (FTV-029). Release state is in [STATE.md](STATE.md).
+- **Date:** 2026-11-18.
+- **Decision owner:** Tushar.
+- **Decision:** The site records how every page is used: page views, seconds on screen, scroll depth, sections seen, taps (on buttons and on things that are not buttons), form boxes touched, load speed and script errors, plus named moments in the assessment and on the prices page. The record goes to the `events` collection in our own database and is read with `scripts/funnel-report.mjs`.
+- **Reason:** Founder instruction of 2026-11-18, after the first 40 minutes of ads produced visits and no assessment starts and the site could not say what those visitors did: "capture as many events as we can ... we need to learn from user behaviours drops and clicks everything".
+- **Choices made by the agent, not the founder:**
+  - *Answers stay out of the event log.* An event names the question she is on, never the option she picked or anything she typed; on the assessment, plan and account pages a tap is recorded by the kind of element only. Her answers are already saved with her session, so nothing is lost. Email addresses and long numbers are masked before an event is stored.
+  - *First-party only.* Nothing in this log is sent to Meta or any other company. The Meta Pixel and Conversions API remain off ([AD_OPERATIONS.md](AD_OPERATIONS.md)).
+  - *No new cookie.* A random visit number is kept in the browser tab's session storage and links what she did before tapping her age to the session that follows.
+  - *The browser cannot write funnel or payment events.* It may send only a fixed list of behaviour names; "payment_confirmed" and the other server events can be written by the server alone.
+  - *The privacy page was reworded* to say this is collected. The founder has not read the new wording.
+- **Evidence:** Founder message. On 2026-11-18 production had 61 landing loads from the Facebook and Instagram apps and no way to tell a preloaded page from a person who read it.
+- **Implementation:** `src/server/events.ts`, `src/app/api/event/route.ts`, `src/ui/track.ts`, `src/ui/Tracker.tsx`, `scripts/funnel-report.mjs`, `tests/events.test.ts`; `data-sec` and `data-ev` marks on the landing, report and prices pages.
+

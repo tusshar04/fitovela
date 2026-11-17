@@ -1,4 +1,6 @@
 import type { Category, Hook } from '@/domain/types';
+import { headers } from 'next/headers';
+import { uaInfo } from '@/server/events';
 import { logEvent } from '@/server/session';
 import { asCategory, asHook, sanitizeAd } from '@/server/validate';
 import { AgeButtons } from '@/ui/AgeButtons';
@@ -25,7 +27,7 @@ function Hero({ hook, category }: { hook: Hook; category: Category }) {
         : { title: 'Dieting hard. Weight still stuck?', accent: 'Find out why.', sub: 'Generic diets ignore your hormones. Answer about 18 questions and see which of 4 hidden causes is holding you back.' };
 
   return (
-    <div className="stack" style={{ alignItems: 'center', gap: 12 }}>
+    <div className="stack" data-sec="hero" style={{ alignItems: 'center', gap: 12 }}>
       <h1 className="center" style={{ textWrap: 'balance' }}>
         <span style={{ display: 'block', fontSize: 32, lineHeight: 1.08, fontWeight: 800, letterSpacing: '-0.032em' }}>{copy.title}</span>
         <span className="accent" style={{ display: 'block', marginTop: 6, fontSize: 42 }}>
@@ -43,7 +45,7 @@ function Visual({ hook }: { hook: Hook }) {
   if (hook === 'b') {
     return (
       <>
-        <section className="grid2" style={{ marginTop: 22 }}>
+        <section data-sec="visual" className="grid2" style={{ marginTop: 22 }}>
           {AREAS.map((a) => (
             <div key={a} className="check-tile">
               <div style={{ fontSize: 14.5, fontWeight: 700 }}>{a}</div>
@@ -68,7 +70,7 @@ function Visual({ hook }: { hook: Hook }) {
     ];
     return (
       <>
-        <section className="grid3" style={{ marginTop: 22 }}>
+        <section data-sec="visual" className="grid3" style={{ marginTop: 22 }}>
           {plates.map((p) => (
             <div key={p.label} className="stack" style={{ gap: 6 }}>
               <div style={{ position: 'relative' }}>
@@ -90,7 +92,7 @@ function Visual({ hook }: { hook: Hook }) {
     );
   }
   return (
-    <section className="plum stack" style={{ marginTop: 22, padding: 18, gap: 14 }}>
+    <section data-sec="visual" className="plum stack" style={{ marginTop: 22, padding: 18, gap: 14 }}>
       <div className="row between" style={{ gap: 10 }}>
         <span style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: '0.14em', color: 'var(--yellow)' }}>YOUR FREE REPORT</span>
         <span className="row dim" style={{ gap: 5, fontSize: 11.5, fontWeight: 500 }}>
@@ -123,7 +125,11 @@ export default async function Landing({ searchParams }: { searchParams: Promise<
   const hook = asHook(params.h);
   const category = asCategory(params.c);
   const ad = sanitizeAd(params);
-  await logEvent('landing_view', undefined, { hook, category });
+  // Counted on the server, so it includes Meta's crawler and pages an app loads ahead of a tap.
+  // `ua` tells those apart; the browser's own "page_view" is the count of pages a person saw.
+  const h = await headers();
+  const adId = /^[\w-]{1,40}$/.test(ad.utm_content ?? '') ? ad.utm_content : undefined;
+  await logEvent('landing_view', undefined, { hook, category, ...uaInfo(h.get('user-agent')), ...(adId ? { ad: adId } : {}), ...(ad.fbclid ? { fb: true } : {}), ...(/prefetch|preview/i.test(`${h.get('sec-purpose') ?? ''} ${h.get('purpose') ?? ''} ${h.get('x-purpose') ?? ''}`) ? { prefetch: true } : {}) });
 
   return (
     <main className="screen pad" style={{ paddingBottom: 18 }}>
@@ -137,7 +143,7 @@ export default async function Landing({ searchParams }: { searchParams: Promise<
         <Visual hook={hook} />
       </div>
 
-      <div className="stack" style={{ gap: 12 }}>
+      <div className="stack" data-sec="age_buttons" style={{ gap: 12 }}>
         <div className="trust">
           <span>No sign-up</span>
           <span aria-hidden>·</span>

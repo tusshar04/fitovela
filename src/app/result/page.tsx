@@ -40,7 +40,7 @@ export default async function ResultPage() {
           </div>
         </div>
 
-        <section className="plum stack" style={{ padding: 22, gap: 16 }}>
+        <section data-sec="type" className="plum stack" style={{ padding: 22, gap: 16 }}>
           <div className="stack" style={{ gap: 8 }}>
             <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: '0.14em', color: 'var(--yellow)' }}>YOUR SYMPTOMS MATCH</div>
             <h1 style={{ fontSize: 29, lineHeight: 1.1, fontWeight: 800, letterSpacing: '-0.028em' }}>
@@ -73,7 +73,7 @@ export default async function ResultPage() {
           <p style={{ fontSize: 14, lineHeight: 1.55, color: '#E6D9E8' }}>{content.summary}</p>
         </section>
 
-        <section className="outline stack" style={{ padding: '16px 18px 6px', gap: 4 }}>
+        <section data-sec="systems" className="outline stack" style={{ padding: '16px 18px 6px', gap: 4 }}>
           <h2 style={{ fontSize: 15, fontWeight: 700, letterSpacing: '-0.01em', paddingBottom: 6 }}>What we found across 4 systems</h2>
           {AREAS.map((area) => (
             <div key={area} className="sys-row">
@@ -84,7 +84,7 @@ export default async function ResultPage() {
           ))}
         </section>
 
-        <section className="sec">
+        <section data-sec="means" className="sec">
           <h2 className="h2">
             What this means <span className="accent">for you</span>
           </h2>
@@ -100,7 +100,7 @@ export default async function ResultPage() {
 
         <JourneyCard stops={a.journey} />
 
-        <section className="outline stack" style={{ padding: '16px 18px 4px', gap: 12, marginTop: 10 }}>
+        <section data-sec="bmi" className="outline stack" style={{ padding: '16px 18px 4px', gap: 12, marginTop: 10 }}>
           <div className="row between" style={{ gap: 12 }}>
             <div className="row" style={{ gap: 10, alignItems: 'baseline' }}>
               <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--muted)' }}>Your BMI</span>
@@ -124,7 +124,7 @@ export default async function ResultPage() {
             </div>
           </div>
           {energy.week12LossKg > 0 ? (
-            <details className="numbers">
+            <details className="numbers" data-ev="twelve_week_numbers">
               <summary>
                 <span>See your 12-week numbers</span>
                 <Plus size={18} stroke={2} />
@@ -139,7 +139,7 @@ export default async function ResultPage() {
         </section>
 
         {a.eligibility.eligible ? (
-          <section className="locked-card">
+          <section data-sec="locked_diet" className="locked-card">
             <div className="head">
               <h2 style={{ fontSize: 16.5, lineHeight: 1.25, fontWeight: 700, letterSpacing: '-0.012em' }}>Your diet for this type</h2>
               <span className="lock-pill">
@@ -163,25 +163,25 @@ export default async function ResultPage() {
             </div>
           </section>
         ) : (
-          <section className="advice stack" style={{ gap: 8, padding: 18, borderRadius: 20 }}>
+          <section data-sec="talk_first" className="advice stack" style={{ gap: 8, padding: 18, borderRadius: 20 }}>
             <h2 style={{ fontSize: 17, fontWeight: 700 }}>Please talk to us before starting a plan</h2>
             <p>
               You told us {a.eligibility.reasons.map((r) => EXCLUSION_LABEL[r]).join(', and ')}. A self-serve diet plan is not the right fit without a professional looking at your case first.
             </p>
-            <a className="btn" href="/unlock" style={{ marginTop: 6 }}>
+            <a className="btn" href="/unlock" data-ev="see_next" style={{ marginTop: 6 }}>
               See what happens next
             </a>
           </section>
         )}
 
-        <p className="small">
+        <p className="small" data-sec="disclaimer">
           This report is a symptom assessment based on your answers, not a medical diagnosis. To confirm, ask your doctor about these tests: {SUGGESTED_TESTS.join(', ')}.
         </p>
       </div>
 
       {a.eligibility.eligible ? (
         <div className="sticky-cta">
-          <a className="btn" href="/unlock">
+          <a className="btn" href="/unlock" data-ev="unlock_cta">
             Unlock my diet plan
             <ChevronRight size={18} stroke={2.6} />
           </a>

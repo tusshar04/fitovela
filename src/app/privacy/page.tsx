@@ -15,7 +15,7 @@ export default function PrivacyPage() {
         <li><b>Your contact details:</b> your email address and mobile number, if you give them.</li>
         <li><b>Your order:</b> which plan you bought, what you paid, and the payment reference from our payment provider. We never see or store your card, UPI or bank details.</li>
         <li><b>Weekly check-ins,</b> if you are on the intensive plan: your weight and the signs you report.</li>
-        <li><b>How you reached us and used the site:</b> the ad or link you came from, and which steps of the assessment you completed.</li>
+        <li><b>How you reached us and used the site:</b> the ad or link you came from; which pages and steps you saw and how long you spent on them; how far you scrolled and which buttons you tapped; whether a form box was filled in, but not what you typed; the type of phone and browser you used; and any errors the page ran into.</li>
       </ul>
 
       <h2>Why we use it</h2>
@@ -23,7 +23,7 @@ export default function PrivacyPage() {
         <li>To build your report and your diet plan, and to decide which plans are safe to offer you.</li>
         <li>To send your report and plan to your email address, and to log you in with a one-time code sent to your mobile number.</li>
         <li>To take payment, give refunds and keep the records the law requires.</li>
-        <li>To see where people leave the assessment so we can improve it. For this we look at totals, not at individuals.</li>
+        <li>To see where people leave the site and what they tap, so we can improve it. For this we look at totals, not at individuals. This record stays with us and is not sent to advertisers.</li>
         <li>To send you recipes and offers, only if you ticked that box. You can stop these at any time.</li>
       </ul>
       <p>We use your information because you asked for a report or a plan and agreed to this policy when you started the assessment.</p>
@@ -38,7 +38,7 @@ export default function PrivacyPage() {
       <p>We will also disclose information if the law requires us to.</p>
 
       <h2>Cookies</h2>
-      <p>We set two cookies that the site needs to work: one keeps your assessment together while you answer it, and one keeps you logged in after you enter your one-time code. We do not set advertising cookies.</p>
+      <p>We set two cookies that the site needs to work: one keeps your assessment together while you answer it, and one keeps you logged in after you enter your one-time code. We do not set advertising cookies. Your browser also keeps a random number for the length of your visit, so that we can count one visit as one visit. It is not a cookie, it holds nothing about you, and it is gone when you close the tab.</p>
 
       <h2>How long we keep it</h2>
       <p>We keep your answers, report and plan so that you can come back to them. Ask us to delete them and we will, within 30 days. We keep order and payment records for as long as tax law requires, even after a deletion request.</p>

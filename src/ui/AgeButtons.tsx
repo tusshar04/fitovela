@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import type { AgeBand, Category, Hook } from '@/domain/types';
 import { ChevronDown, ChevronRight } from './bits';
+import { track } from './track';
 
 const BANDS: { id: AgeBand; label: string }[] = [
   { id: '18-29', label: '18–29' },
@@ -20,11 +21,15 @@ export function AgeButtons({ hook, category, ad }: { hook: Hook; category: Categ
   async function start(ageBand: AgeBand) {
     setBusy(ageBand);
     setError('');
+    track('age_tap', { band: ageBand }, true);
+    let status = 0;
     try {
       const res = await fetch('/api/session', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ageBand, hook, category, ad }) });
+      status = res.status;
       if (!res.ok) throw new Error();
       router.push('/quiz');
     } catch {
+      track('session_error', { status }, true);
       setError('Could not start. Check your connection and tap again.');
       setBusy(null);
     }

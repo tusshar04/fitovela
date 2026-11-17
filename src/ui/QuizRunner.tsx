@@ -8,6 +8,7 @@ import { MARKERS, SECTIONS, optionLabel, type Question } from '@/domain/question
 import { areaCounts, markersFrom } from '@/domain/scoring';
 import { asList, isMetrics, type Answers, type AnswerValue, type Metrics } from '@/domain/types';
 import { Bars, Check, ChevronLeft, Lock, Logo, Ring, Spark, Tick } from './bits';
+import { track } from './track';
 
 const CUISINE_PHOTOS: Record<string, string> = {
   south: '/img/leaf.jpg',
@@ -20,9 +21,6 @@ const SIGNAL_NOUN: Record<string, string> = { pcos: 'hormone', insulin: 'insulin
 
 const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
 
-function track(name: string) {
-  fetch('/api/event', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ name }) }).catch(() => {});
-}
 
 export function QuizRunner({ initialAnswers }: { initialAnswers: Answers }) {
   const router = useRouter();
@@ -38,7 +36,11 @@ export function QuizRunner({ initialAnswers }: { initialAnswers: Answers }) {
 
   // Load the stored answer into the draft whenever the question changes.
   useEffect(() => {
-    if (step?.kind === 'question') setDraft(asList(answers[step.question.id]));
+    if (step?.kind === 'question') {
+      setDraft(asList(answers[step.question.id]));
+      // Which question she is looking at (never her answer). The gap to the next event is her time on it.
+      track('question_view', { q: step.question.id, n: questionList.findIndex((x) => x.id === step.question.id) + 1, of: questionList.length, again: answers[step.question.id] !== undefined });
+    }
     if (step?.kind === 'scan') track('scan_view');
     if (step?.kind === 'finding') track('finding_view');
     window.scrollTo(0, 0);
@@ -59,8 +61,12 @@ export function QuizRunner({ initialAnswers }: { initialAnswers: Answers }) {
       .then((res) => {
         if (res.status === 401) router.push('/');
         else if (!res.ok) setSaveError('That answer did not save. Check your connection and try again.');
+        if (!res.ok) track('save_error', { q: id, status: res.status });
       })
-      .catch(() => setSaveError('That answer did not save. Check your connection and try again.'));
+      .catch(() => {
+        track('save_error', { q: id, status: 0 });
+        setSaveError('That answer did not save. Check your connection and try again.');
+      });
     return next;
   }
 
@@ -74,6 +80,7 @@ export function QuizRunner({ initialAnswers }: { initialAnswers: Answers }) {
 
   function goBack() {
     const idx = steps.findIndex((s) => s.key === key);
+    track('question_back', { q: step?.kind === 'question' ? step.question.id : step?.kind, n: idx + 1 });
     if (idx <= 0) router.push('/');
     else setKey(steps[idx - 1].key);
   }
@@ -376,10 +383,15 @@ function MetricsForm({ initial, onSubmit }: { initial: Metrics | null; onSubmit:
     e.preventDefault();
     const a = Number(age);
     const g = Number(goal);
-    if (!(a >= 13 && a <= 90)) return setError('Enter your age in years.');
-    if (!(heightCm >= 120 && heightCm <= 215)) return setError(unit === 'cm' ? 'Enter your height in centimetres, for example 160.' : 'Enter your height in feet and inches, for example 5 and 3.');
-    if (!(w >= 30 && w <= 250)) return setError('Enter your weight in kilograms.');
-    if (!(g >= 30 && g <= 250)) return setError('Enter the weight you want to reach, in kilograms.');
+    // Records which box stopped her, not what she typed.
+    const fail = (field: string, message: string) => {
+      track('form_error', { form: 'metrics', field });
+      setError(message);
+    };
+    if (!(a >= 13 && a <= 90)) return fail('age', 'Enter your age in years.');
+    if (!(heightCm >= 120 && heightCm <= 215)) return fail('height', unit === 'cm' ? 'Enter your height in centimetres, for example 160.' : 'Enter your height in feet and inches, for example 5 and 3.');
+    if (!(w >= 30 && w <= 250)) return fail('weight', 'Enter your weight in kilograms.');
+    if (!(g >= 30 && g <= 250)) return fail('goal', 'Enter the weight you want to reach, in kilograms.');
     setError('');
     onSubmit({ age: Math.round(a), heightCm, weightKg: w, goalKg: g });
   }
@@ -489,16 +501,19 @@ function LeadForm({ onDone }: { onDone: () => void }) {
   async function send(body: Record<string, unknown>) {
     setBusy(true);
     setError(null);
+    track(body.skip ? 'lead_skip_tap' : 'lead_submit');
     try {
       const res = await fetch('/api/session/lead', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
       const data = (await res.json().catch(() => ({}))) as { error?: string; field?: string };
       if (!res.ok) {
+        track('form_error', { form: 'lead', field: data.field ?? 'server', status: res.status });
         setError({ field: data.field, message: data.error ?? 'Something went wrong. Please try again.' });
         setBusy(false);
         return;
       }
       onDone();
     } catch {
+      track('form_error', { form: 'lead', field: 'network', status: 0 });
       setError({ message: 'Could not reach us. Check your connection and try again.' });
       setBusy(false);
     }

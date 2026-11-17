@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
+import { track as trackEvent } from './track';
 import { SUPPORT_EMAIL } from '@/domain/company';
 import { MEDICATION_ADVISORY } from '@/domain/eligibility';
 import { FIRST_MONTH_WEEKS, JOURNEY_FOOTNOTE, type JourneyStop } from '@/domain/journey';
@@ -69,6 +70,18 @@ const FAQ = [
   ['How do refunds work?', `Write to ${SUPPORT_EMAIL} within 7 days of buying and we refund you in full.`],
 ];
 
+function errorCode(message: string): string {
+  if (/intensive/i.test(message)) return 'other';
+  if (/still being confirmed/i.test(message)) return 'payment_pending';
+  if (/went through but/i.test(message)) return 'plan_not_opened';
+  if (/did not go through|not charged/i.test(message)) return 'payment_failed';
+  if (/email/i.test(message)) return 'email';
+  if (/mobile|phone/i.test(message)) return 'phone';
+  if (/payment page did not/i.test(message)) return 'payment_page';
+  if (/could not reach/i.test(message)) return 'network';
+  return 'other';
+}
+
 export function UnlockClient(props: Props) {
   const router = useRouter();
   const [selected, setSelected] = useState<TierId>(DEFAULT_TIER);
@@ -85,6 +98,25 @@ export function UnlockClient(props: Props) {
   const [busy, setBusy] = useState(false);
   const [checkout, setCheckout] = useState<{ orderId: string; amountRupees: number } | null>(null);
   const formRef = useRef<HTMLDivElement>(null);
+
+  // Behaviour log only: which price she picked, when the launch price ran out, and any message she was shown.
+  const firstRender = useRef(true);
+  useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
+    }
+    trackEvent('tier_select', { tier: selected, plan: track });
+  }, [selected, track]);
+  useEffect(() => {
+    // A short code, never the message: some messages name a health reason.
+    if (error) trackEvent('checkout_error', { code: errorCode(error), tier: selected });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [error]);
+  const expired = left <= 0;
+  useEffect(() => {
+    if (expired) trackEvent('offer_expired');
+  }, [expired]);
 
   useEffect(() => {
     const t = setInterval(() => setLeft(Math.max(0, new Date(props.offerEndsAt).getTime() - Date.now())), 1000);
@@ -118,6 +150,7 @@ export function UnlockClient(props: Props) {
   const tier = props.tiers.find((t) => t.id === selected)!;
 
   async function startCheckout() {
+    trackEvent('checkout_tap', { tier: selected, plan: onIntensive ? 'intensive' : 'standard', launch: launchLive, has_email: email.trim().length > 0, has_phone: phone.trim().length > 0 }, true);
     setBusy(true);
     setError('');
     // Stays true once the payment page is taking over, so the button cannot be tapped twice.
@@ -217,19 +250,19 @@ export function UnlockClient(props: Props) {
 
   return (
     <main className="screen">
-      <div className="timer">
+      <div className="timer" data-sec="timer_bar">
         <div className="stack">
           <span className="dim" style={{ fontSize: 11, fontWeight: 500, color: '#D9C9DB' }}>
             {launchLive ? 'Launch price held for' : 'Launch price has ended'}
           </span>
           <span className="clock">{launchLive ? `${mm}:${ss}` : 'Regular price'}</span>
         </div>
-        <button type="button" onClick={() => formRef.current?.scrollIntoView({ block: 'center', behavior: 'smooth' })}>
+        <button type="button" data-ev="timer_get_plan" onClick={() => formRef.current?.scrollIntoView({ block: 'center', behavior: 'smooth' })}>
           Get my plan
         </button>
       </div>
 
-      <section className="stack" style={{ padding: '26px 22px 0', alignItems: 'center', gap: 12 }}>
+      <section data-sec="hero" className="stack" style={{ padding: '26px 22px 0', alignItems: 'center', gap: 12 }}>
         <div className="signal">
           <i />
           <span>{props.typeName}</span>
@@ -248,7 +281,7 @@ export function UnlockClient(props: Props) {
         </div>
       </section>
 
-      <section className="sec" style={{ padding: '30px 22px 0' }}>
+      <section data-sec="first_weeks" className="sec" style={{ padding: '30px 22px 0' }}>
         <h2 className="h2">
           Your first <span className="accent">{FIRST_MONTH_WEEKS} weeks</span>
         </h2>
@@ -256,7 +289,7 @@ export function UnlockClient(props: Props) {
         <p className="small">{JOURNEY_FOOTNOTE}</p>
       </section>
 
-      <section className="stack" style={{ padding: '30px 22px 0', gap: 12 }}>
+      <section data-sec="choose_plan" className="stack" style={{ padding: '30px 22px 0', gap: 12 }}>
         <h2 className="h2">Choose your plan</h2>
         {props.intensive ? (
           <div className="stack" style={{ gap: 10 }}>
@@ -269,7 +302,7 @@ export function UnlockClient(props: Props) {
             ).map((t) => {
               const on = track === t.id;
               return (
-                <button key={t.id} type="button" className={`tier${on ? ' on' : ''}`} style={{ padding: '14px 16px', alignItems: 'flex-start' }} aria-pressed={on} onClick={() => setTrack(t.id)}>
+                <button key={t.id} type="button" className={`tier${on ? ' on' : ''}`} style={{ padding: '14px 16px', alignItems: 'flex-start' }} aria-pressed={on} data-ev={`plan:${t.id}`} onClick={() => setTrack(t.id)}>
                   <span className="radio" style={{ marginTop: 2 }}>
                     <i />
                   </span>
@@ -288,13 +321,13 @@ export function UnlockClient(props: Props) {
         ) : null}
       </section>
 
-      <section className="stack" style={{ padding: '14px 22px 0', gap: 10 }}>
+      <section data-sec="prices" className="stack" style={{ padding: '14px 22px 0', gap: 10 }}>
         {props.intensive ? <div className="step-label">2 · How long</div> : null}
         {props.tiers.map((t) => {
           const on = t.id === selected;
           const price = priceOf(t);
           const button = (
-            <button key={t.id} type="button" className={`tier${on ? ' on' : ''}${t.popular ? ' pop' : ''}`} aria-pressed={on} onClick={() => setSelected(t.id)}>
+            <button key={t.id} type="button" className={`tier${on ? ' on' : ''}${t.popular ? ' pop' : ''}`} aria-pressed={on} data-ev={`tier:${t.id}`} onClick={() => setSelected(t.id)}>
               <span className="radio">
                 <i />
               </span>
@@ -321,7 +354,7 @@ export function UnlockClient(props: Props) {
         })}
       </section>
 
-      <section ref={formRef} className="stack" style={{ padding: '20px 22px 0', gap: 12 }}>
+      <section ref={formRef} data-sec="pay_form" className="stack" style={{ padding: '20px 22px 0', gap: 12 }}>
         <div className="field">
           <label htmlFor="pay-email">Email for your plan</label>
           <input id="pay-email" className="input" type="email" autoComplete="email" inputMode="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} />
@@ -334,7 +367,7 @@ export function UnlockClient(props: Props) {
           </div>
         </div>
         {error ? <p className="error">{error}</p> : null}
-        <button type="button" className="btn" disabled={busy || props.provider === null} onClick={startCheckout}>
+        <button type="button" className="btn" data-ev="pay_main" disabled={busy || props.provider === null} onClick={startCheckout}>
           Get my plan · {rupees(priceOf(tier))}
         </button>
         <div className="center" style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--muted)' }}>
@@ -349,7 +382,7 @@ export function UnlockClient(props: Props) {
         </div>
       </section>
 
-      <section className="stack" style={{ padding: '36px 22px 0', gap: 14 }}>
+      <section data-sec="what_you_get" className="stack" style={{ padding: '36px 22px 0', gap: 14 }}>
         <h2 className="h2">What you get</h2>
         <div className="grid3">
           {[
@@ -374,7 +407,7 @@ export function UnlockClient(props: Props) {
         {props.medicationAdvisory ? <div className="advice">{MEDICATION_ADVISORY}</div> : null}
       </section>
 
-      <section className="stack" style={{ padding: '36px 22px 0' }}>
+      <section data-sec="faq" className="stack" style={{ padding: '36px 22px 0' }}>
         <h2 className="h2" style={{ marginBottom: 6 }}>
           Questions
         </h2>
@@ -389,7 +422,7 @@ export function UnlockClient(props: Props) {
         ))}
       </section>
 
-      <section className="plum stack grow" style={{ marginTop: 36, borderRadius: 0, padding: '30px 22px 26px', gap: 14 }}>
+      <section data-sec="closing" className="plum stack grow" style={{ marginTop: 36, borderRadius: 0, padding: '30px 22px 26px', gap: 14 }}>
         <div className="stack center" style={{ gap: 4 }}>
           <div style={{ fontSize: 24, lineHeight: 1.15, fontWeight: 700, letterSpacing: '-0.022em' }}>
             {tier.name} for <span style={{ color: 'var(--yellow)' }}>{rupees(priceOf(tier))}</span>
@@ -398,7 +431,7 @@ export function UnlockClient(props: Props) {
             One-time payment. No auto-renewal.
           </div>
         </div>
-        <button type="button" className="btn" style={{ boxShadow: 'none' }} disabled={busy || props.provider === null} onClick={startCheckout}>
+        <button type="button" className="btn" style={{ boxShadow: 'none' }} data-ev="pay_bottom" disabled={busy || props.provider === null} onClick={startCheckout}>
           Get my plan
         </button>
         <p className="dim center" style={{ fontSize: 11.5, lineHeight: 1.5 }}>

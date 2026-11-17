@@ -106,6 +106,11 @@ export const fileStore: Store = {
     await fs.mkdir(ROOT, { recursive: true });
     await fs.appendFile(path.join(ROOT, 'events.ndjson'), `${JSON.stringify(event)}\n`);
   },
+  async addEvents(events: EventRecord[]) {
+    if (events.length === 0) return;
+    await fs.mkdir(ROOT, { recursive: true });
+    await fs.appendFile(path.join(ROOT, 'events.ndjson'), events.map((e) => `${JSON.stringify(e)}\n`).join(''));
+  },
   claimDelivery: (id, attempt, now) => atomic(async () => {
     const current = await read<DeliveryRecord>('deliveries', id);
     if (current && current.state !== 'failed' && current.state !== 'pending') return false;

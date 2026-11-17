@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
+import { Tracker } from '@/ui/Tracker';
 import './globals.css';
 
 // Fonts are bundled in src/fonts so a build never depends on downloading them.
@@ -24,7 +25,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${sans.variable} ${serif.variable}`}>
       {/* Browser extensions (Grammarly and others) add attributes to <body>; do not flag that as a mismatch. */}
-      <body suppressHydrationWarning>{children}</body>
+      <body suppressHydrationWarning>
+        {children}
+        <Tracker />
+      </body>
     </html>
   );
 }
