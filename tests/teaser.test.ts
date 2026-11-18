@@ -6,7 +6,7 @@ import type { Answers } from '@/domain/types';
 // Synthetic women. The paywall is told how many signs, how many systems and how strong a match:
 // never her type or which system scored what (D-030).
 const base: Answers = {
-  struggle: 'weight', cycle: 'regular', hormone_signs: ['none'], insulin_signs: ['none'], family: 'no', inflam_signs: ['none'],
+  struggle: 'eat_little', cycle: 'regular', hormone_signs: ['none'], insulin_signs: ['none'], family: 'no', inflam_signs: ['none'],
   thyroid_signs: ['none'], thyroid_dx: 'no', stress: ['none'], metrics: { age: 29, heightCm: 160, weightKg: 72, goalKg: 62 },
   activity: 'sedentary', safety: ['none'], meds: ['none'], cuisine: ['north'], diet: 'veg', avoid: ['none'],
 };
