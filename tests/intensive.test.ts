@@ -6,6 +6,7 @@ import { buildAssessment } from '@/domain/assessment';
 import { isComplete, questionSteps } from '@/domain/flow';
 import { sanitizeAnswers } from '@/server/validate';
 import { INTENSIVE_CEILING_KCAL, INTENSIVE_FLOOR_KCAL, MAX_PACE_KG_PER_WEEK, energyPlan } from '@/domain/energy';
+import type { Eligibility } from '@/domain/eligibility';
 import { checkinFlag, cleanSigns, hasStopSign, intensiveBlocks, intensiveBreakDue, weeksOpen, type Checkin } from '@/domain/intensive';
 import { generatePlan, type PlanInput } from '@/domain/plan/generator';
 import { LIGHT_MEALS } from '@/domain/plan/lightMeals';
@@ -13,7 +14,7 @@ import { MEALS } from '@/domain/plan/meals';
 import type { Answers, Metrics } from '@/domain/types';
 
 const big: Metrics = { age: 35, heightCm: 160, weightKg: 95, goalKg: 70 };
-const eligible = { eligible: true, reasons: [], medicationAdvisory: false };
+const eligible: Eligibility = { eligible: true, reasons: [], cautions: [], medicationAdvisory: false };
 
 const answers = (metrics: Metrics, extra: Partial<Answers> = {}): Answers => ({
   struggle: 'eat_little',
@@ -67,7 +68,7 @@ describe('who can be offered the intensive plan', () => {
     expect(intensiveBlocks(ok)).toEqual([]);
     expect(intensiveBlocks({ ...ok, bmi: 29.9, toLoseKg: 10 })).toEqual(['bmi_below_30']);
     expect(intensiveBlocks({ ...ok, metrics: { ...big, age: 61 } })).toEqual(['age']);
-    expect(intensiveBlocks({ ...ok, eligibility: { ...eligible, eligible: false, reasons: ['kidney'] } })).toEqual(['not_eligible']);
+    expect(intensiveBlocks({ ...ok, eligibility: { ...eligible, eligible: false, reasons: ['pregnant'] } })).toEqual(['not_eligible']);
     expect(intensiveBlocks({ ...ok, toLoseKg: 0 })).toEqual(['nothing_to_lose']);
   });
 
@@ -89,7 +90,17 @@ describe('who can be offered the intensive plan', () => {
     expect(buildAssessment(answers(big))!.intensive.blocks).toEqual([]);
     expect(buildAssessment(answers({ age: 29, heightCm: 162, weightKg: 72, goalKg: 64 }))!.intensive.blocks).toEqual(['bmi_below_30']);
     expect(buildAssessment(answers(big, { safety: ['pregnant'] }))!.intensive.blocks).toContain('not_eligible');
-    expect(buildAssessment(answers(big, { safety: ['eating_disorder'] }))!.intensive.blocks).toContain('not_eligible');
+  });
+
+  it('a woman who can now buy with a caution (D-029) gets the standard plan, never this one', () => {
+    for (const c of ['t1d_insulin', 'kidney', 'eating_disorder']) {
+      const a = buildAssessment(answers(big, { safety: [c] }))!;
+      expect(a.eligibility).toMatchObject({ eligible: true, cautions: [c], medicationAdvisory: false });
+      expect(a.intensive.blocks).toEqual(['condition']);
+    }
+    expect(intensiveBlocks({ ...ok, eligibility: { ...eligible, cautions: ['kidney'] } })).toEqual(['condition']);
+    // Underweight can never reach BMI 30, but the rule does not depend on that.
+    expect(intensiveBlocks({ ...ok, eligibility: { ...eligible, cautions: ['underweight'] } })).toEqual(['condition']);
   });
 
   it('needs a break after 12 weeks of it', () => {
@@ -108,6 +119,11 @@ describe('extra safety check', () => {
   it('is asked only at BMI 30 and above, and must be answered there', () => {
     const ids = (a: Answers) => questionSteps(a).map((q) => q.id);
     expect(ids(answers(big))).toContain('strict_check');
+    // BMI 29.96 rounds to 30.0, which the gate accepts, so the check must be asked too.
+    const edge = { age: 35, heightCm: 160, weightKg: 76.7, goalKg: 60 };
+    expect(ids(answers(edge))).toContain('strict_check');
+    expect(buildAssessment(answers(edge))!.intensive.blocks).toEqual([]);
+    expect(buildAssessment(answers(edge, { strict_check: ['heart'] }))!.intensive.blocks).toEqual(['condition']);
     expect(ids(answers({ age: 29, heightCm: 162, weightKg: 72, goalKg: 64 }))).not.toContain('strict_check');
     expect(isComplete(answers(big))).toBe(false);
     expect(isComplete(answers(big, { strict_check: ['none'] }))).toBe(true);

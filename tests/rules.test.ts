@@ -89,19 +89,34 @@ describe('3A: the PCOS types (post-pill removed by the founder), and the non-PCO
 });
 
 describe('5A and 6A: who can buy', () => {
-  it('lets an ordinary user buy', () => expect(checkEligibility(pcosInsulin)).toEqual({ eligible: true, reasons: [], medicationAdvisory: false }));
+  it('lets an ordinary user buy', () => expect(checkEligibility(pcosInsulin)).toEqual({ eligible: true, reasons: [], cautions: [], medicationAdvisory: false }));
 
   it.each([
     ['pregnant', { safety: ['pregnant'] }],
+    ['under18', { metrics: { ...metrics, age: 17 } }],
+  ])('still blocks %s', (reason, patch) => {
+    const e = checkEligibility({ ...pcosInsulin, ...(patch as Answers) });
+    expect(e.eligible).toBe(false);
+    expect(e.reasons).toEqual([reason]);
+  });
+
+  it.each([
     ['t1d_insulin', { safety: ['t1d_insulin'] }],
     ['kidney', { safety: ['kidney'] }],
     ['eating_disorder', { safety: ['eating_disorder'] }],
-    ['under18', { metrics: { ...metrics, age: 17 } }],
     ['underweight', { metrics: { ...metrics, weightKg: 45, goalKg: 44 } }],
-  ])('blocks %s', (reason, patch) => {
+  ])('sells to %s, as a caution, with no doctor line of its own (D-029)', (caution, patch) => {
     const e = checkEligibility({ ...pcosInsulin, ...(patch as Answers) });
+    expect(e).toEqual({ eligible: true, reasons: [], cautions: [caution], medicationAdvisory: false });
+    // The line still comes from her medicines, as for anyone.
+    expect(checkEligibility({ ...pcosInsulin, ...(patch as Answers), meds: ['metformin'] }).medicationAdvisory).toBe(true);
+  });
+
+  it('a caution never unblocks pregnancy or an age under 18', () => {
+    const e = checkEligibility({ ...pcosInsulin, safety: ['pregnant', 'kidney', 't1d_insulin'], metrics: { ...metrics, age: 16 } });
     expect(e.eligible).toBe(false);
-    expect(e.reasons).toContain(reason);
+    expect(e.reasons).toEqual(['pregnant', 'under18']);
+    expect(e.cautions).toEqual(['t1d_insulin', 'kidney']);
   });
 
   it('lets women on metformin or thyroid tablets buy, with the advisory', () => {

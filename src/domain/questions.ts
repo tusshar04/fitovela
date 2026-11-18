@@ -382,7 +382,8 @@ export const QUESTIONS: Question[] = [
     accent: 'Any of these?',
     help: 'So we only show you plans that are safe for you.',
     dependsOn: ['metrics'],
-    showIf: (a) => isMetrics(a.metrics) && a.metrics.weightKg / (a.metrics.heightCm / 100) ** 2 >= 30,
+    // Rounded to one decimal like bmi() in energy.ts, which the intensive gate uses: 29.96 counts as 30 in both.
+    showIf: (a) => isMetrics(a.metrics) && Math.round((a.metrics.weightKg / (a.metrics.heightCm / 100) ** 2) * 10) / 10 >= 30,
     options: [
       { id: 'heart', label: 'Heart disease, or chest pain when I exert myself' },
       { id: 'gallstones', label: 'Gallstones or gallbladder trouble' },

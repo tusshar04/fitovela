@@ -46,7 +46,8 @@ export function intensiveBlocks(input: {
   otherMedicine: boolean;
   /** She said her thyroid dose changed recently. */
   thyroidDoseChanged: boolean;
-  /** She ticked heart disease, gallstones, gout or blood-pressure medicine on the extra safety check. */
+  /** She ticked heart disease, gallstones, gout or blood-pressure medicine on the extra safety check.
+   * Type 1 diabetes or insulin, kidney disease, an eating disorder and a BMI under 18.5 count too; they arrive in `eligibility.cautions`. */
   condition: boolean;
 }): IntensiveBlock[] {
   const blocks: IntensiveBlock[] = [];
@@ -56,7 +57,8 @@ export function intensiveBlocks(input: {
   if (input.toLoseKg <= 0) blocks.push('nothing_to_lose');
   if (input.otherMedicine) blocks.push('other_medicine');
   if (input.thyroidDoseChanged) blocks.push('thyroid_dose');
-  if (input.condition) blocks.push('condition');
+  // Sold the standard plan since 2026-11-18 (D-029), but a diet this strict stays closed to them.
+  if (input.condition || input.eligibility.cautions.length > 0) blocks.push('condition');
   return blocks;
 }
 

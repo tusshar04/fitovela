@@ -1,4 +1,4 @@
-import { SUPPORT_EMAIL } from '@/domain/company';
+import { SUPPORT_EMAIL, TERMS_UPDATED } from '@/domain/company';
 import { LegalPage } from '@/ui/Legal';
 
 export const metadata = { title: 'Terms of Use · Fitovela' };
@@ -6,7 +6,7 @@ export const metadata = { title: 'Terms of Use · Fitovela' };
 export default function TermsPage() {
   const mail = <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>;
   return (
-    <LegalPage title="Terms of Use">
+    <LegalPage title="Terms of Use" updated={TERMS_UPDATED}>
       <p>These terms apply when you use fitovela.com or buy a plan from Fitovela (“we”). By starting the assessment you agree to them and to our <a href="/privacy">Privacy Policy</a>.</p>
 
       <h2>What Fitovela is</h2>
@@ -16,7 +16,7 @@ export default function TermsPage() {
       <h2>Who can use it</h2>
       <ul>
         <li>You must be 18 or older.</li>
-        <li>Do not buy a plan if you are pregnant or breastfeeding, have type 1 diabetes or take insulin, have kidney disease, have or have had an eating disorder, or are underweight. The assessment asks about these and will not offer you a plan if you say yes.</li>
+        <li>Do not buy a plan if you are pregnant or breastfeeding. The assessment asks about this and will not offer you a plan if you say yes.</li>
         <li>If you take any medicine or have any health condition, show the plan to your doctor before you start, and never change a dose because of it.</li>
       </ul>
 

@@ -100,7 +100,7 @@ The doctor answered all twelve questions on 2026-11-15. Her answers, how the app
 ## Not decided yet
 
 - Which category launches first, and in which language (English, Hinglish, Hindi).
-- Who excluded visitors ("talk to us first") are handed to.
+- Who excluded visitors ("talk to us first": since D-029 only pregnant or breastfeeding women and under-18s) are handed to.
 - Whether email and mobile stay skippable before the result.
 - Refund terms, GST treatment, support hours.
 - Providers for email and SMS codes; when Cashfree is switched on and the Meta Pixel goes in.

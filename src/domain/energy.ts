@@ -158,12 +158,15 @@ export function energyPlan(m: Metrics, activity: Activity, track: Track = 'stand
   const bmrFloor = Math.ceil(b / 10) * 10;
 
   if (toLose === 0) {
+    // Below the healthy range she must not lose at all, so her food also covers what the
+    // movement plan burns (rounded up). Sold a plan since 2026-11-18, D-029.
+    const cover = bmi(m) < HEALTHY_MIN_BMI ? movement.kcalPerDay : 0;
     return {
       bmr: Math.round(b),
       tdee: Math.round(t),
       strict: false,
       track: 'standard',
-      targetKcal: Math.max(bmrFloor, Math.round(t / 10) * 10),
+      targetKcal: Math.max(bmrFloor, cover > 0 ? Math.ceil((t + cover) / 10) * 10 : Math.round(t / 10) * 10),
       deficit: 0,
       movement,
       mealsOnlyPaceKgPerWeek: 0,

@@ -107,6 +107,16 @@ Founder: the screen after the hormone-signs question shows a spinner, so she wai
 
 Checks: typecheck and all 132 tests pass (one new, for the Back rule). Walked in headless Chrome at 393 x 740 on a local preview: the screen left by itself after about 2.5 seconds; Back from the next question, and Back pressed during the screen, both land on the hormone-signs question and stay there. After the deploy, a tagged test visit on `fitovela.com` (release `eac803751922`) showed the screen with no button, moving on after 2.5 seconds, and Back landing on the hormone-signs question and staying. Self-review only: a timing and navigation change with no effect on scoring, payment or what is stored. Not checked on a real phone.
 
+### FTV-034 — four "talk to us first" groups can now buy (Claude, 2026-11-18, merged)
+
+Founder, relaying the doctor ([D-029](DECISIONS.md)): type 1 diabetes or insulin, kidney disease, eating-disorder history and BMI under 18.5 are sold the standard plan, with no doctor line of their own (the founder declined one). Pregnant or breastfeeding women and under-18s still see "talk to us first" (founder's choice when asked). Added by Claude: the four groups are never given the intensive track, and an underweight woman's food covers her movement plan so she is not made to lose. The terms page no longer tells the four groups not to buy. Also fixed: the extra safety check before the intensive track is now asked at the same rounded BMI of 30 at which the track opens. Branch `feat/ftv-034-sell-to-conditions`.
+
+Review: a separate Claude agent, read-only (it ran the typecheck, the tests and its own calculations; nothing in a browser). Its first pass did not approve: the terms page still told the four groups not to buy, and an underweight woman would have lost weight through the movement plan. Both fixed, together with the founder's later instruction to drop the doctor line. Its second pass approved the release; only wording in the docs changed after it.
+
+Checks: typecheck and all 147 tests pass; nine new ones take made-up women through the real fulfilment code (pregnant and age 17 refused even after a payment; each of the four groups given a 7-day standard plan with no doctor line; the intensive plan refused to a woman with a condition), and four check the underweight calorie rule. The order-creation route's refusals were read, not tested. On a local preview at phone size, before the doctor line was removed: kidney disease with insulin at BMI 37, and an eating disorder at BMI 27, each saw the normal report and prices page with three prices and 1,200 kcal (not the intensive figure); BMI 17 saw the same at maintenance; pregnant, and age 17, saw "Let us talk first" with no prices.
+
+Limits: the doctor's view is the founder's report of it, not in writing. Four medical points are open for her in [MEDICAL_RULES.md](MEDICAL_RULES.md); none is built. A woman on insulin gets no warning beyond the small print shown to everyone. No real payment was made as one of these women.
+
 ### Exact next step
 
 Monitor the launched Purchase campaign and first genuine paid event; confirm plan access/email arrival and the matching Slack paid-order alert. Remaining production housekeeping is listed above.

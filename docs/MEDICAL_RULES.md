@@ -14,7 +14,7 @@ Answer code as sent: `1A 2A 3A 4A 5A 6A 7C 8B 9B 10A 11C 12A`. Relayed by Tushar
 | 2 | Areas reported | All four: PCOS / PCOD signs, insulin resistance, inflammation, thyroid. | `src/domain/questions.ts` (`MARKERS`) |
 | 3 | PCOS types named | Four: insulin-resistant, inflammatory, post-pill, adrenal. **Post-pill removed by the founder on 2026-11-15** ([D-022](DECISIONS.md)); three remain. | `src/domain/typing.ts` |
 | 4 | Scoring | Simple count per area: 0 to 1 signs Low, 2 to 3 Moderate, 4 or more High. | `src/domain/scoring.ts` (`levelFor`) |
-| 5 | Not sold a plan automatically | Pregnant or breastfeeding, under 18, type 1 diabetes or on insulin, kidney disease, eating-disorder history, BMI under 18.5. | `src/domain/eligibility.ts` |
+| 5 | Not sold a plan automatically | First answer: pregnant or breastfeeding, under 18, type 1 diabetes or on insulin, kidney disease, eating-disorder history, BMI under 18.5. **Narrowed on 2026-11-18** ([D-029](DECISIONS.md)): Tushar relayed that the doctor finds the meal plans sound for women with conditions, and chose to keep only **pregnant or breastfeeding** and **under 18** on "talk to us first". The other four now buy the standard plan like anyone else and are never given the intensive track; see "Sold with a caution" below. | `src/domain/eligibility.ts` |
 | 6 | On metformin or thyroid tablets | Can buy. Plan says: show this to your doctor, do not change your dose. | `src/domain/eligibility.ts` (`MEDICATION_ADVISORY`) |
 | 7 | Calorie floor | First answer: never below her BMR. Changed after the demo to 1,200 kcal; see below. | `src/domain/energy.ts` |
 | 8 | Pace on the prediction chart | First answer: up to 1 kg a week. Changed after the demo; see below. | `src/domain/energy.ts` (`MAX_PACE_KG_PER_WEEK`) |
@@ -54,7 +54,7 @@ On 2026-11-15 Tushar relayed that the doctor approved a minimum of 800 kcal, tha
 
 | Step | Rule |
 | --- | --- |
-| Who is offered it | BMI 30 and above, age 18 to 60, none of the exclusions in answer 5, weight to lose, no "another prescription medicine", no recent change of thyroid dose, and none of heart disease, gallstones, gout or blood-pressure medicine. Everyone else never sees the option and the server refuses it. They can still buy the standard plan. |
+| Who is offered it | BMI 30 and above, age 18 to 60, none of the six groups in the first answer 5 (the four who can now buy the standard plan stay shut out of this one), weight to lose, no "another prescription medicine", no recent change of thyroid dose, and none of heart disease, gallstones, gout or blood-pressure medicine. Everyone else never sees the option and the server refuses it. They can still buy the standard plan. |
 | Calories | Maintenance minus 1,000 kcal, kept between 800 and 1,000. A sedentary woman of 88 kg and 160 cm gets 860 kcal. |
 | The day | Three light plates and one snack (not five meals). The standard dishes cannot go below about 1,230 kcal a day, so 31 light plates were written for this track. |
 | Release | The plan opens as soon as she pays, like the standard plan. Nobody looks at her answers first. |
@@ -162,7 +162,28 @@ The question "Did you stop a birth-control pill in the last 12 months?" and the 
   - **Limits kept in the code and its tests:** no "will", "guarantee" or "cure"; skin, cycles and dark patches keep "start to" or "can"; nothing is said about hair growth or hair fall; a line appears only for a sign she ticked; the clothes and "other people" lines are dropped for a woman who is not trying to lose. The page still says these are what many women notice and that every body moves at its own pace.
 - Movement plan: `src/domain/energy.ts` (`movementPlan`) and the "Today's movement" card in `src/ui/PlanClient.tsx`. The 60 minutes a day is her instruction; the split into a brisk walk plus three strength sessions, the four strength moves, and the calorie estimate (net MET 3.3 for brisk walking, 2.5 for strength) are drafts. Women with heart, joint or other conditions that limit exercise are not screened for yet.
 
+## Sold with a caution (2026-11-18)
+
+Type 1 diabetes or insulin, kidney disease, an eating disorder now or in the past, and a BMI under 18.5 were on the doctor's "do not sell" list. Since [D-029](DECISIONS.md) they are sold the standard plan. What they get, and whose choice each part is:
+
+| Part | Rule | Whose |
+| --- | --- | --- |
+| Can buy | The standard plan, at every price. | Founder, relaying the doctor: the meal plans are sound for them. |
+| Doctor line | None of their own. The founder decided on 2026-11-18 that they are not shown "Show this plan to your doctor before you start". They get it only if they also take metformin or thyroid tablets, as anyone does (answer 6). | Founder. |
+| Intensive track | Never offered, and the server refuses it. | Claude's choice: the doctor's approval of 800 kcal was "not for everyone", and nobody reviews an order. |
+| Underweight | Her plan is not set to make her lose. Her goal is held at her present weight, and her calorie target covers maintenance plus what the movement plan burns (about 160 kcal a day if she mostly sits, less if she is already active), rounded up. Two limits: the meal library tops out near 2,200 to 2,400 kcal a day, so a tall, very active underweight woman can still be given less than her target; and a BMI of 18.45 to 18.49 rounds to 18.5, so she is treated as healthy and gets maintenance without the movement cover. Before this she could not buy, and maintenance food with the hour's walk would have cost her about 0.14 kg a week. | Existing rule (no target below BMI 18.5), extended by Claude to cover the movement. |
+| Terms page | "Do not buy a plan if you are pregnant or breastfeeding." The other four are no longer named. Its general line stays: with any medicine or health condition, show the plan to your doctor first. | Follows the decision. |
+
+**For the doctor to rule on, none of it built:**
+
+- **Insulin.** The plan cuts calories and carbohydrate. A woman who keeps her insulin dose the same can go low on sugar. Nothing tells her that her dose may need to come down. The only words about a doctor she sees are the general ones shown to everyone: "If you take medication, speak to your doctor first" in the small print of the prices page, and the same idea on the terms page.
+- **Kidney disease.** Every meal carries protein (answer 10). A kidney patient is often told to limit protein. The plan does not lower it for her.
+- **Eating disorder.** The plan shows a daily calorie figure and a weekly weight line. Nothing is hidden or softened for her.
+- **Underweight.** Her plan still has the full movement plan (60 minutes a day), and her timeline lines are the ones every woman with her signs gets, for example about bloat making her "look bigger"; they are picked by her signs, not by weight to lose.
+
+**Also fixed here:** the extra safety check before the intensive track (heart disease, gallstones, gout, blood-pressure medicine) was asked at an unrounded BMI of 30, while the track itself opens at a BMI that rounds to 30.0. A woman at 29.96 was offered the track without being asked. Both now use the rounded figure.
+
 ## Not covered by her answers
 
 - Whether "plans follow rules approved by a doctor" may be said on the site without naming her.
-- Who the "talk to us first" route hands excluded users to.
+- Who the "talk to us first" route hands excluded users to (now only pregnant or breastfeeding women and under-18s).

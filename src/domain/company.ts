@@ -4,3 +4,5 @@ export const SITE_URL = 'https://fitovela.com';
 export const LEGAL_UPDATED = '15 November 2026';
 // The privacy policy has changed since: behaviour log (D-026), ad measurement (D-027, D-028).
 export const PRIVACY_UPDATED = '18 November 2026';
+// The terms changed with D-029: only pregnancy and breastfeeding are named as "do not buy".
+export const TERMS_UPDATED = '18 November 2026';
