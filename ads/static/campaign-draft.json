@@ -272,21 +272,22 @@
     "campaign_id": "120248244657940009",
     "adset_id": "120248244664190009"
   },
-  "activation_note": "Founder explicitly authorised installation and activation. Nine status-only API writes succeeded. Two readbacks confirm campaign, ad set and all seven approved ads configured/effective ACTIVE with every other captured field unchanged. Old Traffic and failed static duplicates stay PAUSED.",
+  "activation_note": "Founder explicitly authorised installation and activation. Nine status-only API writes succeeded. Two readbacks confirm campaign, ad set and all seven approved ads configured/effective ACTIVE with every other captured field unchanged. Old Traffic stays PAUSED. FTV-031 subsequently removed the five failed static duplicates with the approved native Delete action; API status ARCHIVED.",
   "instagram_ads_actor_id": "30336590792597009",
   "browser_handoff": {
     "pending_objects": 0,
     "published_ad_count": 7,
-    "last_published_check_utc": "2026-11-17T21:41:46.849323+00:00",
+    "last_published_check_utc": "2026-11-18T02:41:45.095583+00:00",
     "billing": "Payment method saved, confirmed in account overview",
     "phone_verification": "Historical Traffic account overview offered linking an existing verified profile number; no association was made. That campaign reached ACTIVE before FTV-028 paused it. No phone prompt currently blocks the Purchase setup.",
     "api": "Sales campaign/adset creation and two existing video creative ads succeeded. Five existing-static API ads failed asynchronously with1885183; fresh native copies published.",
     "review": "Two fresh native exports identical across5x584fields; exact original static media/copy/URLs/placements preserved. All seven API readbacks twice; native music-only enhancement checks. Native copies use new post/creative IDs; two videos reuse exact originals.",
     "next": "Monitor first genuine consenting Cashfree Purchase delivery, processing, browser/server deduplication and ad attribution; existing hourly spend/profit and paid-order alerts continue.",
-    "excluded_paused_ad_count": 5
+    "excluded_paused_ad_count": 0,
+    "excluded_archived_ad_count": 5
   },
-  "last_verified_utc": "2026-11-17T21:41:46.849323+00:00",
-  "native_delivery_status": "Active; Purchase ad set and all seven canonical ads. No pending drafts.",
+  "last_verified_utc": "2026-11-18T02:41:45.095583+00:00",
+  "native_delivery_status": "Active: seven canonical ads only; no Delivery error rows and no pending drafts after FTV-031 duplicate cleanup.",
   "superseded_traffic": {
     "reason": "Agent incorrectly substituted Traffic/Link clicks for purchase-driven goal; founder corrected it. Do not reactivate.",
     "campaign_id": "120248243480500009",
@@ -359,42 +360,50 @@
     {
       "id": "120248244668720009",
       "name": "Types | Static",
-      "status": "PAUSED",
-      "effective_status": "WITH_ISSUES",
+      "status": "ARCHIVED",
+      "effective_status": "ARCHIVED",
       "error_code": 1885183,
-      "reason": "Replaced by native copies; keep excluded/paused. API receipt preceded Development-mode rejection."
+      "reason": "Removed with founder-approved native Delete action on 18 November 2026; API records ARCHIVED. Working native replacement remains ACTIVE. Historical Development-mode error 1885183."
     },
     {
       "id": "120248244668510009",
       "name": "Eating less | Static",
-      "status": "PAUSED",
-      "effective_status": "WITH_ISSUES",
+      "status": "ARCHIVED",
+      "effective_status": "ARCHIVED",
       "error_code": 1885183,
-      "reason": "Replaced by native copies; keep excluded/paused. API receipt preceded Development-mode rejection."
+      "reason": "Removed with founder-approved native Delete action on 18 November 2026; API records ARCHIVED. Working native replacement remains ACTIVE. Historical Development-mode error 1885183."
     },
     {
       "id": "120248244667690009",
       "name": "Ghar ka khana | Static",
-      "status": "PAUSED",
-      "effective_status": "WITH_ISSUES",
+      "status": "ARCHIVED",
+      "effective_status": "ARCHIVED",
       "error_code": 1885183,
-      "reason": "Replaced by native copies; keep excluded/paused. API receipt preceded Development-mode rejection."
+      "reason": "Removed with founder-approved native Delete action on 18 November 2026; API records ARCHIVED. Working native replacement remains ACTIVE. Historical Development-mode error 1885183."
     },
     {
       "id": "120248244666670009",
       "name": "Symptom checklist | Static",
-      "status": "PAUSED",
-      "effective_status": "WITH_ISSUES",
+      "status": "ARCHIVED",
+      "effective_status": "ARCHIVED",
       "error_code": 1885183,
-      "reason": "Replaced by native copies; keep excluded/paused. API receipt preceded Development-mode rejection."
+      "reason": "Removed with founder-approved native Delete action on 18 November 2026; API records ARCHIVED. Working native replacement remains ACTIVE. Historical Development-mode error 1885183."
     },
     {
       "id": "120248244666530009",
       "name": "First four weeks | Static",
-      "status": "PAUSED",
-      "effective_status": "WITH_ISSUES",
+      "status": "ARCHIVED",
+      "effective_status": "ARCHIVED",
       "error_code": 1885183,
-      "reason": "Replaced by native copies; keep excluded/paused. API receipt preceded Development-mode rejection."
+      "reason": "Removed with founder-approved native Delete action on 18 November 2026; API records ARCHIVED. Working native replacement remains ACTIVE. Historical Development-mode error 1885183."
     }
-  ]
+  ],
+  "cleanup_verification": {
+    "task": "FTV-031",
+    "action": "Founder-approved native Delete of five failed API static duplicates",
+    "observed_api_status": "ARCHIVED",
+    "double_api_check_utc": "2026-11-18T02:41:45.095583+00:00",
+    "canonical_ads_unchanged": true,
+    "native_no_errors_or_drafts": true
+  }
 }
