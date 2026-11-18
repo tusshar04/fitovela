@@ -12,7 +12,7 @@ In production, **payments on** since 2026-11-17 (Cashfree). The app runs on Clou
 
 | Piece | Status on 2026-11-15 |
 | --- | --- |
-| Cloud Run service `fitovela`, `asia-south1` | Live. Release `b072f7c7ba0b` (FTV-032, ad-measurement banner removed, measurement on by default), deployed about 10:32 IST on 2026-11-18 and checked through `fitovela.com`; Cloud Run revision `fitovela-00020-gov` serves 100% traffic. The release before it was `d1022874a2f7` (FTV-030, commerce Pixel/CAPI), revision `fitovela-00018-teh`. FTV-029 first-party behaviour tracking is preserved. The release before it was `14988c961bba` (FTV-025), revision `fitovela-00014-tot`. Its own address is `https://fitovela-pflkmzgscq-el.a.run.app`; the Worker forwards to it. |
+| Cloud Run service `fitovela`, `asia-south1` | Live. Release `eac803751922` (FTV-033, "Reading your answers" moves on by itself), deployed about 10:57 IST on 2026-11-18 and checked through `fitovela.com`; Cloud Run revision `fitovela-00022-nug` serves 100% traffic. The release before it was `b072f7c7ba0b` (FTV-032, ad-measurement banner removed, measurement on by default), revision `fitovela-00020-gov`. FTV-029 first-party behaviour tracking is preserved. The release before it was `14988c961bba` (FTV-025), revision `fitovela-00014-tot`. Its own address is `https://fitovela-pflkmzgscq-el.a.run.app`; the Worker forwards to it. |
 | Firestore, `asia-south1` | Live, used by the service. First real use of the Firestore driver. |
 | Domain | **Live at https://fitovela.com.** DNS is at Cloudflare (nameservers `norm` and `teagan.ns.cloudflare.com`, the same account as tarot). The Worker `fitovela-edge` (source in `edge/`) forwards `fitovela.com` to the Cloud Run service; `www` and plain http redirect to `https://fitovela.com`. Checked through the domain: pages, a full assessment, cookies, security headers. The Google load balancer is deleted. Workers free plan: 100,000 requests a day. |
 | Login codes by SMS | Switched on, through tarot's 2Factor key. Tested by Tushar with his own phone on 2026-11-15. The SMS wording is whatever template tarot's 2Factor account uses. |
@@ -101,11 +101,11 @@ Live check on `fitovela.com` after the deploy (release `b072f7c7ba0b`), as a tag
 
 Limits: opt-out, not consent; no lawyer has reviewed it and the founder has not read the new privacy wording. The privacy page promises an email before a significant change applies; none was sent, and whether any real person has left an email address was not checked. Clearing cookies forgets an "off". Not checked on a real phone. A visitor with no stored choice, or whose "on" has run out, who turns it off on the privacy page in one tab in the same moment as the landing page loads in another could end up on; she can turn it off again. The new tests use a stand-in for the cookie jar, not real response headers.
 
-### FTV-033 — "Reading your answers" screen moves on by itself (Claude, 2026-11-18, merged)
+### FTV-033 — "Reading your answers" screen moves on by itself (Claude, 2026-11-18, merged and live)
 
 Founder: the screen after the hormone-signs question shows a spinner, so she waits for it instead of tapping "Next question". The button is gone; the screen moves to the next question after 2.5 seconds. Back steps over that screen (from the question after it, and while it is showing), so she is not sent forward again. The findings screen ("What we see so far") keeps its button. Branch `fix/ftv-033-scan-auto-advance`.
 
-Checks: typecheck and all 132 tests pass (one new, for the Back rule). Walked in headless Chrome at 393 x 740 on a local preview: the screen left by itself after about 2.5 seconds; Back from the next question, and Back pressed during the screen, both land on the hormone-signs question and stay there. Self-review only: a timing and navigation change with no effect on scoring, payment or what is stored. Not checked on a real phone.
+Checks: typecheck and all 132 tests pass (one new, for the Back rule). Walked in headless Chrome at 393 x 740 on a local preview: the screen left by itself after about 2.5 seconds; Back from the next question, and Back pressed during the screen, both land on the hormone-signs question and stay there. After the deploy, a tagged test visit on `fitovela.com` (release `eac803751922`) showed the screen with no button, moving on after 2.5 seconds, and Back landing on the hormone-signs question and staying. Self-review only: a timing and navigation change with no effect on scoring, payment or what is stored. Not checked on a real phone.
 
 ### Exact next step
 
