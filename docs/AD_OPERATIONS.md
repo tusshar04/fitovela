@@ -108,3 +108,7 @@ FTV-030 release verification: independent implementation review passed on `ced6d
 ## Ad wording after FTV-035 (2026-11-18)
 
 The report is now paid ([D-030](DECISIONS.md)). The site no longer promises a free report or a free type. The ads in Meta were written before that: the shared text says "Explore your report", both videos end on "Take the free check", the "First four weeks" static says "Get your free report", and the quiz video shows the type and the four scores as free screens. `ads/video/capture.mjs` still captures `/result`, which now redirects to the paywall. The assessment is still free; the result is not. Changing the ad text or creatives is a Meta account change and is the founder's or the campaign owner's, not part of this task.
+
+## "Tried" video paused (2026-11-18, 14:56 IST)
+
+On the founder's instruction ("ok go", after Claude's recommendation), Claude paused ad `120248244667170009` (Tried | Love You Zindagi | Video v2) with one status-only API update and read it back as `PAUSED`. By then it had spent INR 271.95 today for 1,013 impressions, 5 clicks and no landing-page views; the "Types" video had spent INR 386.21 for 16 clicks and 13 landing-page views. Nothing else in the account was changed: budget, ad set, the other six ads and the ad text are as they were.
