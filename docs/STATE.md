@@ -101,6 +101,12 @@ Live check on `fitovela.com` after the deploy (release `b072f7c7ba0b`), as a tag
 
 Limits: opt-out, not consent; no lawyer has reviewed it and the founder has not read the new privacy wording. The privacy page promises an email before a significant change applies; none was sent, and whether any real person has left an email address was not checked. Clearing cookies forgets an "off". Not checked on a real phone. A visitor with no stored choice, or whose "on" has run out, who turns it off on the privacy page in one tab in the same moment as the landing page loads in another could end up on; she can turn it off again. The new tests use a stand-in for the cookie jar, not real response headers.
 
+### FTV-033 — "Reading your answers" screen moves on by itself (Claude, 2026-11-18, merged)
+
+Founder: the screen after the hormone-signs question shows a spinner, so she waits for it instead of tapping "Next question". The button is gone; the screen moves to the next question after 2.5 seconds. Back steps over that screen (from the question after it, and while it is showing), so she is not sent forward again. The findings screen ("What we see so far") keeps its button. Branch `fix/ftv-033-scan-auto-advance`.
+
+Checks: typecheck and all 132 tests pass (one new, for the Back rule). Walked in headless Chrome at 393 x 740 on a local preview: the screen left by itself after about 2.5 seconds; Back from the next question, and Back pressed during the screen, both land on the hormone-signs question and stay there. Self-review only: a timing and navigation change with no effect on scoring, payment or what is stored. Not checked on a real phone.
+
 ### Exact next step
 
 Monitor the launched Purchase campaign and first genuine paid event; confirm plan access/email arrival and the matching Slack paid-order alert. Remaining production housekeeping is listed above.

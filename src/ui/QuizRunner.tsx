@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { bmi } from '@/domain/energy';
-import { adaptation, buildSteps, firstUnanswered, type Step } from '@/domain/flow';
+import { adaptation, buildSteps, firstUnanswered, stepBefore, type Step } from '@/domain/flow';
 import { MARKERS, SECTIONS, optionLabel, type Question } from '@/domain/questions';
 import { areaCounts, markersFrom } from '@/domain/scoring';
 import { asList, isMetrics, type Answers, type AnswerValue, type Metrics } from '@/domain/types';
@@ -20,6 +20,9 @@ const CUISINE_PHOTOS: Record<string, string> = {
 const SIGNAL_NOUN: Record<string, string> = { pcos: 'hormone', insulin: 'insulin', inflammation: 'inflammation', thyroid: 'thyroid', stress: 'stress' };
 
 const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
+
+/** How long the "reading your answers" screen stays before it moves on by itself. */
+const SCAN_MS = 2500;
 
 
 export function QuizRunner({ initialAnswers }: { initialAnswers: Answers }) {
@@ -46,6 +49,15 @@ export function QuizRunner({ initialAnswers }: { initialAnswers: Answers }) {
     window.scrollTo(0, 0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key]);
+
+  // The "reading your answers" screen shows a spinner, so she waits for it; a button there was
+  // never tapped by someone who thought the site was still working. It moves on by itself.
+  useEffect(() => {
+    if (phase !== 'steps' || step?.kind !== 'scan') return;
+    const timer = setTimeout(() => goNext(answers), SCAN_MS);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key, phase]);
 
   useEffect(() => {
     if (phase === 'analysing') track('analysing_view');
@@ -81,8 +93,9 @@ export function QuizRunner({ initialAnswers }: { initialAnswers: Answers }) {
   function goBack() {
     const idx = steps.findIndex((s) => s.key === key);
     track('question_back', { q: step?.kind === 'question' ? step.question.id : step?.kind, n: idx + 1 });
-    if (idx <= 0) router.push('/');
-    else setKey(steps[idx - 1].key);
+    const before = stepBefore(steps, key);
+    if (before === null) router.push('/');
+    else setKey(before);
   }
 
   if (phase === 'analysing') return <Analysing answers={answers} onDone={() => setPhase('lead')} />;
@@ -144,9 +157,6 @@ export function QuizRunner({ initialAnswers }: { initialAnswers: Answers }) {
               {plural(questionList.length, 'question')} in your assessment.
             </span>
           </div>
-          <button type="button" className="btn push" onClick={() => goNext(answers)}>
-            Next question
-          </button>
         </div>
       </main>
     );

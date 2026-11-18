@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { buildAssessment } from '@/domain/assessment';
 import { checkEligibility } from '@/domain/eligibility';
 import { bmi, bmiBand, bmr, energyPlan } from '@/domain/energy';
-import { adaptation, buildSteps, isComplete, questionSteps } from '@/domain/flow';
+import { adaptation, buildSteps, isComplete, questionSteps, stepBefore } from '@/domain/flow';
 import { isLaunchPriceLive, priceFor, TIER_ORDER, TIERS } from '@/domain/offer';
 import { QUESTIONS } from '@/domain/questions';
 import { areaCounts, levelFor, markersFrom } from '@/domain/scoring';
@@ -214,6 +214,18 @@ describe('adaptive questionnaire', () => {
     const keys = buildSteps(pcosInsulin).map((s) => s.key);
     expect(keys.indexOf('scan')).toBe(keys.indexOf('hormone_signs') + 1);
     expect(keys.indexOf('finding')).toBe(keys.indexOf('family') + 1);
+  });
+
+  it('back steps over the scan screen, which moves on by itself, but not over the findings screen', () => {
+    const steps = buildSteps(pcosInsulin);
+    const keys = steps.map((s) => s.key);
+    const afterScan = keys[keys.indexOf('scan') + 1];
+    expect(stepBefore(steps, afterScan)).toBe('hormone_signs');
+    expect(stepBefore(steps, 'scan')).toBe('hormone_signs');
+    expect(stepBefore(steps, keys[keys.indexOf('finding') + 1])).toBe('finding');
+    expect(stepBefore(steps, keys[1])).toBe(keys[0]);
+    expect(stepBefore(steps, keys[0])).toBeNull();
+    expect(stepBefore(steps, 'not-a-step')).toBeNull();
   });
 
   it('knows when the assessment is complete', () => {

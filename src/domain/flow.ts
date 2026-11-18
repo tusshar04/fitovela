@@ -41,6 +41,14 @@ export function buildSteps(answers: Answers): Step[] {
   return steps;
 }
 
+/** Where the back button goes from `key`, or null for "leave the assessment". The scan screen moves
+ * on by itself, so stopping on it would send her straight forward again: back steps over it. */
+export function stepBefore(steps: Step[], key: string | null): string | null {
+  let i = steps.findIndex((s) => s.key === key) - 1;
+  while (i >= 0 && steps[i].kind === 'scan') i -= 1;
+  return i >= 0 ? steps[i].key : null;
+}
+
 export function questionSteps(answers: Answers): Question[] {
   return buildSteps(answers).flatMap((s) => (s.kind === 'question' ? [s.question] : []));
 }

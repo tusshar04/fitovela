@@ -25,7 +25,7 @@ A funnel that opens with "get a diet plan" misses this. Every screen before the 
 | --- | --- | --- | --- |
 | 1 | Landing | A hook headline, a teaser of what the report holds, and four age buttons as the only action. No photos in the age step. A live count of women checked today. | The ad click turns into the first answer with no extra step. |
 | 2 | Questions | One question per screen, grouped as Hormones, Insulin, Inflammation, Thyroid, Food. A live count of signals found. | Feels like an assessment in progress, not a form. |
-| 3 | Reading her answers | After the first few answers: what was noted, "choosing your next questions", and questions skipped because they do not apply to her. | Shows the questionnaire is reacting to her, and respects her time. |
+| 3 | Reading her answers | After the first few answers: what was noted, "choosing your next questions", and questions skipped because they do not apply to her. It moves on by itself after 2.5 seconds; there is no button (FTV-033). | Shows the questionnaire is reacting to her, and respects her time. |
 | 4 | Follow-up | A question that quotes her earlier answer ("Because you said…") and, once she taps, a note on what that answer changed. | Makes every answer feel heard. |
 | 5 | What we see so far | "It was never your willpower", signals per area, two areas still unchecked. | Emotional connection and a reason to finish. |
 | 6 | Food | Cuisine photo tiles (up to two), vegetarian / egg / non-veg. | Makes the plan feel personal before she sees a price. |
