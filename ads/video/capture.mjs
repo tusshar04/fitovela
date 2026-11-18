@@ -86,6 +86,9 @@ try {
   writeFileSync(join(OUT, 'build.js'), `window.BUILD_FRAMES = ${frames};\n`);
 
   // The report and the paywall, whole pages.
+  // NOTE (FTV-035, 2026-11-18): /result now sends a woman who can buy to /unlock, so this
+  // 'result' frame saves the paywall. A new capture of the report needs a paid plan's
+  // /plan/<token>/report page.
   await post('/api/session/lead', { skip: true });
   await goto(`${BASE}/result`);
   await page.sleep(1200);

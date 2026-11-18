@@ -18,7 +18,7 @@ export default async function ResultPage() {
   const a = buildAssessment(session.answers);
   if (!a) redirect('/quiz');
   if (a.eligibility.eligible) redirect('/unlock');
-  await logEvent('result_view', session.id, { type: a.result.type });
+  await logEvent('result_view', session.id);
 
   return (
     <main className="screen">

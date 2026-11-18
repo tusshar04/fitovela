@@ -2,7 +2,7 @@
 // we cannot sell a plan to still sees it free, on /result.
 
 import type { Assessment } from '@/domain/assessment';
-import { BMI_BAND_LABEL } from '@/domain/energy';
+import { BMI_BAND_LABEL, type EnergyPlan } from '@/domain/energy';
 import type { JourneyStop } from '@/domain/journey';
 import { SUGGESTED_TESTS, type TypeContent } from '@/domain/typeContent';
 import { STRENGTH_LABEL } from '@/domain/typing';
@@ -88,9 +88,12 @@ export function ReportDisclaimer() {
   );
 }
 
-/** The full report body: type, the four systems, what it means, the first weeks and BMI. */
-export function ReportSections({ a, journey }: { a: Assessment; journey?: JourneyStop[] }) {
-  const { content, result, energy, metrics } = a;
+/**
+ * The full report body: type, the four systems, what it means, the first weeks and BMI.
+ * `journey` and `energy` are those of the plan she bought, when it is not the standard one.
+ */
+export function ReportSections({ a, journey, energy = a.energy }: { a: Assessment; journey?: JourneyStop[]; energy?: EnergyPlan }) {
+  const { content, result, metrics } = a;
   const bmiPin = Math.max(2, Math.min(98, ((a.bmi - 15) / 20) * 100));
   return (
     <>

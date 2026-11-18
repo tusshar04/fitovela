@@ -1,5 +1,7 @@
-// What the paywall may say about her report before she pays: counts only.
-// Never the type, its description, or which system scored what (founder, 2026-11-18, D-030).
+// What the paywall may say about her report before she pays (founder, 2026-11-18, D-030):
+// how many signs she ticked, how many systems stand out, and how strong the match is.
+// Never the type, its description, or which system scored what. The "x of y markers" figure
+// stays out too: y is different for every type, so it would name the type by itself.
 
 import type { Assessment } from './assessment';
 import { AREAS } from './types';
@@ -7,20 +9,19 @@ import type { Strength } from './typing';
 
 export interface ReportTeaser {
   age: number;
-  /** Signs she ticked across the four systems. Stress signs are not a system, so they are left out. */
+  /** Every sign she ticked, stress and sleep signs included. */
   signs: number;
   /** How many of the four systems scored Moderate or High. */
   flagged: number;
-  /** Absent when no pattern matched (the routine-led type), where there is no match to count. */
-  match: { matched: number; total: number; strength: Strength } | null;
+  /** Absent when no pattern matched (the routine-led type), where there is no match to rate. */
+  strength: Strength | null;
 }
 
 export function reportTeaser(a: Assessment): ReportTeaser {
-  const { result } = a;
   return {
     age: a.metrics.age,
-    signs: AREAS.reduce((n, area) => n + a.counts[area], 0),
+    signs: a.markers.length,
     flagged: AREAS.filter((area) => a.levels[area] !== 'low').length,
-    match: result.type === 'routine' ? null : { matched: result.matched, total: result.total, strength: result.strength },
+    strength: a.result.type === 'routine' ? null : a.result.strength,
   };
 }

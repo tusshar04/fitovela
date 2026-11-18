@@ -21,7 +21,7 @@ const AREAS = ['PCOS / PCOD', 'Insulin', 'Inflammation', 'Thyroid'];
 function Hero({ hook, category }: { hook: Hook; category: Category }) {
   const copy =
     hook === 'b'
-      ? { title: CHECK_HEADLINE[category], accent: 'Check in 2 minutes.', sub: 'A free symptom check made for Indian women. No blood test, no sign-up. Find out what your body has been trying to tell you.' }
+      ? { title: CHECK_HEADLINE[category], accent: 'Check in 2 minutes.', sub: 'A free symptom check made for Indian women. No blood test, no sign-up. Your report and diet plan are built from your answers.' }
       : hook === 'c'
         ? { title: 'One diet does not fit every woman.', accent: 'Find yours.', sub: 'Take the free assessment. We match your symptoms to a type, then build your plan from dosa, dal and roti. No salads.' }
         : { title: 'Dieting hard. Weight still stuck?', accent: 'Find out why.', sub: 'Generic diets ignore your hormones. Answer about 18 questions. We check which of 4 hidden causes is holding you back.' };
@@ -135,7 +135,7 @@ export default async function Landing({ searchParams }: { searchParams: Promise<
     <main className="screen pad" style={{ paddingBottom: 18 }}>
       <header className="hdr land" style={{ padding: 0 }}>
         <Logo large />
-        <span className="tag-yellow">Free · 2 minutes</span>
+        <span className="tag-yellow">Free assessment · 2 minutes</span>
       </header>
 
       <div className="stack" style={{ margin: 'auto 0', padding: '10px 0 18px' }}>

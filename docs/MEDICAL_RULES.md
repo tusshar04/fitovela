@@ -10,7 +10,7 @@ Answer code as sent: `1A 2A 3A 4A 5A 6A 7C 8B 9B 10A 11C 12A`. Relayed by Tushar
 
 | # | Decision | Her choice | Where it lives in the code |
 | --- | --- | --- | --- |
-| 1 | Result wording | "Your symptoms match [type]." Not a diagnosis; confirm with tests. | `src/app/result/page.tsx`, `src/domain/typeContent.ts` |
+| 1 | Result wording | "Your symptoms match [type]." Not a diagnosis; confirm with tests. | `src/ui/Report.tsx`, `src/domain/typeContent.ts` |
 | 2 | Areas reported | All four: PCOS / PCOD signs, insulin resistance, inflammation, thyroid. | `src/domain/questions.ts` (`MARKERS`) |
 | 3 | PCOS types named | Four: insulin-resistant, inflammatory, post-pill, adrenal. **Post-pill removed by the founder on 2026-11-15** ([D-022](DECISIONS.md)); three remain. | `src/domain/typing.ts` |
 | 4 | Scoring | Simple count per area: 0 to 1 signs Low, 2 to 3 Moderate, 4 or more High. | `src/domain/scoring.ts` (`levelFor`) |

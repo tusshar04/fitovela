@@ -34,6 +34,9 @@ interface Props {
   payNotice: 'failed' | 'pending' | 'error' | null;
 }
 
+/** A coarse bar for the paywall. The exact share of markers matched would give her type away. */
+const STRENGTH_METER = { early: '35%', clear: '65%', strong: '90%' } as const;
+
 const rupees = (n: number) => `₹${n.toLocaleString('en-IN')}`;
 
 const PAY_NOTICE = {
@@ -288,19 +291,16 @@ export function UnlockClient(props: Props) {
               Hidden until you unlock
             </div>
           </div>
-          {teaser.match ? (
+          {teaser.strength ? (
             <div className="match">
               <div className="row between" style={{ gap: 12 }}>
                 <span className="dim" style={{ fontSize: 13, fontWeight: 500 }}>
-                  <b style={{ color: '#fff', fontWeight: 700 }}>
-                    {teaser.match.matched} of {teaser.match.total}
-                  </b>{' '}
-                  markers matched
+                  How strongly your answers match
                 </span>
-                <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--yellow)' }}>{STRENGTH_LABEL[teaser.match.strength]}</span>
+                <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--yellow)' }}>{STRENGTH_LABEL[teaser.strength]}</span>
               </div>
               <div className="meter">
-                <i style={{ width: `${Math.round((teaser.match.matched / Math.max(1, teaser.match.total)) * 100)}%` }} />
+                <i style={{ width: STRENGTH_METER[teaser.strength] }} />
               </div>
             </div>
           ) : null}
@@ -508,6 +508,9 @@ export function UnlockClient(props: Props) {
         </p>
         <p className="dim center" style={{ fontSize: 11.5 }}>
           <a href="/terms" style={{ color: 'inherit' }}>Terms</a> · <a href="/privacy" style={{ color: 'inherit' }}>Privacy</a> · <a href="/refund" style={{ color: 'inherit' }}>Refunds</a> · <a href="/contact" style={{ color: 'inherit' }}>Contact</a>
+        </p>
+        <p className="dim center" style={{ fontSize: 11.5 }}>
+          Already bought a plan? <a href="/login" style={{ color: 'inherit' }}>Log in</a>
         </p>
       </section>
 

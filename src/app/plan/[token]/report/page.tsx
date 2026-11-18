@@ -34,7 +34,7 @@ export default async function PlanReportPage({ params }: { params: Promise<{ tok
         {a && session ? (
           <>
             <ReportHeading age={a.metrics.age} answered={Object.keys(session.answers).length} />
-            <ReportSections a={a} journey={order.plan.journey} />
+            <ReportSections a={a} journey={order.plan.journey} energy={order.plan.track === 'intensive' ? a.intensive.energy : a.energy} />
           </>
         ) : (
           <>

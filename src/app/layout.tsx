@@ -17,7 +17,7 @@ const serif = localFont({
 
 export const metadata: Metadata = {
   title: 'Fitovela · Free symptom assessment for women',
-  description: 'Answer a few questions and see which of four hidden causes may be holding your weight. Then unlock an Indian diet plan built for your type.',
+  description: 'A free 2-minute symptom assessment for Indian women. We check your answers against four hidden causes, then build a report and an Indian diet plan for your type.',
 };
 
 export const viewport: Viewport = { width: 'device-width', initialScale: 1, themeColor: '#ffffff' };

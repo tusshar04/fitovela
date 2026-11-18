@@ -6,7 +6,7 @@ This file owns current coordination. Read [AGENTS.md](../AGENTS.md) before actin
 
 ## Current stage
 
-In production, **payments on** since 2026-11-17 (Cashfree). The app runs on Cloud Run in Mumbai (GCP project `fitovela-prod`) behind `fitovela.com`, with Firestore as the database. A visitor can take the assessment, see her report and the paywall, and pay. A completed INR 199 payment and its full refund were verified read-only at Cashfree on 2026-11-17; the matching production webhook returned 200. On-screen plan access and email arrival still need confirmation. See [D-021](DECISIONS.md) and [D-025](DECISIONS.md).
+In production, **payments on** since 2026-11-17 (Cashfree). The app runs on Cloud Run in Mumbai (GCP project `fitovela-prod`) behind `fitovela.com`, with Firestore as the database. A visitor can take the assessment, see the paywall with her report locked, and pay; her report opens with her plan (FTV-035). A completed INR 199 payment and its full refund were verified read-only at Cashfree on 2026-11-17; the matching production webhook returned 200. On-screen plan access and email arrival still need confirmation. See [D-021](DECISIONS.md) and [D-025](DECISIONS.md).
 
 ## Production — FTV-012 (Claude, started 2026-11-15)
 
