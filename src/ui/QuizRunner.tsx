@@ -548,14 +548,14 @@ function LeadForm({ onDone }: { onDone: () => void }) {
           Your report is <span className="accent">ready.</span>
         </h1>
         <p className="sub" style={{ marginTop: 6, fontSize: 14 }}>
-          Where should we send a copy?
+          Where should we send your report and plan?
         </p>
 
         <div className="stack" style={{ marginTop: 18, gap: 12 }}>
           <div className="field">
             <label htmlFor="lead-email">Email address</label>
             <input id="lead-email" className={`input${error?.field === 'email' ? ' bad' : ''}`} type="email" autoComplete="email" inputMode="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} />
-            <span className="small">Your report and your plan are sent here.</span>
+            <span className="small">Your report and your plan are sent here when you unlock them.</span>
           </div>
           <div className="field">
             <label htmlFor="lead-phone">Mobile number</label>
@@ -578,10 +578,10 @@ function LeadForm({ onDone }: { onDone: () => void }) {
         ) : null}
 
         <button type="submit" className="btn" style={{ marginTop: 10 }} disabled={busy}>
-          Show my result
+          Continue
         </button>
         <button type="button" className="link-btn" disabled={busy} onClick={() => send({ skip: true })}>
-          Skip, just show me
+          Skip this step
         </button>
 
         <div className="push row small" style={{ gap: 10, alignItems: 'flex-start', paddingTop: 12 }}>

@@ -6,7 +6,7 @@ Status: the founder has accepted the product hook, the funnel shape and the visu
 
 ## Fitovela in one paragraph
 
-Women in India arrive from a Meta ad about weight that will not move. A free two-minute symptom assessment checks her answers against four possible causes, tells her which pattern they match, and shows her a report. Her diet plan for that pattern, built from the food she already cooks, stays locked until she pays.
+Women in India arrive from a Meta ad about weight that will not move. A free two-minute symptom assessment checks her answers against four possible causes. Since 2026-11-18 ([D-030](DECISIONS.md)) the answer is not free: the paywall tells her how many signs were found and that her type is ready, and her report (the pattern her answers match) opens together with her diet plan, built from the food she already cooks, when she pays.
 
 ## The hook (accepted, [D-007](DECISIONS.md#d-007--the-assessment-is-the-product-the-diet-is-the-unlock))
 
@@ -29,9 +29,9 @@ A funnel that opens with "get a diet plan" misses this. Every screen before the 
 | 4 | Follow-up | A question that quotes her earlier answer ("Because you said…") and, once she taps, a note on what that answer changed. | Makes every answer feel heard. |
 | 5 | What we see so far | "It was never your willpower", signals per area, two areas still unchecked. | Emotional connection and a reason to finish. |
 | 6 | Food | Cuisine photo tiles (up to two), vegetarian / egg / non-veg. | Makes the plan feel personal before she sees a price. |
-| 7 | Report ready | Her answers are "analysed" across 4 systems, then she gives her email (the report and plan are sent there) and mobile number (her login, by one-time code), with a skip. | Captures the lead at peak curiosity; gives her an account without a password. |
-| 8 | Result | Her type, markers matched, a score per area, what it means, a weight estimate, and her diet shown blurred and locked. | The payoff of the assessment and the reason to pay. |
-| 9 | Paywall | "Unlock the diet for your type", a recap of her own answers, now versus goal, three plan lengths priced per day, guarantee, sample meals, reviews, FAQ. | Her effort so far becomes the reason to buy now. |
+| 7 | Report ready | Her answers are "analysed" across 4 systems, then she gives her email (the report and plan are sent there once she unlocks them) and mobile number (her login, by one-time code), with a skip. The button says "Continue", not "Show my result". | Captures the lead at peak curiosity; gives her an account without a password. |
+| 8 | Report | **Paid since FTV-035.** Her type, markers matched, a score per area, what it means, her first weeks and BMI. It opens from a card at the top of her plan and from her plan email (`/plan/<token>/report`). Only a woman who cannot buy (pregnant or breastfeeding, under 18) still sees it free, on `/result`. | What she pays to find out. |
+| 9 | Paywall | Comes straight after the questions. A locked report first: her type blurred, how many markers matched and how strongly, how many signs were found and how many of the 4 systems stand out, and locked rows for each system's score, what it means and her diet. Then "Unlock your report and diet plan", a recap of her own answers, her first weeks, three plan lengths priced per day, guarantee, sample meals, FAQ. The page is sent counts only, never her type or which system scored what. | Curiosity about her own result becomes the reason to buy now. |
 | 10 | Plan | Each day's five meals with portions, two swaps per meal, and a grocery list for each week. Sent by email; she can return by logging in. | What she actually receives. |
 
 The founder's brief for the question flow: she should feel her inputs are being processed and the next question depends on them, feel inspired and connected along the way, and feel good enough about the time she invested that buying on the paywall is an impulse.

@@ -4,6 +4,7 @@ import { SUPPORT_EMAIL } from '@/domain/company';
 import { EXCLUSION_LABEL } from '@/domain/eligibility';
 import { isComplete } from '@/domain/flow';
 import { offerEndsAt, TIER_ORDER, TIERS } from '@/domain/offer';
+import { reportTeaser } from '@/domain/teaser';
 import { activeProvider } from '@/server/payments';
 import { currentSession, logEvent, saveSession } from '@/server/session';
 import { Logo } from '@/ui/bits';
@@ -59,7 +60,7 @@ export default async function UnlockPage({ searchParams }: { searchParams: Promi
     <UnlockClient
       offerEndsAt={offerEndsAt(session.offerStartedAt).toISOString()}
       tiers={TIER_ORDER.map((id) => TIERS[id])}
-      typeName={`${a.content.name} ${a.content.accent}`}
+      teaser={reportTeaser(a)}
       recap={a.recap}
       answerCount={Object.keys(session.answers).length}
       targetKcal={a.energy.targetKcal}

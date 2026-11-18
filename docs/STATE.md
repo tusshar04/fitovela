@@ -107,6 +107,16 @@ Founder: the screen after the hormone-signs question shows a spinner, so she wai
 
 Checks: typecheck and all 132 tests pass (one new, for the Back rule). Walked in headless Chrome at 393 x 740 on a local preview: the screen left by itself after about 2.5 seconds; Back from the next question, and Back pressed during the screen, both land on the hormone-signs question and stay there. After the deploy, a tagged test visit on `fitovela.com` (release `eac803751922`) showed the screen with no button, moving on after 2.5 seconds, and Back landing on the hormone-signs question and staying. Self-review only: a timing and navigation change with no effect on scoring, payment or what is stored. Not checked on a real phone.
 
+### FTV-035 — the report is paid; the paywall follows the questions (Claude, 2026-11-18, STATUS_LINE)
+
+Founder ([D-030](DECISIONS.md)): hide the result and sell the report and the diet together. `/result` sends a woman who can buy to `/unlock`, which now opens with a locked report built from counts only (`src/domain/teaser.ts`). The full report is `src/ui/Report.tsx`, shown at `/plan/<token>/report` for a paid plan (linked from the plan page and the plan email) and free on `/result` only for pregnant or breastfeeding women and under-18s. If her answers are gone, or would now name a different type than the plan she bought, the paid report shows only the type, its summary and "what this means". Landing, email-step and paywall wording changed to match. `scripts/funnel-report.mjs` now counts "finished the questions" in the by-ad line and reports the free and the paid report separately.
+
+REVIEW_LINE
+
+Checks: CHECKS_LINE
+
+Open: the ad text in Meta ("Explore your report", "Take the free check", "Get your free report" on one static) no longer matches the site; the founder's to change. Not checked on a real phone or with a real payment. Women who finished the assessment before this release and come back will find the paywall where their report was.
+
 ### FTV-034 — four "talk to us first" groups can now buy (Claude, 2026-11-18, merged and live)
 
 Founder, relaying the doctor ([D-029](DECISIONS.md)): type 1 diabetes or insulin, kidney disease, eating-disorder history and BMI under 18.5 are sold the standard plan, with no doctor line of their own (the founder declined one). Pregnant or breastfeeding women and under-18s still see "talk to us first" (founder's choice when asked). Added by Claude: the four groups are never given the intensive track, and an underweight woman's food covers her movement plan so she is not made to lose. The terms page no longer tells the four groups not to buy. Also fixed: the extra safety check before the intensive track is now asked at the same rounded BMI of 30 at which the track opens. Branch `feat/ftv-034-sell-to-conditions`.

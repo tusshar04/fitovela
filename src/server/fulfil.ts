@@ -50,9 +50,10 @@ export async function fulfilOrder(order: Order, session: Session, origin: string
     to: order.email,
     subject: `Your Fitovela ${intensive ? 'intensive ' : ''}${tier.name} is ready`,
     text: [
-      'Your plan is ready.',
+      'Your report and your plan are ready.',
       '',
-      `Open it here: ${origin}${planUrl}`,
+      `Open your plan here: ${origin}${planUrl}`,
+      `Read your report here: ${origin}${planUrl}/report`,
       ...(intensive ? ['', 'Week 1 is open now. Each new week opens after a short check-in.'] : []),
       '',
       `To come back later, go to ${origin}/login and enter your mobile number ending ${order.phone.slice(-4)}.`,

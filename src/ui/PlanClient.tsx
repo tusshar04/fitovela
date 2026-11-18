@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import type { MovementPlan } from '@/domain/energy';
 import { CHECKIN_SIGNS, type CheckinSign } from '@/domain/intensive';
 import type { GroceryItem, Plan, PlanDish } from '@/domain/plan/generator';
-import { Check, Lock, Logo, SwapIcon } from './bits';
+import { Check, ChevronRight, Lock, Logo, SwapIcon } from './bits';
 
 const DAY_NAMES = ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'];
 
@@ -201,10 +201,21 @@ export function PlanClient({ plan, totalWeeks, token, tierName, typeName, justBo
       {justBought ? (
         <div className="banner" style={{ margin: '14px 20px 0' }}>
           {emailSent
-            ? `Your plan is ready. A link to this page is on its way to ${email}. To come back later, log in with your mobile number.`
-            : `Your plan is ready. Email sending is not connected yet, so nothing was sent to ${email}. To come back later, log in with your mobile number.`}
+            ? `Your report and plan are ready. A link to this page is on its way to ${email}. To come back later, log in with your mobile number.`
+            : `Your report and plan are ready. Email sending is not connected yet, so nothing was sent to ${email}. To come back later, log in with your mobile number.`}
         </div>
       ) : null}
+
+      <a className="outline row between" href={`/plan/${token}/report`} data-ev="report_open" style={{ margin: '14px 20px 0', padding: '14px 16px', gap: 12, textDecoration: 'none', color: 'inherit' }}>
+        <span className="stack" style={{ gap: 3 }}>
+          <span style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: '0.14em', color: 'var(--pink)' }}>YOUR REPORT</span>
+          <span style={{ fontSize: 15.5, fontWeight: 700, letterSpacing: '-0.01em' }}>Your symptoms match: {typeName}</span>
+        </span>
+        <span className="row" style={{ flex: 'none', gap: 2, fontSize: 13.5, fontWeight: 700, color: 'var(--pink-dark)' }}>
+          Read
+          <ChevronRight size={16} stroke={2.6} />
+        </span>
+      </a>
 
       {movedToStandard ? (
         <div className="advice stack" style={{ margin: '14px 20px 0', gap: 6 }}>

@@ -7,14 +7,18 @@ import { SUPPORT_EMAIL } from '@/domain/company';
 import { MEDICATION_ADVISORY } from '@/domain/eligibility';
 import { FIRST_MONTH_WEEKS, JOURNEY_FOOTNOTE, type JourneyStop } from '@/domain/journey';
 import { DEFAULT_TIER, perDay, type Tier, type TierId } from '@/domain/offer';
+import type { ReportTeaser } from '@/domain/teaser';
 import { PROTEIN_LINE, PROTEIN_LINE_INTENSIVE } from '@/domain/typeContent';
+import { STRENGTH_LABEL } from '@/domain/typing';
+import { AREAS, AREA_LABEL } from '@/domain/types';
 import { JourneyTimeline } from './JourneyCard';
-import { Plus, Shield, Tick } from './bits';
+import { Lock, Plus, Shield, Tick } from './bits';
 
 interface Props {
   offerEndsAt: string;
   tiers: Tier[];
-  typeName: string;
+  /** Counts only. Her type and her score in each system stay out of this page until she pays (D-030). */
+  teaser: ReportTeaser;
   recap: string[];
   answerCount: number;
   targetKcal: number;
@@ -66,7 +70,7 @@ const FAQ = [
   ['Is this a medical diagnosis?', 'No. It is a nutrition plan based on a symptom assessment. Only a doctor and tests can diagnose a condition.'],
   ['I take metformin or thyroid tablets. Can I follow it?', 'Yes. The plan is regular home food. Show it to your doctor before you start and never change a dose because of it.'],
   ['Do I need special ingredients?', 'No powders or supplements. Everything is on a normal kirana shelf.'],
-  ['How do I get my plan?', 'It opens on screen as soon as you pay and a link is sent to your email. You can come back any time by logging in with your mobile number and a one-time code.'],
+  ['How do I get my report and plan?', 'Both open on screen as soon as you pay and a link is sent to your email. You can come back any time by logging in with your mobile number and a one-time code.'],
   ['How do refunds work?', `Write to ${SUPPORT_EMAIL} within 7 days of buying and we refund you in full.`],
 ];
 
@@ -84,6 +88,7 @@ function errorCode(message: string): string {
 
 export function UnlockClient(props: Props) {
   const router = useRouter();
+  const { teaser } = props;
   const [selected, setSelected] = useState<TierId>(DEFAULT_TIER);
   const [track, setTrack] = useState<'standard' | 'intensive'>('standard');
   const onIntensive = track === 'intensive' && props.intensive !== null;
@@ -258,17 +263,81 @@ export function UnlockClient(props: Props) {
           <span className="clock">{launchLive ? `${mm}:${ss}` : 'Regular price'}</span>
         </div>
         <button type="button" data-ev="timer_get_plan" onClick={() => formRef.current?.scrollIntoView({ block: 'center', behavior: 'smooth' })}>
-          Get my plan
+          Unlock now
         </button>
       </div>
 
-      <section data-sec="hero" className="stack" style={{ padding: '26px 22px 0', alignItems: 'center', gap: 12 }}>
-        <div className="signal">
-          <i />
-          <span>{props.typeName}</span>
+      <section data-sec="locked_report" className="stack" style={{ padding: '20px 22px 0', gap: 14 }}>
+        <div className="stack" style={{ alignItems: 'center', gap: 4 }}>
+          <div className="eyebrow">Your assessment report</div>
+          <div style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--faint)' }}>
+            Age {teaser.age} · {props.answerCount} answers analysed
+          </div>
         </div>
+        <div className="plum stack" style={{ padding: 22, gap: 16 }}>
+          <div className="stack" style={{ gap: 8 }}>
+            <div className="row between" style={{ gap: 12 }}>
+              <span style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: '0.14em', color: 'var(--yellow)' }}>YOUR SYMPTOMS MATCH</span>
+              <span className="lock-pill">
+                <Lock size={12} />
+                <span>Locked</span>
+              </span>
+            </div>
+            {/* A stand-in, not her type: the real name is not sent to this page. */}
+            <div aria-hidden className="blur" style={{ fontSize: 29, lineHeight: 1.1, fontWeight: 800, letterSpacing: '-0.028em' }}>
+              Hidden until you unlock
+            </div>
+          </div>
+          {teaser.match ? (
+            <div className="match">
+              <div className="row between" style={{ gap: 12 }}>
+                <span className="dim" style={{ fontSize: 13, fontWeight: 500 }}>
+                  <b style={{ color: '#fff', fontWeight: 700 }}>
+                    {teaser.match.matched} of {teaser.match.total}
+                  </b>{' '}
+                  markers matched
+                </span>
+                <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--yellow)' }}>{STRENGTH_LABEL[teaser.match.strength]}</span>
+              </div>
+              <div className="meter">
+                <i style={{ width: `${Math.round((teaser.match.matched / Math.max(1, teaser.match.total)) * 100)}%` }} />
+              </div>
+            </div>
+          ) : null}
+          <p style={{ fontSize: 14, lineHeight: 1.55, color: '#E6D9E8' }}>
+            {teaser.signs > 0 ? (
+              <>
+                We found <b style={{ color: '#fff' }}>{teaser.signs === 1 ? '1 sign' : `${teaser.signs} signs`}</b> in your answers
+                {teaser.flagged > 0 ? `, and ${teaser.flagged} of the 4 systems we checked ${teaser.flagged === 1 ? 'stands' : 'stand'} out` : ''}.
+              </>
+            ) : (
+              <>We checked your answers against 4 systems.</>
+            )}{' '}
+            Your report names your type and tells you what is holding your weight.
+          </p>
+        </div>
+        <div className="locked-card">
+          <div className="head">
+            <h2 style={{ fontSize: 16.5, lineHeight: 1.25, fontWeight: 700, letterSpacing: '-0.012em' }}>Inside your report</h2>
+            <span className="lock-pill">
+              <Lock size={12} />
+              <span>Locked</span>
+            </span>
+          </div>
+          <div className="rows">
+            {[...AREAS.map((area) => [AREA_LABEL[area], 'Your score']), ['What it means for you', 'Three findings'], ['Your diet for this type', 'Every meal planned']].map(([k, v]) => (
+              <div key={k} className="locked-row">
+                <b>{k}</b>
+                <span aria-hidden>{v}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section data-sec="hero" className="stack" style={{ padding: '26px 22px 0', alignItems: 'center', gap: 12 }}>
         <h1 className="h1 big">
-          Your plan is ready to <span className="accent">unlock</span>
+          Unlock your report and <span className="accent">diet plan</span>
         </h1>
         <div className="outline stack" style={{ alignSelf: 'stretch', marginTop: 6, gap: 10, padding: '16px 18px' }}>
           <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.1em', color: 'var(--faint)' }}>BUILT FROM YOUR {props.answerCount} ANSWERS</div>
@@ -356,7 +425,7 @@ export function UnlockClient(props: Props) {
 
       <section ref={formRef} data-sec="pay_form" className="stack" style={{ padding: '20px 22px 0', gap: 12 }}>
         <div className="field">
-          <label htmlFor="pay-email">Email for your plan</label>
+          <label htmlFor="pay-email">Email for your report and plan</label>
           <input id="pay-email" className="input" type="email" autoComplete="email" inputMode="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} />
         </div>
         <div className="field">
@@ -368,7 +437,7 @@ export function UnlockClient(props: Props) {
         </div>
         {error ? <p className="error">{error}</p> : null}
         <button type="button" className="btn" data-ev="pay_main" disabled={busy || props.provider === null} onClick={startCheckout}>
-          Get my plan · {rupees(priceOf(tier))}
+          Get my report and plan · {rupees(priceOf(tier))}
         </button>
         <div className="center" style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--muted)' }}>
           {props.provider === null ? 'Payments are not switched on yet.' : 'One-time payment. No auto-renewal.'}
@@ -397,7 +466,7 @@ export function UnlockClient(props: Props) {
           ))}
         </div>
         <div className="stack" style={{ gap: 12, marginTop: 4 }}>
-          {[onIntensive ? `Every day planned: 3 light meals and a snack, about ${kcal} kcal` : `Every day planned: 5 meals, about ${kcal} kcal, in your own cuisine`, ...(onIntensive ? ['A short check-in each week before the next week opens'] : []), 'Two swaps for every single meal', 'A grocery list for each week', 'Your basic movement plan', 'Sent to your email, with a login to come back any time', ...planChanges].map((line) => (
+          {['Your full report: your type, your score in each of the 4 systems and what it means for you', onIntensive ? `Every day planned: 3 light meals and a snack, about ${kcal} kcal` : `Every day planned: 5 meals, about ${kcal} kcal, in your own cuisine`, ...(onIntensive ? ['A short check-in each week before the next week opens'] : []), 'Two swaps for every single meal', 'A grocery list for each week', 'Your basic movement plan', 'Sent to your email, with a login to come back any time', ...planChanges].map((line) => (
             <div key={line} className="line-item top" style={{ fontSize: 15 }}>
               <Tick />
               <span>{line}</span>
@@ -432,7 +501,7 @@ export function UnlockClient(props: Props) {
           </div>
         </div>
         <button type="button" className="btn" style={{ boxShadow: 'none' }} data-ev="pay_bottom" disabled={busy || props.provider === null} onClick={startCheckout}>
-          Get my plan
+          Get my report and plan
         </button>
         <p className="dim center" style={{ fontSize: 11.5, lineHeight: 1.5 }}>
           Fitovela offers nutrition guidance. It does not diagnose or treat any medical condition. Results vary from person to person. If you take medication, speak to your doctor first.

@@ -125,7 +125,7 @@ list(top(on('page_view', '/'), (e) => `    ${P(e).ua ?? '?'} / ${P(e).os ?? '?'}
 const lcp = median(E.filter(on('perf', '/')).map((e) => P(e).lcp).filter((x) => typeof x === 'number'));
 if (lcp !== undefined) console.log(`  Median time until the page was drawn: ${(lcp / 1000).toFixed(1)} s`);
 
-head('2. By ad (people who saw the landing page → tapped an age → saw the report → saw the prices → paid)');
+head('2. By ad (people who saw the landing page → tapped an age → finished the questions → saw the prices → paid)');
 const byAd = new Map();
 const bump = (id, i) => {
   const ad = visits.get(id)?.ad ?? '(no ad id)';
@@ -133,7 +133,7 @@ const bump = (id, i) => {
   row[i] += 1;
   byAd.set(ad, row);
 };
-[on('page_view', '/'), (e) => e.name === 'age_selected', (e) => e.name === 'result_view', (e) => e.name === 'unlock_view', (e) => e.name === 'payment_confirmed'].forEach((pred, i) => people(pred).forEach((id) => bump(id, i)));
+[on('page_view', '/'), (e) => e.name === 'age_selected', (e) => e.name === 'analysing_view', (e) => e.name === 'unlock_view', (e) => e.name === 'payment_confirmed'].forEach((pred, i) => people(pred).forEach((id) => bump(id, i)));
 for (const [ad, r] of [...byAd].sort((a, b) => b[1][0] - a[1][0])) console.log(`  ${ad.padEnd(22)} ${r.map((x) => String(x).padStart(5)).join(' →')}`);
 
 head('3. Assessment, question by question');
@@ -151,17 +151,20 @@ line('reached "building your report"', n(on('analysing_view')), started);
 line('saw the email step', n(on('lead_view')), started);
 line('gave an email or number', n((e) => e.name === 'lead_captured'), started);
 line('skipped the email step', n((e) => e.name === 'lead_skipped'), started);
-line('saw her report', n((e) => e.name === 'result_view'), started);
+line('saw the prices page', n((e) => e.name === 'unlock_view'), started);
+line('saw the free report (only women who cannot buy)', n((e) => e.name === 'result_view'), started);
 console.log('  Form problems (form › box):');
 list(top(on('form_error'), (e) => `    ${P(e).form} › ${P(e).field}`), started);
 list(top(on('save_error'), (e) => `    answer did not save › ${P(e).q} (${P(e).status})`), started);
 
-head('4. Report page');
+// Since 18 Nov 2026 (FTV-035) the report opens with a paid plan. /result is shown only to a
+// woman who cannot buy; everyone else goes from the questions straight to the prices page.
+head('4. Report (free only for women who cannot buy; paid for everyone else)');
 const res = n((e) => e.name === 'result_view');
-line('saw her report', res, res);
+line('saw the free report', res, res);
 list(top(on('section_view', '/result'), (e) => `reached section: ${P(e).sec}`), res);
 list(top(on('toggle', '/result'), (e) => `opened: ${P(e).label}`), res);
-line('tapped "Unlock my diet plan"', n((e) => on('tap', '/result')(e) && P(e).label === 'unlock_cta'), res);
+line('opened her paid report', n((e) => e.name === 'report_view'), n((e) => e.name === 'payment_confirmed'));
 
 head('5. Prices page');
 const unl = n((e) => e.name === 'unlock_view');

@@ -21,10 +21,10 @@ const AREAS = ['PCOS / PCOD', 'Insulin', 'Inflammation', 'Thyroid'];
 function Hero({ hook, category }: { hook: Hook; category: Category }) {
   const copy =
     hook === 'b'
-      ? { title: CHECK_HEADLINE[category], accent: 'Check in 2 minutes.', sub: 'A free symptom check made for Indian women. No blood test, no sign-up. See what your body has been trying to tell you.' }
+      ? { title: CHECK_HEADLINE[category], accent: 'Check in 2 minutes.', sub: 'A free symptom check made for Indian women. No blood test, no sign-up. Find out what your body has been trying to tell you.' }
       : hook === 'c'
         ? { title: 'One diet does not fit every woman.', accent: 'Find yours.', sub: 'Take the free assessment. We match your symptoms to a type, then build your plan from dosa, dal and roti. No salads.' }
-        : { title: 'Dieting hard. Weight still stuck?', accent: 'Find out why.', sub: 'Generic diets ignore your hormones. Answer about 18 questions and see which of 4 hidden causes is holding you back.' };
+        : { title: 'Dieting hard. Weight still stuck?', accent: 'Find out why.', sub: 'Generic diets ignore your hormones. Answer about 18 questions. We check which of 4 hidden causes is holding you back.' };
 
   return (
     <div className="stack" data-sec="hero" style={{ alignItems: 'center', gap: 12 }}>
@@ -57,7 +57,7 @@ function Visual({ hook }: { hook: Hook }) {
           ))}
         </section>
         <div className="center" style={{ marginTop: 12, fontSize: 13, fontWeight: 600, color: 'var(--muted)' }}>
-          You get a score for each one, and your type.
+          We score each one and match you to a type.
         </div>
       </>
     );
@@ -94,10 +94,10 @@ function Visual({ hook }: { hook: Hook }) {
   return (
     <section data-sec="visual" className="plum stack" style={{ marginTop: 22, padding: 18, gap: 14 }}>
       <div className="row between" style={{ gap: 10 }}>
-        <span style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: '0.14em', color: 'var(--yellow)' }}>YOUR FREE REPORT</span>
+        <span style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: '0.14em', color: 'var(--yellow)' }}>YOUR REPORT</span>
         <span className="row dim" style={{ gap: 5, fontSize: 11.5, fontWeight: 500 }}>
           <Lock size={12} />
-          <span>Opens when you finish</span>
+          <span>Built from your answers</span>
         </span>
       </div>
       <div className="row" style={{ alignItems: 'baseline', gap: 10 }}>
@@ -105,7 +105,7 @@ function Visual({ hook }: { hook: Hook }) {
           Your type:
         </span>
         <span aria-hidden className="blur" style={{ fontSize: 20, fontWeight: 700 }}>
-          Hidden until you finish
+          Hidden for now
         </span>
       </div>
       <div className="grid2" style={{ gap: 8 }}>
