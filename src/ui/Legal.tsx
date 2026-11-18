@@ -3,7 +3,7 @@
 import { LEGAL_UPDATED } from '@/domain/company';
 import { Logo } from './bits';
 
-export function LegalPage({ title, children }: { title: string; children: React.ReactNode }) {
+export function LegalPage({ title, updated = LEGAL_UPDATED, children }: { title: string; updated?: string; children: React.ReactNode }) {
   return (
     <main className="screen">
       <header className="hdr solo">
@@ -13,7 +13,7 @@ export function LegalPage({ title, children }: { title: string; children: React.
         <h1 className="h2" style={{ fontSize: 26 }}>
           {title}
         </h1>
-        <p className="small">Last updated {LEGAL_UPDATED}</p>
+        <p className="small">Last updated {updated}</p>
         {children}
         <nav className="legal-nav">
           <a href="/terms">Terms</a>

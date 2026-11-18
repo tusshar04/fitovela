@@ -80,11 +80,11 @@ Primary documentation checked on 17 November 2026:
 
 ### What the implementation sends
 
-- After an explicit **Allow** choice, an image Pixel records a public landing `PageView`. There is no Meta JavaScript SDK, automatic event collection or advanced matching. Only the root URL without any query parameters is supplied; HTTP referrers are disabled.
+- Measurement is **on by default** since FTV-032 ([D-028](DECISIONS.md)): the landing page asks nothing and shows no banner. For a browser with no stored choice, or with it already on, an image Pixel records a public landing `PageView`. Before FTV-032 this needed an explicit **Allow** on a banner. There is no Meta JavaScript SDK, automatic event collection or advanced matching. Only the root URL without any query parameters is supplied; HTTP referrers are disabled.
 - A **Purchase** is created only by the first verified Cashfree paid-order transaction. The allowlist is event name, stable hashed-order event ID, actual paid time, website action source, actual public `/unlock` checkout URL, INR amount/currency, genuine click/browser identifiers and the checkout browser user agent. No email/phone matching or IP field is sent by CAPI. Meta naturally receives the browser IP on an image request.
 - Assessment answers, symptoms, condition/type results, body measurements, medicines, plan/tier/track, cuisine/meal preferences, contact fields, report/plan contents and private links never enter the outgoing payload. FTV-029's detailed first-party behaviour stream remains separate and is never forwarded.
 - On the new paid plan view, a first-party endpoint validates the paid order, original session and current consent, then claims at most one browser Purchase. Its image request has the same event ID/value as CAPI, no page/referrer URL, and `referrerPolicy=no-referrer`. No script reads the report DOM. The browser event is optional; the webhook can complete server delivery without a browser return.
-- Declining leaves the funnel/payment intact. The privacy page has a control to change the choice. Consent withdrawal is checked before both server dispatch and browser claim; automatic landing refresh cannot regrant withdrawn consent. Already-sent events cannot be recalled.
+- Turning it off leaves the funnel/payment intact. The privacy page is the only place with the control (`Ad measurement: on/off · change`). The stored record says whether it is on by default or by her own choice. A stored "off" is checked before both server dispatch and browser claim, and neither the default nor an automatic landing refresh can switch it back on while her browser keeps the cookie (400 days, renewed at every landing). Already-sent events cannot be recalled.
 
 ### Reliability and operations
 

@@ -6,6 +6,9 @@ export interface AdConsent {
   expiresAt: string;
   fbp?: string;
   fbc?: string;
+  /** 'default': switched on without asking, on her first landing (D-028). 'choice': she set it herself.
+   * Absent on records from before D-028, which were all her own choice. */
+  basis?: 'default' | 'choice';
 }
 
 export interface AdAttribution {
@@ -65,7 +68,7 @@ export function pixelUrl(pixelId: string, event: { name: 'PageView' | 'Purchase'
   return `https://www.facebook.com/tr?${q}`;
 }
 
-/** An automatic landing refresh can update a genuine click, but never grant consent. */
+/** An automatic landing refresh can update a genuine click, but never turn measurement back on. */
 export function refreshedAdClick(c: AdConsent | null, fbclid: string | undefined, now: number): AdConsent | null {
   if (!validConsent(c, now)) return null;
   if (fbclid && /^[A-Za-z0-9_-]{10,500}$/.test(fbclid) && !c.fbc?.endsWith(`.${fbclid}`)) return { ...c, fbc: `fb.1.${now}.${fbclid}` };

@@ -6,14 +6,14 @@ import { fileStore } from '@/server/store/fileStore';
 import type { Order, Session } from '@/server/store';
 import { metaEventId, purchaseDelivery, sendMetaPurchase } from '@/server/metaEvents';
 
-const browser = vi.hoisted(() => ({ cookies: new Map<string, string>(), session: null as Session | null }));
+const browser = vi.hoisted(() => ({ cookies: new Map<string, string>(), maxAge: new Map<string, number | undefined>(), session: null as Session | null }));
 vi.mock('next/headers', () => ({ cookies: async () => ({
   get: (key: string) => browser.cookies.has(key) ? { value: browser.cookies.get(key) } : undefined,
-  set: (key: string, value: string) => browser.cookies.set(key, value),
+  set: (key: string, value: string, opts?: { maxAge?: number }) => { browser.cookies.set(key, value); browser.maxAge.set(key, opts?.maxAge); },
   delete: (key: string) => browser.cookies.delete(key),
 }) }));
 vi.mock('@/server/session', () => ({ currentSession: async () => browser.session }));
-import { POST as preference } from '@/app/api/ads/preferences/route';
+import { GET as readPreference, POST as preference } from '@/app/api/ads/preferences/route';
 import { POST as browserPurchase } from '@/app/api/ads/purchase/route';
 import { checkoutAttribution } from '@/server/adConsent';
 
@@ -26,7 +26,7 @@ beforeEach(() => {
   process.env.META_EVENTS_ENABLED = '1'; process.env.META_PIXEL_ID = '123456';
   process.env.META_MARKETING_ACCESS_TOKEN = 'test-secret-never-logged';
   process.env.SITE_URL = 'https://fitovela.test';
-  browser.cookies.clear(); browser.session = null;
+  browser.cookies.clear(); browser.maxAge.clear(); browser.session = null;
 });
 afterEach(async () => {
   vi.unstubAllGlobals(); vi.restoreAllMocks(); process.env = { ...savedEnv };
@@ -118,8 +118,8 @@ describe('Meta commerce-only event boundary', () => {
   });
 });
 
-describe('explicit measurement choice and genuine attribution', () => {
-  it('defaults off, records an actual click only after opt-in, and clears cookies on withdrawal', async () => {
+describe('measurement choice and genuine attribution', () => {
+  it('shares nothing before the landing page has run, records only an actual click, and clears cookies when turned off', async () => {
     const checkout = new Request('https://fitovela.test/api/order', { headers: { referer: 'https://fitovela.test/unlock?pay=pending', 'user-agent': 'Browser Test' } });
     expect(await checkoutAttribution(checkout)).toBeUndefined();
     const result = await (await preference(request('/api/ads/preferences', { allowed: true, landing: true, fbclid: 'ActualClickValueAbC123' }))).json();
@@ -132,6 +132,81 @@ describe('explicit measurement choice and genuine attribution', () => {
     await preference(request('/api/ads/preferences', { allowed: false }));
     expect(browser.cookies.has('_fbc')).toBe(false); expect(browser.cookies.has('_fbp')).toBe(false);
     expect(await checkoutAttribution(checkout)).toBeUndefined();
+  });
+
+  it('is switched on by default for a browser with no stored choice, and says so in the record', async () => {
+    const r = await (await preference(request('/api/ads/preferences', { allowed: true, landing: true, auto: true, fbclid: 'ActualClickValueAbC123' }))).json();
+    const id = browser.cookies.get('fv_ads')!; record('adConsents', id);
+    expect(r.choice).toBe(true); expect(new URL(r.pixel).searchParams.get('ev')).toBe('PageView');
+    const stored = await fileStore.getAdConsent(id);
+    expect(stored?.allowed).toBe(true); expect(stored?.basis).toBe('default');
+    expect(stored?.fbc).toMatch(/^fb\.1\.\d{13}\.ActualClickValueAbC123$/);
+    expect(browser.cookies.get('_fbp')).toBe(stored?.fbp);
+  });
+
+  it('the default never switches it back on after she turned it off', async () => {
+    await preference(request('/api/ads/preferences', { allowed: false }));
+    const id = browser.cookies.get('fv_ads')!; record('adConsents', id);
+    expect((await fileStore.getAdConsent(id))?.basis).toBe('choice');
+    const r = await (await preference(request('/api/ads/preferences', { allowed: true, landing: true, auto: true, fbclid: 'ActualNewClick12345' }))).json();
+    expect(r.choice).toBe(false); expect(r.pixel).toBeNull();
+    const stored = await fileStore.getAdConsent(id);
+    expect(stored?.allowed).toBe(false); expect(stored?.fbp).toBeUndefined(); expect(stored?.fbc).toBeUndefined();
+    expect(browser.cookies.get('fv_ads')).toBe(id); expect(browser.cookies.has('_fbp')).toBe(false);
+    const checkout = new Request('https://fitovela.test/api/order', { headers: { referer: 'https://fitovela.test/unlock', 'user-agent': 'Browser Test' } });
+    expect(await checkoutAttribution(checkout)).toBeUndefined();
+  });
+
+  it('remembers "off" beyond the 90 days: a long cookie, renewed at each landing, and an off record never lapses', async () => {
+    await preference(request('/api/ads/preferences', { allowed: false }));
+    const id = browser.cookies.get('fv_ads')!; record('adConsents', id);
+    expect(browser.maxAge.get('fv_ads')).toBe(400 * 86400);
+    // 91 days later: the record's own 90 days have run out, the cookie is still there.
+    const stored = (await fileStore.getAdConsent(id))!;
+    await fileStore.saveAdConsent({ ...stored, expiresAt: new Date(Date.now() - 86400000).toISOString() });
+    browser.maxAge.clear();
+    expect((await (await readPreference()).json()).choice).toBe(false);
+    expect(browser.maxAge.get('fv_ads')).toBe(400 * 86400); // the landing page's read renews it
+    browser.maxAge.clear();
+    const r = await (await preference(request('/api/ads/preferences', { allowed: true, landing: true, auto: true, fbclid: 'ActualNewClick12345' }))).json();
+    expect(r.choice).toBe(false); expect(r.pixel).toBeNull();
+    expect(browser.cookies.get('fv_ads')).toBe(id); expect(browser.maxAge.get('fv_ads')).toBe(400 * 86400);
+    expect((await fileStore.getAdConsent(id))?.allowed).toBe(false);
+    expect(browser.cookies.has('_fbp')).toBe(false);
+  });
+
+  it('an "on" record whose 90 days have run out is replaced by a new default record, never written over', async () => {
+    const c = await consent();
+    await fileStore.saveAdConsent({ ...c, basis: 'choice', expiresAt: new Date(Date.now() - 86400000).toISOString() });
+    expect((await (await readPreference()).json()).choice).toBeNull();
+    const r = await (await preference(request('/api/ads/preferences', { allowed: true, landing: true, auto: true }))).json();
+    const id = browser.cookies.get('fv_ads')!; record('adConsents', id);
+    expect(r.choice).toBe(true); expect(r.pixel).toContain('ev=PageView');
+    expect(id).not.toBe(c.id); expect(browser.maxAge.get('fv_ads')).toBe(90 * 86400);
+    const fresh = await fileStore.getAdConsent(id);
+    expect(fresh?.basis).toBe('default'); expect(fresh?.fbp).not.toBe(c.fbp); expect(fresh?.fbc).toBeUndefined();
+    expect((await fileStore.getAdConsent(c.id))?.basis).toBe('choice');
+  });
+
+  it('the default is only a refresh for a browser that already has it on', async () => {
+    const c = await consent();
+    await fileStore.saveAdConsent({ ...c, basis: 'choice' });
+    const r = await (await preference(request('/api/ads/preferences', { allowed: true, landing: true, auto: true, fbclid: 'ActualNewClick12345' }))).json();
+    expect(r.choice).toBe(true); expect(r.pixel).toContain('ev=PageView');
+    const stored = await fileStore.getAdConsent(c.id);
+    expect(browser.cookies.get('fv_ads')).toBe(c.id);
+    expect(stored?.fbp).toBe(c.fbp); expect(stored?.basis).toBe('choice');
+    expect(stored?.updatedAt).toBe(c.updatedAt); expect(stored?.expiresAt).toBe(c.expiresAt);
+    expect(new URL(r.pixel).searchParams.get('fbp')).toBe(c.fbp);
+    expect(stored?.fbc).toMatch(/\.ActualNewClick12345$/);
+  });
+
+  it('rejects a default that is not "on", and records her own choice as a choice', async () => {
+    expect((await preference(request('/api/ads/preferences', { allowed: false, auto: true }))).status).toBe(400);
+    expect(browser.cookies.has('fv_ads')).toBe(false);
+    await preference(request('/api/ads/preferences', { allowed: true }));
+    const id = browser.cookies.get('fv_ads')!; record('adConsents', id);
+    expect((await fileStore.getAdConsent(id))?.basis).toBe('choice');
   });
 
   it('an automatic landing refresh cannot undo a withdrawal from another tab', async () => {
