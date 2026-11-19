@@ -29,7 +29,7 @@ In production, **payments on** since 2026-11-17 (Cashfree). The app runs on Clou
 
 | Area | Today | Needed |
 | --- | --- | --- |
-| Ad tracking | FTV-030 Pixel/CAPI deployed; Purchase campaign ACTIVE. Measurement is on by default since FTV-032, with no banner. | Verify the first genuine paid event is processed, deduplicated and attributed by Meta. |
+| Ad tracking | FTV-030 Pixel/CAPI deployed; Purchase campaign PAUSED by the founder on 19 Nov 2026 ([totals](AD_OPERATIONS.md)). Measurement is on by default since FTV-032, with no banner. | Verify the first genuine paid event is processed, deduplicated and attributed by Meta. |
 | Reviews, live counter | Hidden. | Real ones, to come from the doctor via Tushar. |
 | Photos | Unsplash stand-ins in `public/img/`. | Licensed or shot images. |
 | Medical drafts | In force on the doctor's interim answer ("go with your recommendations for now"). | Her review when she returns ([MEDICAL_RULES.md](MEDICAL_RULES.md)). |

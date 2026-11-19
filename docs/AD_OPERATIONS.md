@@ -112,3 +112,9 @@ The report is now paid ([D-030](DECISIONS.md)). The site no longer promises a fr
 ## "Tried" video paused (2026-11-18, 14:56 IST)
 
 On the founder's instruction ("ok go", after Claude's recommendation), Claude paused ad `120248244667170009` (Tried | Love You Zindagi | Video v2) with one status-only API update and read it back as `PAUSED`. By then it had spent INR 271.95 today for 1,013 impressions, 5 clicks and no landing-page views; the "Types" video had spent INR 386.21 for 16 clicks and 13 landing-page views. Nothing else in the account was changed: budget, ad set, the other six ads and the ad text are as they were.
+
+## Both campaigns paused by the founder (2026-11-19)
+
+The founder paused the Purchase campaign himself. An API read at 11:35 IST on 19 November shows campaign `120248244657940009` and the old Traffic campaign `120248243480500009` both `PAUSED`. Claude made no change in the account.
+
+Totals to that point, from Meta: Purchase INR 934.97, 5,414 impressions, 111 link clicks, 33 landing-page views, 0 purchases; Traffic INR 51.27. From the site's own log since browser tracking began (18 November, 02:20 IST): 61 people saw the landing page, 14 tapped an age, 12 finished the questions, 10 saw the prices page, 1 opened the Cashfree page, 0 paid. Of these, only 3 saw the prices page after the report became paid ([D-030](DECISIONS.md)); that is too few to judge the change.
