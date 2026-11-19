@@ -5,7 +5,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { fileStore } from '@/server/store/fileStore';
 import type { Order } from '@/server/store';
 import { deliverSlack, orderAlertText } from '@/server/slack';
-import { reportWindow, scheduledReportTime, totals } from '@/server/reporting';
+import { reportWindow, scheduledReportTime, sendHourlyReport, totals } from '@/server/reporting';
 import { parseSpendRows, fetchMetaSpend } from '@/server/metaInsights';
 import { authorizedOps } from '@/server/opsAuth';
 import { cashfreeRefundRecord } from '@/server/refunds';
@@ -25,7 +25,7 @@ const paid = (orderId: string): Order => ({
   planToken: 'private-plan-must-not-leak', track: 'intensive', plan: { days: [] } as unknown as Order['plan'],
 });
 afterEach(async () => {
-  vi.unstubAllGlobals(); process.env = { ...savedEnv };
+  vi.restoreAllMocks(); vi.unstubAllGlobals(); process.env = { ...savedEnv };
   await Promise.all(cleanup.splice(0).map(p => fs.rm(p, { force: true })));
 });
 
@@ -71,6 +71,41 @@ describe('payment and notification idempotency', () => {
 });
 
 describe('reporting boundaries and missing data', () => {
+  it.each([
+    { label: 'an empty day', orderHour: null, spendHour: null, spend: 0, expected: 'skipped' },
+    { label: 'an explicit zero-spend row', orderHour: null, spendHour: 11, spend: 0, expected: 'skipped' },
+    { label: 'earlier activity but a quiet last hour', orderHour: 10, spendHour: 10, spend: 100, expected: 'skipped' },
+    { label: 'spend without orders', orderHour: null, spendHour: 11, spend: 0.01, expected: 'sent' },
+    { label: 'an order without spend', orderHour: 11, spendHour: null, spend: 0, expected: 'sent' },
+    { label: 'unavailable spend without orders', orderHour: null, spendHour: null, spend: null, expected: 'sent' },
+  ])('$expected for $label', async ({ orderHour, spendHour, spend, expected }) => {
+    process.env.SLACK_REPORT_WEBHOOK_URL = 'https://hooks.slack.com/services/SYNTHETIC';
+    process.env.META_MARKETING_ACCESS_TOKEN = 'synthetic-token';
+    delete process.env.STORE_DRIVER;
+    const date = '2026-11-17';
+    const at = (hour: number) => new Date(`${date}T${hour}:15:00+05:30`).toISOString();
+    vi.spyOn(fileStore, 'listPaidOrders').mockResolvedValue(orderHour === null ? [] : [{ ...paid('synthetic-report-order'), paidAt: at(orderHour) }]);
+    // Even a refund/old uncertain delivery does not create an otherwise zero/zero report.
+    vi.spyOn(fileStore, 'listRefunds').mockResolvedValue([{ id: 'refund', orderId: 'older-order', amountRupees: 199, processedAt: at(11) }]);
+    vi.spyOn(fileStore, 'listUncertainDeliveries').mockResolvedValue([{ id: 'old-attempt', state: 'uncertain', attempt: 'synthetic', updatedAt: at(10) }]);
+    vi.spyOn(fileStore, 'getSession').mockResolvedValue(null);
+    const claim = vi.spyOn(fileStore, 'claimDelivery').mockResolvedValue(true);
+    vi.spyOn(fileStore, 'finishDelivery').mockResolvedValue(undefined);
+    const slack = vi.fn().mockResolvedValue(new Response('ok'));
+    vi.stubGlobal('fetch', vi.fn(async (input, init) => {
+      const url = new URL(String(input));
+      if (url.hostname === 'hooks.slack.com') return slack(input, init);
+      if (url.pathname.endsWith('/insights')) {
+        if (spend === null) throw new Error('Meta unavailable');
+        return Response.json({ data: spendHour === null ? [] : [{ ad_id: '123', ad_name: 'Synthetic ad', campaign_id: '456', spend: String(spend), date_start: date, date_stop: date, hourly_stats_aggregated_by_advertiser_time_zone: `${spendHour}:00:00 - ${spendHour}:59:59` }] });
+      }
+      return Response.json({ account_id: '1457307065897121', currency: 'INR', timezone_name: 'Asia/Kolkata', business: { id: '1110506178493480' } });
+    }));
+    expect(await sendHourlyReport(new Date(`${date}T12:05:00+05:30`))).toBe(expected);
+    expect(slack).toHaveBeenCalledTimes(expected === 'skipped' ? 0 : 1);
+    expect(claim).toHaveBeenCalledTimes(expected === 'skipped' ? 0 : 1);
+    if (spend === null) expect(JSON.parse(slack.mock.calls[0][1].body).text).toContain('spend and margin withheld');
+  });
   it('keeps the original scheduled window when a retry crosses midnight', () => {
     const scheduled = '2026-11-17T17:35:00Z'; // 23:05 IST
     const request = new Request('https://fitovela.test/api/ops/report', { headers: { 'x-cloudscheduler-scheduletime': scheduled } });

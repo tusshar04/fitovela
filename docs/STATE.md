@@ -1,6 +1,6 @@
 # Project state and handoff
 
-Last updated: 2026-11-18
+Last updated: 2026-11-19
 
 This file owns current coordination. Read [AGENTS.md](../AGENTS.md) before acting. Branch state can change after this document is written; inspect Git at every handoff. Work is merged straight into `main`; pull requests are not used ([D-010](DECISIONS.md)).
 
@@ -136,6 +136,8 @@ Limits: the doctor's view is the founder's report of it, not in writing. Four me
 Monitor the launched Purchase campaign and first genuine paid event; confirm plan access/email arrival and the matching Slack paid-order alert. Remaining production housekeeping is listed above.
 
 ## Other open work
+
+- **FTV-036 (Codex, quiet hourly Slack reports, 2026-11-19): implemented and checked; deployment pending.** Branch `fix/ftv-036-quiet-hourly-reports`, worktree `/Users/tushar/fitovela-worktrees/ftv-036-quiet-hourly-reports`. Founder requested no message when ad spend and orders are both zero. Acceptance: skip the last completed hour with confirmed zero spend/zero paid orders before Slack or delivery claims, keep spend-only/order-only reports and unavailable-data warnings, preserve paid-order alerts, schedules and campaign settings. Final diff self-reviewed; typecheck, all 157 tests (including six new report-send cases), production build and whitespace checks pass. No application behavior outside the hourly report is changed. Next: merge and deploy, then verify the live quiet-hour path without sending a test message.
 
 - **FTV-031 (Codex, live campaign errors, 2026-11-18): completed; verified.** Branch `fix/ftv-031-ad-errors`, worktree `/Users/tushar/fitovela-worktrees/ftv-031-ad-errors`. Only the five paused API static duplicates carried error **1885183** (Development-mode creative); their seven canonical replacements/videos were already ACTIVE. After the founder explicitly confirmed deletion, two fresh original-state checks and exact-diff reviews preceded the native **Delete 5 ads** action. Meta records those five as **ARCHIVED**. Two readbacks at 08:11 IST confirm campaign/ad set and all seven canonical ads ACTIVE without issues, every other captured setting unchanged, and old Traffic still PAUSED. Evidence: `/Users/tushar/.codex/artifacts/fitovela/ads-errors-2026-11-18/`; exact IDs/statuses: [campaign configuration](../ads/static/campaign-draft.json). Refreshed native view confirms exactly seven Active ads, no Delivery error rows and disabled Review and publish. Campaign configuration and Desktop manifest are current; all 12 archived media hashes remain exact. Documentation/configuration self-review, JSON validation and whitespace checks passed. Next: monitor the launched Purchase campaign and first genuine consenting paid event. No application change or deployment.
 

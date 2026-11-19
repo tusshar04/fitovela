@@ -52,6 +52,9 @@ export async function sendHourlyReport(now = new Date()): Promise<'sent' | 'skip
   catch (err) { unavailable = err instanceof Error && err.message.startsWith('Meta') ? err.message : 'Meta request failed'; }
   const day = totals(orders, refunds, rows);
   const hour = totals(orders.filter(o => o.paidAt! >= w.lastHourStart), refunds.filter(r => r.processedAt >= w.lastHourStart), rows?.filter(r => r.hour === w.lastHour) ?? null);
+  // Skip quiet completed hours before claiming a delivery or contacting Slack.
+  // Unknown spend is not zero; preserve the existing unavailable-data warning.
+  if (hour.spend === 0 && hour.orders === 0) return 'skipped';
   const sessions = new Map<string, Awaited<ReturnType<typeof store.getSession>>>();
   for (const order of orders) if (!sessions.has(order.sessionId)) sessions.set(order.sessionId, await store.getSession(order.sessionId));
   const byAd = new Map<string, { name: string; spend: number; orders: number; revenue: number }>();
