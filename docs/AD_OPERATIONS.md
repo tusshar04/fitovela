@@ -120,3 +120,7 @@ On the founder's instruction ("ok go", after Claude's recommendation), Claude pa
 The founder paused the Purchase campaign himself. An API read at 11:35 IST on 19 November shows campaign `120248244657940009` and the old Traffic campaign `120248243480500009` both `PAUSED`. Claude made no change in the account.
 
 Totals to that point, from Meta: Purchase INR 934.97, 5,414 impressions, 111 link clicks, 33 landing-page views, 0 purchases; Traffic INR 51.27. From the site's own log since browser tracking began (18 November, 02:20 IST): 61 people saw the landing page, 14 tapped an age, 12 finished the questions, 10 saw the prices page, 1 opened the Cashfree page, 0 paid. Of these, only 3 saw the prices page after the report became paid ([D-030](DECISIONS.md)); that is too few to judge the change.
+
+## Prices changed to INR 499 and 999 (2026-11-20)
+
+The site now sells 4 weeks at INR 499 and 12 weeks at INR 999; the INR 199 trial is gone ([D-031](DECISIONS.md)). The shared ad text in Meta still ends "Plans from ₹199." Before any ad runs again it has to say a price the site offers (for example "Plans from ₹499."), or leave the price out. Changing it is a Meta account change, the founder's to make or to ask for.

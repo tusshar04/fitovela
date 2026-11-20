@@ -5,7 +5,7 @@ import { buildAssessment } from '@/domain/assessment';
 import { checkEligibility } from '@/domain/eligibility';
 import { bmi, bmiBand, bmr, energyPlan } from '@/domain/energy';
 import { adaptation, buildSteps, isComplete, questionSteps, stepBefore } from '@/domain/flow';
-import { isLaunchPriceLive, priceFor, TIER_ORDER, TIERS } from '@/domain/offer';
+import { isLaunchPriceLive, isTierOnSale, priceFor, TIER_ORDER, TIERS } from '@/domain/offer';
 import { QUESTIONS } from '@/domain/questions';
 import { areaCounts, levelFor, markersFrom } from '@/domain/scoring';
 import { determineType } from '@/domain/typing';
@@ -253,11 +253,20 @@ describe('adaptive questionnaire', () => {
 describe('launch price window', () => {
   const start = '2026-11-15T10:00:00.000Z';
   it('charges the launch price inside 15 minutes and the regular price after', () => {
-    expect(priceFor('w4', start, new Date('2026-11-15T10:14:59Z'))).toBe(299);
-    expect(priceFor('w4', start, new Date('2026-11-15T10:15:00Z'))).toBe(599);
-    expect(TIER_ORDER.map((id) => TIERS[id].launch)).toEqual([199, 299, 399]);
-    expect(TIER_ORDER.map((id) => TIERS[id].regular)).toEqual([399, 599, 799]);
+    expect(priceFor('w4', start, new Date('2026-11-15T10:14:59Z'))).toBe(499);
+    expect(priceFor('w4', start, new Date('2026-11-15T10:15:00Z'))).toBe(999);
+    expect(TIER_ORDER.map((id) => TIERS[id].launch)).toEqual([499, 999]);
+    expect(TIER_ORDER.map((id) => TIERS[id].regular)).toEqual([999, 1999]);
     expect(isLaunchPriceLive(undefined)).toBe(false);
+  });
+
+  it('sells only the 4-week and 12-week plans, but still knows the retired 1-week plan for old orders', () => {
+    expect(isTierOnSale('w4')).toBe(true);
+    expect(isTierOnSale('w12')).toBe(true);
+    expect(isTierOnSale('w1')).toBe(false);
+    expect(isTierOnSale('anything')).toBe(false);
+    expect(TIERS.w1.name).toBe('1-week trial');
+    expect(TIERS.w12.popular).toBe(true);
   });
 });
 

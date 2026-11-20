@@ -4,7 +4,7 @@ import { buildAssessment } from '@/domain/assessment';
 import { isComplete } from '@/domain/flow';
 import { INTENSIVE_BLOCK_LABEL, intensiveBreakDue } from '@/domain/intensive';
 import { TIERS } from '@/domain/offer';
-import { isTierId, priceFor } from '@/domain/offer';
+import { isTierOnSale, priceFor } from '@/domain/offer';
 import { siteOrigin } from '@/server/origin';
 import { activeProvider, cashfreeMode, cashfreeOrderId, createCashfreeOrder, createRazorpayOrder } from '@/server/payments';
 import { currentSession, logEvent, newId, saveSession } from '@/server/session';
@@ -17,7 +17,7 @@ export async function POST(req: Request) {
   if (!session) return NextResponse.json({ error: 'Your session has expired. Please start again.' }, { status: 401 });
 
   const body = (await req.json().catch(() => null)) as Record<string, unknown> | null;
-  if (!isTierId(body?.tier)) return NextResponse.json({ error: 'Choose a plan.' }, { status: 400 });
+  if (!isTierOnSale(body?.tier)) return NextResponse.json({ error: 'Choose a plan.' }, { status: 400 });
 
   if (!isComplete(session.answers)) return NextResponse.json({ error: 'Please finish the assessment first.' }, { status: 409 });
   const assessment = buildAssessment(session.answers);
