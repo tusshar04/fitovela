@@ -123,4 +123,10 @@ Totals to that point, from Meta: Purchase INR 934.97, 5,414 impressions, 111 lin
 
 ## Prices changed to INR 499 and 999 (2026-11-20)
 
-The site now sells 4 weeks at INR 499 and 12 weeks at INR 999; the INR 199 trial is gone ([D-031](DECISIONS.md)). The shared ad text in Meta still ends "Plans from ₹199." Before any ad runs again it has to say a price the site offers (for example "Plans from ₹499."), or leave the price out. Changing it is a Meta account change, the founder's to make or to ask for.
+The site now sells 4 weeks at INR 499 and 12 weeks at INR 999; the INR 199 trial is gone ([D-031](DECISIONS.md)). Three things in the live ads still show INR 199, and all must change before any ad runs again, or women are promised a price the site no longer sells:
+
+1. The shared primary text ends "Plans from ₹199." ([campaign configuration](../ads/static/campaign-draft.json), `primary_text`).
+2. The link description shown on every ad is "Personalised Indian meal plans from ₹199" (same file, `description`).
+3. The "Ghar ka khana" static (ad `120248244748190009`, feed and reel versions) has "Plans from ₹199" printed in the image (`ads/static/ad4-ghar-ka-khana.html`). It needs a new image, not a text edit, or the ad paused.
+
+Say a price the site offers (for example "Plans from ₹499") or leave the price out. Unpublished drafts that also say ₹199 and must be fixed before anyone uploads them: `ads/video/quiz.html` ("From ₹199." / "Sirf ₹199 se."), `ads/video/weeks.html` ("Plans from ₹199." / "Sirf ₹199 se.") and `ads/video/story-script.md`. Changing the live ads is a Meta account change, the founder's to make or to ask for.
